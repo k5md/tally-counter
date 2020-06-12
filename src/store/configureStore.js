@@ -2,13 +2,13 @@
 
 import {createStore, compose, applyMiddleware} from 'redux';
 import {persistStore, persistCombineReducers} from 'redux-persist';
-import storage from 'redux-persist/es/storage';
+import AsyncStorage from '@react-native-community/async-storage';
 import {createLogger} from 'redux-logger';
 import rootReducers from '../reducers';
 
 const config = {
   key: 'root',
-  storage,
+  storage: AsyncStorage,
   debug: __DEV__,
 };
 
