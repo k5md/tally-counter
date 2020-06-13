@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import SortableGrid from 'react-native-sortable-grid';
+import SortableList from 'react-native-sortable-list';
 import { EntryContainer } from './';
 
 const styles = StyleSheet.create({
   block: {
-    flex: 1,
+    flex: 0,
     margin: 8,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  list: {
+    flex: 1,
+  },
+  contentContainer: {
+    width: window.width,
+    paddingHorizontal: 0,
   },
 });
 
@@ -21,16 +28,16 @@ export class ListView extends Component {
     const { data, onOrderChange } = this.props;
 
     return (
-      <SortableGrid
-        blockTransitionDuration={400}
-        activeBlockCenteringDuration={200}
-        dragActivationTreshold={200}
-        itemsPerRow={1}
-        onDragRelease={itemOrder => console.log(itemOrder)}>
-        {data.map((entry, index) => (
-          <EntryContainer key={index} entry={entry} style={styles.block} />
-        ))}
-      </SortableGrid>
+      <SortableList
+        style={styles.list}
+        contentContainerStyle={styles.contentContainer}
+        data={data}
+        renderRow={({ active, data, key, index }) => {
+          return (
+            <EntryContainer key={index} entry={data} style={styles.block} />
+          );
+        }}
+      />
     );
   }
 }
