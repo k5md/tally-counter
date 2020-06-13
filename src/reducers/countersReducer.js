@@ -46,13 +46,17 @@ const handlers = {
       initialValue: {
         title,
         step = 1,
+        value = 0,
         imageString = null,
         colorString = randomRGB(),
       },
     },
   ) => {
     const id = uniqueId();
-    return { ...state, [id]: { id, title, step, imageString, colorString } };
+    return {
+      ...state,
+      [id]: { id, title, step, value, imageString, colorString },
+    };
   },
 
   [types.COUNTER_UPDATE]: (state, { id, fields }) => ({
@@ -75,7 +79,15 @@ const handlers = {
     [id]: { ...state[id], colorString },
   }),
 
-  [types.COUNTER_SET_STEP]: (state, { id, step }) => ({}),
+  [types.COUNTER_SET_STEP]: (state, { id, step }) => ({
+    ...state,
+    [id]: { ...state[id], step },
+  }),
+
+  [types.COUNTER_SET_VALUE]: (state, { id, value }) => ({
+    ...state,
+    [id]: { ...state[id], value },
+  }),
 
   [types.COUNTER_REMOVE]: (state, { id }) => omit(state, id),
 };

@@ -45,6 +45,12 @@ export const setStep = (id, step) => ({
   type: types.COUNTER_SET_STEP,
 });
 
+export const setValue = (id, value) => ({
+  id,
+  value,
+  type: types.COUNTER_SET_VALUE,
+});
+
 export const remove = id => ({
   id,
   type: types.COUNTER_REMOVE,
