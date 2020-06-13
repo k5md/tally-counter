@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Searchbar, FAB } from 'react-native-paper';
-import { GridView, ListView } from './';
+import { GridView, ListView, ModalView, NewCounterView } from './';
 
 const styles = StyleSheet.create({
-  fab: {
+  fabContainer: {
+    display: 'flex',
+    flexDirection: 'row',
     position: 'absolute',
     margin: 16,
     right: 0,
@@ -19,6 +21,8 @@ export const TallyCountersView = ({
   counters,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const CountersRenderer = props => {
     const Renderer = {
@@ -36,18 +40,29 @@ export const TallyCountersView = ({
     <>
       <Searchbar
         placeholder="Search"
-        onChangeText={(value) => setSearchQuery(value.toLowerCase())}
+        onChangeText={value => setSearchQuery(value.toLowerCase())}
         value={searchQuery}
       />
 
       <CountersRenderer data={visibleCounters} sortable={searchQuery === ''} />
 
-      <FAB
-        style={styles.fab}
-        small
-        icon={nextDisplayType.icon}
-        onPress={() => setDisplayType(nextDisplayType)}
-      />
+      <View style={styles.fabContainer}>
+        <FAB
+          style={styles.fab}
+          small
+          icon={nextDisplayType.icon}
+          onPress={() => setDisplayType(nextDisplayType)}
+        />
+        <FAB
+          style={styles.fab}
+          small
+          icon="plus"
+          onPress={() => setModalVisible(true)}
+        />
+      </View>
+      <ModalView visible={modalVisible} onClose={() => setModalVisible(false)}>
+        <NewCounterView onClose={() => setModalVisible(false)} />
+      </ModalView>
     </>
   );
 };
