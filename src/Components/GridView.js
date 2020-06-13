@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 
 import SortableGrid from 'react-native-sortable-grid';
 
-export default class basicExample extends Component {
+export class GridView extends Component {
   constructor() {
     super();
     this.alphabets = [

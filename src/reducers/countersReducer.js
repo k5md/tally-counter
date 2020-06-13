@@ -1,7 +1,22 @@
 import * as types from '../constants/actionTypes';
 import {uniqueId, omit} from 'lodash';
 
-const initialState = {};
+const initialState = {
+  0: {
+    title: 'Example counter',
+    value: 0,
+    step: 1,
+    imageString: null,
+    colorString: null,
+  },
+  1: {
+    title: 'Example',
+    value: 0,
+    step: 1,
+    imageString: null,
+    colorString: null,
+  },
+};
 
 const handlers = {
   [types.COUNTER_INCREMENT]: (state, {id}) => {

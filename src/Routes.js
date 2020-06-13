@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {BottomNavigation} from 'react-native-paper';
-import TallyCounters from './TallyCounters';
-import Statistics from './Statistics';
+import {TallyCounters, Statistics} from './Pages';
 
 export const Routes = () => {
   const [index, setIndex] = useState(0);

@@ -6,14 +6,14 @@ const displayTypes = [
 ];
 
 const initialState = {
-  displayTypes: {...displayTypes},
-  currentDisplayType: displayTypes[0],
+  displayTypes: [...displayTypes],
+  currentDisplayType: {...displayTypes[0]},
 };
 
 const handlers = {
-  [types.UI_SET_DISPLAY_TYPE]: (state, action) => ({
+  [types.UI_SET_DISPLAY_TYPE]: (state, {displayType}) => ({
     ...state,
-    currentWordIndex: action.index,
+    currentDisplayType: displayType,
   }),
 };
 

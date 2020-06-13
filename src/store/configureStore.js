@@ -7,7 +7,7 @@ import {createLogger} from 'redux-logger';
 import rootReducers from '../reducers';
 
 const config = {
-  key: 'root',
+  key: 'not-root', // refer to redux-persist issue on rp converting arrays in root storage to plain objects
   storage: AsyncStorage,
   debug: __DEV__,
 };
