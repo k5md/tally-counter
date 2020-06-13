@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export class GridView extends Component {
+export class ListView extends Component {
   constructor() {
     super();
   }
@@ -24,6 +24,7 @@ export class GridView extends Component {
         blockTransitionDuration={400}
         activeBlockCenteringDuration={200}
         dragActivationTreshold={200}
+        itemsPerRow={1}
         onDragRelease={itemOrder => console.log(itemOrder)}>
         {data.map(({title, colorString}, index) => (
           <View

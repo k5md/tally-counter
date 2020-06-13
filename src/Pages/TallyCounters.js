@@ -16,11 +16,12 @@ const getNextDisplayType = (displayTypes, currentDisplayType) => {
 
 const mapStateToProps = state => {
   return {
-    counters: state.countersReducer,
+    counters: Object.values(state.countersReducer), //TODO: do not use object.values
     nextDisplayType: getNextDisplayType(
       state.uiReducer.displayTypes,
       state.uiReducer.currentDisplayType,
     ),
+    currentDisplayType: state.uiReducer.currentDisplayType,
   };
 };
 

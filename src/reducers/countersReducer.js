@@ -1,5 +1,6 @@
-import * as types from '../constants/actionTypes';
 import {uniqueId, omit} from 'lodash';
+import * as types from '../constants/actionTypes';
+import {randomRGB} from '../utils';
 
 const initialState = {
   0: {
@@ -7,14 +8,14 @@ const initialState = {
     value: 0,
     step: 1,
     imageString: null,
-    colorString: null,
+    colorString: randomRGB(),
   },
   1: {
     title: 'Example',
     value: 0,
     step: 1,
     imageString: null,
-    colorString: null,
+    colorString: randomRGB(),
   },
 };
 
@@ -30,7 +31,14 @@ const handlers = {
 
   [types.COUNTER_CREATE]: (
     state,
-    {initialValue: {title, step = 1, imageString = null, colorString = null}},
+    {
+      initialValue: {
+        title,
+        step = 1,
+        imageString = null,
+        colorString = randomRGB(),
+      },
+    },
   ) => {
     const id = uniqueId();
     return {...state, [id]: {id, title, step, imageString, colorString}};

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {Searchbar, FAB} from 'react-native-paper';
-import {GridView} from './';
+import {GridView, ListView} from './';
 
 const styles = StyleSheet.create({
   fab: {
@@ -12,8 +12,21 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TallyCountersView = ({nextDisplayType, setDisplayType}) => {
+export const TallyCountersView = ({
+  currentDisplayType,
+  nextDisplayType,
+  setDisplayType,
+  counters,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
+
+  const CountersRenderer = props => {
+    const Renderer = {
+      list: ListView,
+      grid: GridView,
+    }[currentDisplayType.name];
+    return <Renderer {...props} />;
+  };
 
   return (
     <>
@@ -23,7 +36,7 @@ export const TallyCountersView = ({nextDisplayType, setDisplayType}) => {
         value={searchQuery}
       />
 
-      <GridView />
+      <CountersRenderer data={counters} />
 
       <FAB
         style={styles.fab}
