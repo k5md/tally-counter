@@ -15,16 +15,16 @@ const translations = [
   },
 ];
 
-const fallback = {languageTag: 'en', isRTL: false};
-const {languageTag} =
+const fallback = { languageTag: 'en', isRTL: false };
+const { languageTag } =
   RNLocalize.findBestAvailableLanguage(
     translations.map(item => item.languageTag),
   ) || fallback;
 
-const {translation} = translations.find(
+const { translation } = translations.find(
   item => item.languageTag === languageTag,
 );
 
 const translate = string => translation[string];
 
-export {translate, translations};
+export { translate, translations };

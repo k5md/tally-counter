@@ -1,7 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as uiActions from '../actions/uiActions';
-import {TallyCountersView} from '../Components';
+import { TallyCountersView } from '../Components';
 
 const getNextDisplayType = (displayTypes, currentDisplayType) => {
   if (!displayTypes) {

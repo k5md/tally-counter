@@ -1,2 +1,2 @@
-export {Statistics} from './Statistics';
-export {TallyCounters} from './TallyCounters';
+export { Statistics } from './Statistics';
+export { TallyCounters } from './TallyCounters';

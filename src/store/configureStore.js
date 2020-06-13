@@ -1,9 +1,9 @@
 /* global __DEV__:true */
 
-import {createStore, compose, applyMiddleware} from 'redux';
-import {persistStore, persistCombineReducers} from 'redux-persist';
+import { createStore, compose, applyMiddleware } from 'redux';
+import { persistStore, persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
-import {createLogger} from 'redux-logger';
+import { createLogger } from 'redux-logger';
 import rootReducers from '../reducers';
 
 const config = {
@@ -20,9 +20,9 @@ if (__DEV__) {
 
 const reducers = persistCombineReducers(config, rootReducers);
 const enhancers = [applyMiddleware(...middleware)];
-const persistConfig = {enhancers};
+const persistConfig = { enhancers };
 const store = createStore(reducers, undefined, compose(...enhancers));
 const persistor = persistStore(store, persistConfig, () => {});
-const configureStore = () => ({persistor, store});
+const configureStore = () => ({ persistor, store });
 
 export default configureStore;

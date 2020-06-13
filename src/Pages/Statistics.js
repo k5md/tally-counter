@@ -1,11 +1,11 @@
 import React from 'react';
-import {View} from 'react-native';
-import {LineChart, YAxis, XAxis, Grid} from 'react-native-svg-charts';
+import { View } from 'react-native';
+import { LineChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
 
 export const Statistics = () => {
-  const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80]
- 
-  const contentInset = { top: 20, bottom: 20 }
+  const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80];
+
+  const contentInset = { top: 20, bottom: 20 };
 
   return (
     <View style={{ height: '100%', padding: 20, flexDirection: 'row' }}>
@@ -17,7 +17,7 @@ export const Statistics = () => {
           fontSize: 10,
         }}
         numberOfTicks={10}
-        formatLabel={(value) => `${value}ºC`}
+        formatLabel={value => `${value}ºC`}
       />
       <View style={{ flex: 1, marginLeft: 10, marginRight: 10 }}>
         <LineChart
@@ -36,7 +36,7 @@ export const Statistics = () => {
         />
       </View>
     </View>
-  )
+  );
 };
 
 export default Statistics;

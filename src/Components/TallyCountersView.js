@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {Searchbar, FAB} from 'react-native-paper';
-import {GridView, ListView} from './';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { Searchbar, FAB } from 'react-native-paper';
+import { GridView, ListView } from './';
 
 const styles = StyleSheet.create({
   fab: {

@@ -1,9 +1,10 @@
-import {uniqueId, omit} from 'lodash';
+import { uniqueId, omit } from 'lodash';
 import * as types from '../constants/actionTypes';
-import {randomRGB} from '../utils';
+import { randomRGB } from '../utils';
 
 const initialState = {
   0: {
+    id: 0,
     title: 'Example counter',
     value: 0,
     step: 1,
@@ -11,6 +12,7 @@ const initialState = {
     colorString: randomRGB(),
   },
   1: {
+    id: 1,
     title: 'Example',
     value: 0,
     step: 1,
@@ -20,13 +22,22 @@ const initialState = {
 };
 
 const handlers = {
-  [types.COUNTER_INCREMENT]: (state, {id}) => {
+  [types.COUNTER_INCREMENT]: (state, { id }) => {
     const oldCounter = state[id];
     const newCounter = {
       ...oldCounter,
       value: oldCounter.value + oldCounter.step,
     };
-    return {...state, [id]: newCounter};
+    return { ...state, [id]: newCounter };
+  },
+
+  [types.COUNTER_DECREMENT]: (state, { id }) => {
+    const oldCounter = state[id];
+    const newCounter = {
+      ...oldCounter,
+      value: oldCounter.value - oldCounter.step,
+    };
+    return { ...state, [id]: newCounter };
   },
 
   [types.COUNTER_CREATE]: (
@@ -41,32 +52,32 @@ const handlers = {
     },
   ) => {
     const id = uniqueId();
-    return {...state, [id]: {id, title, step, imageString, colorString}};
+    return { ...state, [id]: { id, title, step, imageString, colorString } };
   },
 
-  [types.COUNTER_UPDATE]: (state, {id, fields}) => ({
+  [types.COUNTER_UPDATE]: (state, { id, fields }) => ({
     ...state,
-    [id]: {...state[id], ...fields},
+    [id]: { ...state[id], ...fields },
   }),
 
-  [types.COUNTER_SET_TITLE]: (state, {id, title}) => ({
+  [types.COUNTER_SET_TITLE]: (state, { id, title }) => ({
     ...state,
-    [id]: {...state[id], title},
+    [id]: { ...state[id], title },
   }),
 
-  [types.COUNTER_SET_IMAGE]: (state, {id, imageString}) => ({
+  [types.COUNTER_SET_IMAGE]: (state, { id, imageString }) => ({
     ...state,
-    [id]: {...state[id], imageString},
+    [id]: { ...state[id], imageString },
   }),
 
-  [types.COUNTER_SET_COLOR]: (state, {id, colorString}) => ({
+  [types.COUNTER_SET_COLOR]: (state, { id, colorString }) => ({
     ...state,
-    [id]: {...state[id], colorString},
+    [id]: { ...state[id], colorString },
   }),
 
-  [types.COUNTER_SET_STEP]: (state, {id, step}) => ({}),
+  [types.COUNTER_SET_STEP]: (state, { id, step }) => ({}),
 
-  [types.COUNTER_REMOVE]: (state, {id}) => omit(state, id),
+  [types.COUNTER_REMOVE]: (state, { id }) => omit(state, id),
 };
 
 const countersReducer = (state = initialState, action) => {

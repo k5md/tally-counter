@@ -1,17 +1,17 @@
 import * as types from '../constants/actionTypes';
 
 const displayTypes = [
-  {name: 'list', icon: 'view-list'},
-  {name: 'grid', icon: 'view-grid'},
+  { name: 'list', icon: 'view-list' },
+  { name: 'grid', icon: 'view-grid' },
 ];
 
 const initialState = {
   displayTypes: [...displayTypes],
-  currentDisplayType: {...displayTypes[0]},
+  currentDisplayType: { ...displayTypes[0] },
 };
 
 const handlers = {
-  [types.UI_SET_DISPLAY_TYPE]: (state, {displayType}) => ({
+  [types.UI_SET_DISPLAY_TYPE]: (state, { displayType }) => ({
     ...state,
     currentDisplayType: displayType,
   }),

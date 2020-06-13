@@ -1,11 +1,11 @@
 import React from 'react';
-import {ActivityIndicator} from 'react-native';
-import {Provider} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
+import { ActivityIndicator } from 'react-native';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import configureStore from './store/configureStore';
-import {Routes} from './Routes';
+import { Routes } from './Routes';
 
-const {persistor, store} = configureStore();
+const { persistor, store } = configureStore();
 
 const App = () => (
   <Provider store={store}>

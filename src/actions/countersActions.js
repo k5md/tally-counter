@@ -5,6 +5,11 @@ export const increment = id => ({
   type: types.COUNTER_INCREMENT,
 });
 
+export const decrement = id => ({
+  id,
+  type: types.COUNTER_DECREMENT,
+});
+
 export const create = initialValue => ({
   initialValue,
   type: types.COUNTER_CREATE,
