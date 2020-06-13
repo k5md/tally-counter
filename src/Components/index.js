@@ -1,6 +1,9 @@
 export { GridView } from './GridView';
 export { ListView } from './ListView';
 export { EntryView } from './EntryView';
-export { CounterView } from './CounterView';
 export { TallyCountersView } from './TallyCountersView';
 export { EntryContainer } from './EntryContainer';
+export { CounterView } from './CounterView';
+export { NewCounterContainer } from './NewCounterContainer';
+export { NewCounterView } from './NewCounterView';
+export { ModalView } from './ModalView';
