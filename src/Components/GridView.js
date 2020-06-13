@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import SortableGrid from 'react-native-sortable-grid';
+import SortableGrid from 'react-native-sortable-grid-with-fixed';
 import { EntryContainer } from './';
 
 const styles = StyleSheet.create({
@@ -18,7 +18,7 @@ export class GridView extends Component {
   }
 
   render() {
-    const { data, onOrderChange } = this.props;
+    const { data, onOrderChange, sortable } = this.props;
 
     return (
       <SortableGrid
@@ -27,7 +27,7 @@ export class GridView extends Component {
         dragActivationTreshold={200}
         onDragRelease={itemOrder => console.log(itemOrder)}>
         {data.map((entry, index) => (
-          <EntryContainer key={index} entry={entry} style={styles.block} />
+          <EntryContainer key={index} entry={entry} style={styles.block} inactive={!sortable}/>
         ))}
       </SortableGrid>
     );

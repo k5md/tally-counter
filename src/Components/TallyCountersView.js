@@ -28,15 +28,19 @@ export const TallyCountersView = ({
     return <Renderer {...props} />;
   };
 
+  const visibleCounters = counters.filter(counter =>
+    counter.title.toLowerCase().includes(searchQuery),
+  );
+
   return (
     <>
       <Searchbar
         placeholder="Search"
-        onChangeText={setSearchQuery}
+        onChangeText={(value) => setSearchQuery(value.toLowerCase())}
         value={searchQuery}
       />
 
-      <CountersRenderer data={counters} />
+      <CountersRenderer data={visibleCounters} sortable={searchQuery === ''} />
 
       <FAB
         style={styles.fab}

@@ -25,13 +25,14 @@ export class ListView extends Component {
   }
 
   render() {
-    const { data, onOrderChange } = this.props;
+    const { data, onOrderChange, sortable } = this.props;
 
     return (
       <SortableList
         style={styles.list}
         contentContainerStyle={styles.contentContainer}
         data={data}
+        sortingEnabled={sortable}
         renderRow={({ active, data, key, index }) => {
           return (
             <EntryContainer key={index} entry={data} style={styles.block} />
