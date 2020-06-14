@@ -38,5 +38,3 @@ export const Statistics = () => {
     </View>
   );
 };
-
-export default Statistics;

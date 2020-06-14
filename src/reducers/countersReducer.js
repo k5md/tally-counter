@@ -1,95 +1,83 @@
-import { uniqueId, omit } from 'lodash';
+import { uniqueId, cloneDeep } from 'lodash';
 import * as types from '../constants/actionTypes';
 import { randomRGB } from '../utils';
 
 const initialState = {
-  0: {
-    id: 0,
-    title: 'Example counter',
-    value: 0,
-    step: 1,
-    imageString: null,
-    colorString: randomRGB(),
-  },
-  1: {
-    id: 1,
-    title: 'Example',
-    value: 0,
-    step: 1,
-    imageString: null,
-    colorString: randomRGB(),
-  },
+  data: [
+    {
+      id: '0',
+      title: 'Example counter',
+      value: 0,
+      step: 1,
+      imageString: '',
+      colorString: randomRGB(),
+    },
+    {
+      id: '1',
+      title: 'Example',
+      value: 0,
+      step: 1,
+      imageString: '',
+      colorString: randomRGB(),
+    },
+  ],
+  ids: ['0', '1'],
 };
 
 const handlers = {
   [types.COUNTER_INCREMENT]: (state, { id }) => {
-    const oldCounter = state[id];
-    const newCounter = {
-      ...oldCounter,
-      value: oldCounter.value + oldCounter.step,
-    };
-    return { ...state, [id]: newCounter };
+    const newState = cloneDeep(state);
+    newState.data.forEach(counter =>
+      counter.id === id
+        ? { ...counter, value: counter.value + counter.step }
+        : counter,
+    );
+    return newState;
   },
 
   [types.COUNTER_DECREMENT]: (state, { id }) => {
-    const oldCounter = state[id];
-    const newCounter = {
-      ...oldCounter,
-      value: oldCounter.value - oldCounter.step,
-    };
-    return { ...state, [id]: newCounter };
+    const newState = cloneDeep(state);
+    newState.data.forEach(counter =>
+      counter.id === id
+        ? { ...counter, value: counter.value - counter.step }
+        : counter,
+    );
+    return newState;
   },
 
   [types.COUNTER_CREATE]: (
     state,
     {
       initialValue: {
-        title,
+        id = uniqueId(),
+        title = uniqueId('New counter '),
         step = 1,
         value = 0,
-        imageString = null,
+        imageString = '',
         colorString = randomRGB(),
       },
     },
   ) => {
-    const id = uniqueId();
-    return {
-      ...state,
-      [id]: { id, title, step, value, imageString, colorString },
-    };
+    const newState = cloneDeep(state);
+    newState.data.push({ id, title, step, value, imageString, colorString });
+    newState.ids.push(id);
+    return newState;
   },
 
-  [types.COUNTER_UPDATE]: (state, { id, fields }) => ({
-    ...state,
-    [id]: { ...state[id], ...fields },
-  }),
+  [types.COUNTER_UPDATE]: (state, { id, fields }) => {
+    const newState = cloneDeep(state);
+    newState.data.forEach(counter =>
+      counter.id === id ? { ...counter, ...fields } : counter,
+    );
+    return newState;
+  },
 
-  [types.COUNTER_SET_TITLE]: (state, { id, title }) => ({
-    ...state,
-    [id]: { ...state[id], title },
-  }),
-
-  [types.COUNTER_SET_IMAGE]: (state, { id, imageString }) => ({
-    ...state,
-    [id]: { ...state[id], imageString },
-  }),
-
-  [types.COUNTER_SET_COLOR]: (state, { id, colorString }) => ({
-    ...state,
-    [id]: { ...state[id], colorString },
-  }),
-
-  [types.COUNTER_SET_STEP]: (state, { id, step }) => ({
-    ...state,
-    [id]: { ...state[id], step },
-  }),
-
-  [types.COUNTER_SET_VALUE]: (state, { id, value }) => ({
-    ...state,
-    [id]: { ...state[id], value },
-  }),
-
-  [types.COUNTER_REMOVE]: (state, { id }) => omit(state, id),
+  [types.COUNTER_REMOVE]: (state, { id }) => {
+    const newState = cloneDeep(state);
+    newState.data = newState.data.filter(item => item.id !== id);
+    newState.ids = newState.ids.filter(item => item !== id);
+    return newState;
+  },
 };
 
 const countersReducer = (state = initialState, action) => {

@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { IconButton, Colors } from 'react-native-paper';
-import { ModalView, CounterView } from './';
+import { CounterContainer } from '../Containers';
+import { Modal } from './';
 
 const styles = StyleSheet.create({});
 
-export const EntryView = ({
-  entry,
-  style,
-  increment,
-  decrement,
-}) => {
-  const {  id,
-    title,
-    value,
-    step,
-    colorString} = entry;
+export const Entry = (props) => {
+  const { entry, style, increment, decrement } = props;
+  const { id, title, value, step, colorString } = entry;
+  console.log('entry rerender', id, props)
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -23,8 +17,7 @@ export const EntryView = ({
     <>
       <View style={[style, { backgroundColor: colorString }]}>
         <Text style={{ color: 'white', fontSize: 14 }}>{title}</Text>
-
-        <View style={{ display: 'flex', flexDirection: 'row'}}>
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
           <IconButton
             icon="minus"
             color={Colors.black}
@@ -47,9 +40,9 @@ export const EntryView = ({
           />
         </View>
       </View>
-      <ModalView visible={modalVisible} onClose={() => setModalVisible(false)}>
-        <CounterView {...entry} />
-      </ModalView>
+      <Modal visible={modalVisible} onClose={() => setModalVisible(false)}>
+        <CounterContainer id={id} />
+      </Modal>
     </>
   );
 };

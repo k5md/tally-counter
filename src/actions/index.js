@@ -1,4 +1,3 @@
-// export action creators
 import * as countersActions from './countersActions';
 import * as uiActions from './uiActions';
 

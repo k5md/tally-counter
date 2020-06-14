@@ -1,7 +1,7 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import * as uiActions from '../actions/uiActions';
-import { TallyCountersView } from '../Components';
+import * as countersActions from '../actions/countersActions';
+import { Counters } from '../Components';
 
 const getNextDisplayType = (displayTypes, currentDisplayType) => {
   if (!displayTypes) {
@@ -14,23 +14,22 @@ const getNextDisplayType = (displayTypes, currentDisplayType) => {
   return displayTypes[nextIndex];
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ({
+  uiReducer: { displayTypes, currentDisplayType },
+}) => {
   return {
-    counters: Object.values(state.countersReducer), //TODO: do not use object.values
-    nextDisplayType: getNextDisplayType(
-      state.uiReducer.displayTypes,
-      state.uiReducer.currentDisplayType,
-    ),
-    currentDisplayType: state.uiReducer.currentDisplayType,
+    currentDisplayType,
+    nextDisplayType: getNextDisplayType(displayTypes, currentDisplayType),
   };
 };
 
 const mapDispatchToProps = dispatch => ({
   setDisplayType: displayType =>
     dispatch(uiActions.setDisplayType(displayType)),
+  create: initialValue => dispatch(countersActions.create(initialValue)),
 });
 
-export const TallyCounters = connect(
+export const CountersContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(TallyCountersView);
+)(Counters);
