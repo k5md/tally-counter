@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import { cloneDeep } from 'lodash';
 import * as types from '../constants/actionTypes';
 import { randomRGB } from '../utils';
@@ -22,15 +23,14 @@ const initialState = {
       colorString: randomRGB(),
     },
   ],
+  order: [{ key: '0', order: 0 }, { key: '1', order: 1 }], // where key is counter id
 };
 
 const handlers = {
   [types.COUNTER_INCREMENT]: (state, { id }) => {
     const newState = cloneDeep(state);
     newState.data.forEach(counter =>
-      counter.id === id
-        ? { ...counter, value: counter.value + counter.step }
-        : counter,
+      counter.id === id ? { ...counter, value: counter.value + counter.step } : counter,
     );
     return newState;
   },
@@ -38,9 +38,7 @@ const handlers = {
   [types.COUNTER_DECREMENT]: (state, { id }) => {
     const newState = cloneDeep(state);
     newState.data.forEach(counter =>
-      counter.id === id
-        ? { ...counter, value: counter.value - counter.step }
-        : counter,
+      counter.id === id ? { ...counter, value: counter.value - counter.step } : counter,
     );
     return newState;
   },
@@ -61,14 +59,13 @@ const handlers = {
     const newState = cloneDeep(state);
     newState.data.push({ id, title, step, value, imageString, colorString });
     newState.idsCreated += 1;
+    newState.order.push({key: String(id), order: state.order.length});
     return newState;
   },
 
   [types.COUNTER_UPDATE]: (state, { id, fields }) => {
     const newState = cloneDeep(state);
-    newState.data.forEach(counter =>
-      counter.id === id ? { ...counter, ...fields } : counter,
-    );
+    newState.data.forEach(counter => (counter.id === id ? { ...counter, ...fields } : counter));
     return newState;
   },
 
@@ -78,11 +75,7 @@ const handlers = {
     return newState;
   },
 
-  [types.COUNTER_REARRANGE]: (state, { data }) => {
-    const newState = cloneDeep(state);
-    newState.data = data;
-    return newState;
-  },
+  [types.COUNTER_REARRANGE]: (state, { order }) => update(state, { order: { $set: order } }),
 };
 
 const countersReducer = (state = initialState, action) => {

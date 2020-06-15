@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { Entry, SortableGrid } from './';
@@ -29,41 +29,96 @@ const styles = StyleSheet.create({
   },
 });
 
-export const CountersCollection = ({ displayType, data, order, rearrange }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+export class CountersCollection extends React.Component {
+  constructor() {
+    super();
+    this.ordered = false;
+  }
 
-  // console.log('rerender collection');
+  state = {
+    searchQuery: '',
+  };
 
-  const filtered = data.filter(counter => counter.title.toLowerCase().includes(searchQuery));
-  const sortable = searchQuery === '';
+  shouldComponentUpdate({ data, displayType, order }, { searchQuery }) {
+    const sameData = this.props.data === data;
+    const sameDisplayType = this.props.displayType === displayType;
+    const sameProps = sameData && sameDisplayType;
 
-  return (
-    <>
-      <Searchbar
-        placeholder="Search"
-        onChangeText={value => setSearchQuery(value.toLowerCase())}
-        value={searchQuery}
-      />
+    const sameSearchQuery = this.state.searchQuery === searchQuery;
 
-      <View style={{ flex: 1 }}>
-        <SortableGrid
-          data={filtered}
-          renderer={({ item }) => <Entry entry={item} style={styles.block} />}
-          keyExtractor={item => item.id}
-          
+    console.log(
+      JSON.stringify({
+        sameData,
+        sameDisplayType,
+        sameProps,
+        sameSearchQuery,
+        ordered: this.ordered,
+      }),
+    );
+
+    if (sameProps && sameSearchQuery && this.ordered) {
+      return false;
+    }
+
+    if (sameProps && sameSearchQuery && !this.ordered) {
+      return true;
+    }
+
+    if (!sameDisplayType && this.ordered && sameSearchQuery) {
+      this.ordered = false;
+      return true;
+    }
+    return sameData || sameSearchQuery;
+  }
+
+  render() {
+    // NOTE: nope, we can not just write itemsPerRow={display.name === 'grid'...}, because SortableGrid does
+    // not support dynamic grid dimension changes
+    console.log('RERENDER');
+
+    const { data, order, displayType, rearrange } = this.props;
+    const { searchQuery } = this.state;
+
+    let filtered = data.filter(counter => counter.title.toLowerCase().includes(searchQuery));
+    let sortable = searchQuery === '';
+
+    if (!this.ordered && sortable) {
+      filtered = order.map(({ key }) => filtered.find(({ id }) => String(id) === String(key)));
+      this.ordered = true;
+    }
+
+    return (
+      <>
+        <Searchbar
+          placeholder="Search"
+          onChangeText={value => this.setState(() => ({ searchQuery: value.toLowerCase() }))}
+          value={searchQuery}
         />
-      </View>
-      {/*<SortableGrid
-        blockTransitionDuration={400}
-        activeBlockCenteringDuration={200}
-        dragActivationTreshold={200}
-        itemsPerRow={displayType.name === 'grid' ? 4 : 1}
-      >
-        {filtered.map(entry => {
-          const { id } = entry;
-          return <Entry key={id} entry={entry} style={styles.block} inactive={!sortable} />;
-        })}
-      </SortableGrid>*/}
-    </>
-  );
-};
+        {displayType.name === 'grid' && (
+          <SortableGrid
+            itemsPerRow={4}
+            blockHeight={100}
+            onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
+          >
+            {filtered.map(entry => {
+              const { id } = entry;
+              return <Entry key={id} entry={entry} style={styles.block} inactive={!sortable} />;
+            })}
+          </SortableGrid>
+        )}
+        {displayType.name === 'list' && (
+          <SortableGrid
+            itemsPerRow={1}
+            blockHeight={100}
+            onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
+          >
+            {filtered.map(entry => {
+              const { id } = entry;
+              return <Entry key={id} entry={entry} style={styles.block} inactive={!sortable} />;
+            })}
+          </SortableGrid>
+        )}
+      </>
+    );
+  }
+}

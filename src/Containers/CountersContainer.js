@@ -3,29 +3,24 @@ import * as uiActions from '../actions/uiActions';
 import * as countersActions from '../actions/countersActions';
 import { Counters } from '../Components';
 
-const getNextDisplayType = (displayTypes, currentDisplayType) => {
+const getNextDisplayType = (displayTypes, displayType) => {
   if (!displayTypes) {
-    return currentDisplayType;
+    return displayType;
   }
-  const currentIndex = displayTypes.findIndex(
-    dt => currentDisplayType.name === dt.name,
-  );
+  const currentIndex = displayTypes.findIndex(dt => displayType.name === dt.name);
   const nextIndex = (currentIndex + 1) % displayTypes.length;
   return displayTypes[nextIndex];
 };
 
-const mapStateToProps = ({
-  uiReducer: { displayTypes, currentDisplayType },
-}) => {
+const mapStateToProps = ({ uiReducer: { displayTypes, displayType } }) => {
   return {
-    currentDisplayType,
-    nextDisplayType: getNextDisplayType(displayTypes, currentDisplayType),
+    displayType,
+    nextDisplayType: getNextDisplayType(displayTypes, displayType),
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  setDisplayType: displayType =>
-    dispatch(uiActions.setDisplayType(displayType)),
+  setDisplayType: displayType => dispatch(uiActions.setDisplayType(displayType)),
   create: initialValue => dispatch(countersActions.create(initialValue)),
 });
 

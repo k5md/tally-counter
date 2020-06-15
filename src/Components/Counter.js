@@ -43,12 +43,12 @@ export const Counter = ({
         value={value}
         onChangeText={v => update(id, { value: Number(v) })}
       />
-      <ColorPicker
+      {/*<ColorPicker
         onColorSelected={v => update(id, { color: v })}
         style={{ flex: 0 }}
         hideSliders
         color={colorString}
-      />
+      />*/}
       <IconButton onPress={imagePickerHandler} icon="plus" />
     </View>
   );
