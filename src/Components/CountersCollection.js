@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import SortableList from 'react-native-sortable-list';
-import SortableGrid from 'react-native-sortable-grid-with-fixed';
-import { Entry } from './';
+import { Entry, SortableGrid } from './';
 
 const styles = StyleSheet.create({
   list: {
@@ -14,20 +12,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   block: {
-    flex: 0,
+    flex: 1,
     margin: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  listItem: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: 70,
+    borderWidth: 1,
+    borderColor: 'black',
+    backgroundColor: 'grey',
+  },
 });
 
-export const CountersCollection = ({ displayType, data }) => {
+export const CountersCollection = ({ displayType, data, order, rearrange }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  console.log('rerender collection', data);
-  const filtered = data.filter(counter =>
-    counter.title.toLowerCase().includes(searchQuery),
-  );
+  // console.log('rerender collection');
+
+  const filtered = data.filter(counter => counter.title.toLowerCase().includes(searchQuery));
   const sortable = searchQuery === '';
 
   return (
@@ -38,40 +45,25 @@ export const CountersCollection = ({ displayType, data }) => {
         value={searchQuery}
       />
 
-      {displayType.name === 'list' && (
-        <SortableList
-          style={styles.list}
-          contentContainerStyle={styles.contentContainer}
-          data={filtered}
-          sortingEnabled={sortable}
-          renderRow={(props) => {
-            console.log(props);
-            const entry = props.data;
-            const { id } = entry;
-            return <Entry key={id} entry={entry} style={styles.block} />;
-          }}
-        />
-      )}
-      {displayType.name === 'grid' && (
+      <View style={{ flex: 1 }}>
         <SortableGrid
-          blockTransitionDuration={400}
-          activeBlockCenteringDuration={200}
-          dragActivationTreshold={200}
-          onDragRelease={itemOrder => console.log(itemOrder)}
-        >
-          {filtered.map(entry => {
-            const { id } = entry;
-            return (
-              <Entry
-                key={id}
-                entry={entry}
-                style={styles.block}
-                inactive={!sortable}
-              />
-            );
-          })}
-        </SortableGrid>
-      )}
+          data={filtered}
+          renderer={({ item }) => <Entry entry={item} style={styles.block} />}
+          keyExtractor={item => item.id}
+          
+        />
+      </View>
+      {/*<SortableGrid
+        blockTransitionDuration={400}
+        activeBlockCenteringDuration={200}
+        dragActivationTreshold={200}
+        itemsPerRow={displayType.name === 'grid' ? 4 : 1}
+      >
+        {filtered.map(entry => {
+          const { id } = entry;
+          return <Entry key={id} entry={entry} style={styles.block} inactive={!sortable} />;
+        })}
+      </SortableGrid>*/}
     </>
   );
 };

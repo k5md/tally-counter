@@ -25,3 +25,8 @@ export const remove = id => ({
   id,
   type: types.COUNTER_REMOVE,
 });
+
+export const rearrange = order => ({
+  order,
+  type: types.COUNTER_REARRANGE,
+});

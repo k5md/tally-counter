@@ -1,8 +1,9 @@
-import { uniqueId, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import * as types from '../constants/actionTypes';
 import { randomRGB } from '../utils';
 
 const initialState = {
+  idsCreated: 2,
   data: [
     {
       id: '0',
@@ -21,7 +22,6 @@ const initialState = {
       colorString: randomRGB(),
     },
   ],
-  ids: ['0', '1'],
 };
 
 const handlers = {
@@ -49,8 +49,8 @@ const handlers = {
     state,
     {
       initialValue: {
-        id = uniqueId(),
-        title = uniqueId('New counter '),
+        id = state.idsCreated,
+        title = `New counter ${state.idsCreated}`,
         step = 1,
         value = 0,
         imageString = '',
@@ -60,7 +60,7 @@ const handlers = {
   ) => {
     const newState = cloneDeep(state);
     newState.data.push({ id, title, step, value, imageString, colorString });
-    newState.ids.push(id);
+    newState.idsCreated += 1;
     return newState;
   },
 
@@ -75,7 +75,12 @@ const handlers = {
   [types.COUNTER_REMOVE]: (state, { id }) => {
     const newState = cloneDeep(state);
     newState.data = newState.data.filter(item => item.id !== id);
-    newState.ids = newState.ids.filter(item => item !== id);
+    return newState;
+  },
+
+  [types.COUNTER_REARRANGE]: (state, { data }) => {
+    const newState = cloneDeep(state);
+    newState.data = data;
     return newState;
   },
 };

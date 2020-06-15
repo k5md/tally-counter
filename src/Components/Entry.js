@@ -9,7 +9,7 @@ const styles = StyleSheet.create({});
 export const Entry = (props) => {
   const { entry, style, increment, decrement } = props;
   const { id, title, value, step, colorString } = entry;
-  console.log('entry rerender', id, props)
+  // console.log('entry rerender', id, props);
 
   const [modalVisible, setModalVisible] = useState(false);
 
