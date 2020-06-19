@@ -7,7 +7,3 @@ export const randomRGB = () => {
   const b = randomInt(160, 240);
   return `rgb(${r},${g},${b})`;
 };
-
-export const SQLite = require('react-native-sqlite-storage');
-
-console.log(SQLite);
