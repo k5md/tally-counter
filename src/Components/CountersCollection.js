@@ -80,11 +80,13 @@ export class CountersCollection extends React.Component {
     const { data, order, displayType, rearrange } = this.props;
     const { searchQuery } = this.state;
 
-    let filtered = data.filter(counter => counter.title.toLowerCase().includes(searchQuery));
+    let filtered = data.filter(
+      counter => counter && counter.title.toLowerCase().includes(searchQuery),
+    );
     let sortable = searchQuery === '';
 
     if (!this.ordered && sortable) {
-      filtered = order.map(({ key }) => filtered.find(({ id }) => String(id) === String(key)));
+      filtered = order.map(({ key }) => filtered.find(({ id }) => id === key));
       this.ordered = true;
     }
 
@@ -104,7 +106,13 @@ export class CountersCollection extends React.Component {
             {filtered.map(entry => {
               const { id } = entry;
               return (
-                <EntryContainer key={id} id={id} entry={entry} style={styles.block} inactive={!sortable} />
+                <EntryContainer
+                  key={id}
+                  id={id}
+                  entry={entry}
+                  style={styles.block}
+                  inactive={!sortable}
+                />
               );
             })}
           </SortableGrid>
@@ -118,7 +126,13 @@ export class CountersCollection extends React.Component {
             {filtered.map(entry => {
               const { id } = entry;
               return (
-                <EntryContainer key={id} id={id} entry={entry} style={styles.block} inactive={!sortable} />
+                <EntryContainer
+                  key={id}
+                  id={id}
+                  entry={entry}
+                  style={styles.block}
+                  inactive={!sortable}
+                />
               );
             })}
           </SortableGrid>

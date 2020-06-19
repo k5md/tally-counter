@@ -1,5 +1,4 @@
 import update from 'immutability-helper';
-import { cloneDeep } from 'lodash';
 import * as types from '../constants/actionTypes';
 import { randomRGB } from '../utils';
 
@@ -37,7 +36,7 @@ const handlers = {
     state,
     {
       initialValue: {
-        id = state.idsCreated,
+        id = String(state.idsCreated),
         title = `New counter ${state.idsCreated}`,
         step = 1,
         value = 0,
@@ -47,9 +46,9 @@ const handlers = {
     },
   ) => {
     return update(state, {
-      data: { [id]: { $merge: { id, title, step, value, imageString, colorString } } },
+      data: { [id]: { $set: { id, title, step, value, imageString, colorString } } },
       idsCreated: { $apply: idsCreated => idsCreated + 1 },
-      order: { $push: { key: String(id), order: state.order.length } },
+      order: { $push: [{ key: id, order: state.idsCreated + 1 }] },
     });
   },
 
@@ -58,10 +57,12 @@ const handlers = {
   },
 
   [types.COUNTER_REMOVE]: (state, { id }) => {
-    const orderIndexToRemove = state.order.findIndex(entry => entry.id === id);
+    // NOTE: $splice introduces null variables and empty slots
+    const newData = state.data.filter(entry => entry.id !== id);
+    const newOrder = state.order.filter(entry => entry.key !== id);
     return update(state, {
-      data: { $remove: [id] },
-      order: { $splice: [[orderIndexToRemove, 1]] },
+      data: { $set: newData },
+      order: { $set: newOrder },
     });
   },
 

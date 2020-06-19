@@ -7,12 +7,16 @@ import ImagePicker from 'react-native-image-crop-picker';
 const styles = StyleSheet.create({});
 
 export const Counter = ({
-  entry: { id, title, value, step, colorString, imageString },
+  entry,
   increment,
   decrement,
   remove,
   update,
 }) => {
+  if (!entry) return null;
+  const { id, title, value, step, colorString, imageString } = entry;
+
+
   const imagePickerHandler = () => {
     ImagePicker.openPicker({
       width: 300,
