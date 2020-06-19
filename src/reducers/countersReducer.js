@@ -27,21 +27,11 @@ const initialState = {
 };
 
 const handlers = {
-  [types.COUNTER_INCREMENT]: (state, { id }) => {
-    const newState = cloneDeep(state);
-    newState.data.forEach(counter =>
-      counter.id === id ? { ...counter, value: counter.value + counter.step } : counter,
-    );
-    return newState;
-  },
+  [types.COUNTER_INCREMENT]: (state, { id }) =>
+    update(state, { data: { [id]: { value: { $apply: value => value + state.data[id].step } } } }),
 
-  [types.COUNTER_DECREMENT]: (state, { id }) => {
-    const newState = cloneDeep(state);
-    newState.data.forEach(counter =>
-      counter.id === id ? { ...counter, value: counter.value - counter.step } : counter,
-    );
-    return newState;
-  },
+  [types.COUNTER_DECREMENT]: (state, { id }) =>
+    update(state, { data: { [id]: { value: { $apply: value => value - state.data[id].step } } } }),
 
   [types.COUNTER_CREATE]: (
     state,
@@ -56,23 +46,23 @@ const handlers = {
       },
     },
   ) => {
-    const newState = cloneDeep(state);
-    newState.data.push({ id, title, step, value, imageString, colorString });
-    newState.idsCreated += 1;
-    newState.order.push({key: String(id), order: state.order.length});
-    return newState;
+    return update(state, {
+      data: { [id]: { $merge: { id, title, step, value, imageString, colorString } } },
+      idsCreated: { $apply: idsCreated => idsCreated + 1 },
+      order: { $push: { key: String(id), order: state.order.length } },
+    });
   },
 
   [types.COUNTER_UPDATE]: (state, { id, fields }) => {
-    const newState = cloneDeep(state);
-    newState.data.forEach(counter => (counter.id === id ? { ...counter, ...fields } : counter));
-    return newState;
+    return update(state, { data: { [id]: { $merge: { fields } } } });
   },
 
   [types.COUNTER_REMOVE]: (state, { id }) => {
-    const newState = cloneDeep(state);
-    newState.data = newState.data.filter(item => item.id !== id);
-    return newState;
+    const orderIndexToRemove = state.order.findIndex(entry => entry.id === id);
+    return update(state, {
+      data: { $remove: [id] },
+      order: { $splice: [[orderIndexToRemove, 1]] },
+    });
   },
 
   [types.COUNTER_REARRANGE]: (state, { order }) => update(state, { order: { $set: order } }),

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import { Entry, SortableGrid } from './';
+import { SortableGrid } from './';
+import { EntryContainer } from '../Containers';
 
 const styles = StyleSheet.create({
   list: {
@@ -102,7 +103,9 @@ export class CountersCollection extends React.Component {
           >
             {filtered.map(entry => {
               const { id } = entry;
-              return <Entry key={id} entry={entry} style={styles.block} inactive={!sortable} />;
+              return (
+                <EntryContainer key={id} id={id} entry={entry} style={styles.block} inactive={!sortable} />
+              );
             })}
           </SortableGrid>
         )}
@@ -114,7 +117,9 @@ export class CountersCollection extends React.Component {
           >
             {filtered.map(entry => {
               const { id } = entry;
-              return <Entry key={id} entry={entry} style={styles.block} inactive={!sortable} />;
+              return (
+                <EntryContainer key={id} id={id} entry={entry} style={styles.block} inactive={!sortable} />
+              );
             })}
           </SortableGrid>
         )}
