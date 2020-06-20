@@ -4,8 +4,8 @@ import { randomRGB } from '../utils';
 
 const initialState = {
   idsCreated: 2,
-  data: [
-    {
+  data: {
+    '0': {
       id: '0',
       title: 'Example counter',
       value: 0,
@@ -13,7 +13,7 @@ const initialState = {
       imageString: '',
       colorString: randomRGB(),
     },
-    {
+    '1': {
       id: '1',
       title: 'Example',
       value: 0,
@@ -21,8 +21,8 @@ const initialState = {
       imageString: '',
       colorString: randomRGB(),
     },
-  ],
-  order: [{ key: '0', order: 0 }, { key: '1', order: 1 }], // where key is counter id
+  },
+  order: { '0': { key: '0', order: 0 }, '1': { key: '1', order: 1 } }, // where key is counter id
 };
 
 const handlers = {
@@ -48,7 +48,7 @@ const handlers = {
     return update(state, {
       data: { [id]: { $set: { id, title, step, value, imageString, colorString } } },
       idsCreated: { $apply: idsCreated => idsCreated + 1 },
-      order: { $push: [{ key: id, order: state.idsCreated + 1 }] },
+      order: { $merge: { [id]: { key: id, order: state.idsCreated + 1 } } },
     });
   },
 
@@ -58,11 +58,9 @@ const handlers = {
 
   [types.COUNTER_REMOVE]: (state, { id }) => {
     // NOTE: $splice introduces null variables and empty slots
-    const newData = state.data.filter(entry => entry.id !== id);
-    const newOrder = state.order.filter(entry => entry.key !== id);
     return update(state, {
-      data: { $set: newData },
-      order: { $set: newOrder },
+      data: { $unset: [id] },
+      order: { $unset: [id] },
     });
   },
 

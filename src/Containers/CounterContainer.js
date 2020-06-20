@@ -3,7 +3,6 @@ import { Counter } from '../Components';
 import * as countersActions from '../actions/countersActions';
 
 const mapStateToProps = ({ countersReducer }, ownProps) => {
-  return {};
   const { id } = ownProps;
   return {
     entry: countersReducer.data[id],

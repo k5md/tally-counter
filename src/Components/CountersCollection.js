@@ -41,6 +41,7 @@ export class CountersCollection extends React.Component {
   };
 
   shouldComponentUpdate({ data, displayType, order }, { searchQuery }) {
+    return true;
     const sameData = this.props.data === data;
     const sameDisplayType = this.props.displayType === displayType;
     const sameProps = sameData && sameDisplayType;
@@ -75,20 +76,15 @@ export class CountersCollection extends React.Component {
   render() {
     // NOTE: nope, we can not just write itemsPerRow={display.name === 'grid'...}, because SortableGrid does
     // not support dynamic grid dimension changes
-    console.log('RERENDER');
+    // console.log('RERENDER', JSON.stringify(this.props.data), JSON.stringify(this.props.order));
 
     const { data, order, displayType, rearrange } = this.props;
     const { searchQuery } = this.state;
 
-    let filtered = data.filter(
+    const filtered = Object.values(data).filter(
       counter => counter && counter.title.toLowerCase().includes(searchQuery),
     );
-    let sortable = searchQuery === '';
-
-    if (!this.ordered && sortable) {
-      filtered = order.map(({ key }) => filtered.find(({ id }) => id === key));
-      this.ordered = true;
-    }
+    const sortable = searchQuery === '';
 
     return (
       <>
@@ -101,6 +97,7 @@ export class CountersCollection extends React.Component {
           <SortableGrid
             itemsPerRow={4}
             blockHeight={100}
+            itemOrder={order}
             onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
           >
             {filtered.map(entry => {
@@ -121,6 +118,7 @@ export class CountersCollection extends React.Component {
           <SortableGrid
             itemsPerRow={1}
             blockHeight={100}
+            itemOrder={order}
             onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
           >
             {filtered.map(entry => {

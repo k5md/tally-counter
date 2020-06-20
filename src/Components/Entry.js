@@ -6,10 +6,10 @@ import { Modal } from './';
 
 const styles = StyleSheet.create({});
 
-export const Entry = (props) => {
+export const Entry = props => {
+  // console.log('entry rerender', props);
   const { entry, style, increment, decrement } = props;
   const { id, title, value, step, colorString } = entry;
-  console.log('entry rerender', id);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -18,19 +18,9 @@ export const Entry = (props) => {
       <View style={[style, { backgroundColor: colorString }]}>
         <Text style={{ color: 'white', fontSize: 14 }}>{title}</Text>
         <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <IconButton
-            icon="minus"
-            color={Colors.black}
-            size={20}
-            onPress={() => decrement(id)}
-          />
+          <IconButton icon="minus" color={Colors.black} size={20} onPress={() => decrement(id)} />
           <Text>{value}</Text>
-          <IconButton
-            icon="plus"
-            color={Colors.black}
-            size={20}
-            onPress={() => increment(id)}
-          />
+          <IconButton icon="plus" color={Colors.black} size={20} onPress={() => increment(id)} />
 
           <IconButton
             icon="dots-vertical"
