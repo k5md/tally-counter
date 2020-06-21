@@ -31,9 +31,9 @@ class SortableGrid extends React.PureComponent {
   activeBlockOffset = null;
   blockWidth = null;
   blockHeight = null;
-  gridHeightTarget = null;
   itemOrder = {};
   panCapture = false;
+  gridHeight = null;
 
   _panResponder = PanResponder.create({
     onStartShouldSetPanResponderCapture: () => false,
@@ -49,9 +49,6 @@ class SortableGrid extends React.PureComponent {
     blockPositions: {},
     startDragWiggle: new Animated.Value(0),
     activeBlock: null,
-    blockWidth: null,
-    blockHeight: null,
-    gridHeight: new Animated.Value(0),
     blockPositionsSetCount: 0,
   };
 
@@ -74,17 +71,21 @@ class SortableGrid extends React.PureComponent {
 
       const oldRows = this.rows;
       this.rows = Math.ceil(properties.children.length / this.itemsPerRow);
-      if (this.state.blockWidth && oldRows !== this.rows) {
-        this._animateGridHeight();
+      if (this.blockWidth && oldRows !== this.rows) {
+        this.gridHeight = this.rows * this.props.blockHeight;
       }
 
       const sortedOrder = sortBy(this.itemOrder, ({ key, order }) => order);
       const flattenedOrder = sortedOrder.map((item, index) => ({ ...item, order: index }));
       flattenedOrder.forEach(({ key, order }) => {
-        const x = (order * this.state.blockWidth) % (this.itemsPerRow * this.state.blockWidth);
+        const x = (order * this.blockWidth) % (this.itemsPerRow * this.blockWidth);
         const y = Math.floor(order / this.itemsPerRow) * this.props.blockHeight;
         this.state.blockPositions[key].origin = { x, y };
-        this.animateBlockMove(key, { x, y });
+        Animated.timing(this._getBlock(key).currentPosition, {
+          toValue: { x, y },
+          duration: this.blockTransitionDuration,
+          useNativeDriver: false,
+        }).start();
       });
     }
   };
@@ -102,11 +103,23 @@ class SortableGrid extends React.PureComponent {
   };
 
   onMoveBlock = (evt, { moveX, moveY, dx, dy }) => {
+    const yChokeAmount = Math.max(
+      0,
+      this.activeBlockOffset.y + moveY - (this.state.gridLayout.height - this.props.blockHeight),
+    );
+    const xChokeAmount = Math.max(
+      0,
+      this.activeBlockOffset.x + moveX - (this.state.gridLayout.width - this.blockWidth),
+    );
+    const yMinChokeAmount = Math.min(0, this.activeBlockOffset.y + moveY);
+    const xMinChokeAmount = Math.min(0, this.activeBlockOffset.x + moveX);
+
     const dragPosition = {
-      x: moveX,
-      y: moveY,
+      x: moveX - xChokeAmount - xMinChokeAmount,
+      y: moveY - yChokeAmount - yMinChokeAmount,
     };
     this.dragPosition = dragPosition;
+
     const originalPosition = this._getActiveBlock().origin;
     const distanceToOrigin = this._getDistanceTo(originalPosition);
     this._getActiveBlock().currentPosition.setValue(dragPosition);
@@ -119,7 +132,7 @@ class SortableGrid extends React.PureComponent {
         const blockPosition = block.origin;
         const distance = this._getDistanceTo(blockPosition);
 
-        if (distance < closestDistance && distance < this.state.blockWidth) {
+        if (distance < closestDistance && distance < this.blockWidth) {
           closest = key;
           closestDistance = distance;
         }
@@ -141,6 +154,7 @@ class SortableGrid extends React.PureComponent {
       this.itemOrder[this.state.activeBlock].order = this.itemOrder[closest].order;
       this.itemOrder[closest].order = tempOrder;
     }
+    console.log(JSON.stringify(Object.values(this.state.blockPositions)));
   };
 
   onReleaseBlock = (evt, gestureState) => {
@@ -155,14 +169,6 @@ class SortableGrid extends React.PureComponent {
     this.onDragRelease({ itemOrder: this.itemOrder });
     this.setState({ activeBlock: null });
     this.panCapture = false;
-  };
-
-  animateBlockMove = (key, position) => {
-    Animated.timing(this._getBlock(key).currentPosition, {
-      toValue: position,
-      duration: this.blockTransitionDuration,
-      useNativeDriver: false,
-    }).start();
   };
 
   saveBlockPositions = key => ({ nativeEvent }) => {
@@ -181,12 +187,12 @@ class SortableGrid extends React.PureComponent {
         origin: thisPosition,
       };
       this.setState({ blockPositions, blockPositionsSetCount });
-      
+
       if (this._blockPositionsSet()) {
         const oldRows = this.rows;
         this.rows = Math.ceil(this.props.children.length / this.itemsPerRow);
-        if (this.state.blockWidth && oldRows !== this.rows) {
-          this._animateGridHeight();
+        if (this.blockWidth && oldRows !== this.rows) {
+          this.gridHeight = this.rows * this.props.blockHeight;
         }
       }
     }
@@ -200,8 +206,8 @@ class SortableGrid extends React.PureComponent {
       this.state.startDragWiggle.setValue(20);
       Animated.spring(this.state.startDragWiggle, {
         toValue: 0,
-        velocity: 2000,
-        tension: 2000,
+        velocity: 1000,
+        tension: 1000,
         friction: 5,
         useNativeDriver: false,
       }).start();
@@ -215,22 +221,6 @@ class SortableGrid extends React.PureComponent {
   _getBlock = key => this.state.blockPositions[key];
 
   _blockPositionsSet = () => this.state.blockPositionsSetCount === this.props.children.length;
-
-  _animateGridHeight = () => {
-    this.gridHeightTarget = this.rows * this.props.blockHeight;
-    if (
-      this.gridHeightTarget === this.state.gridLayout.height ||
-      this.state.gridLayout.height === 0
-    ) {
-      this.state.gridHeight.setValue(this.gridHeightTarget);
-    } else if (this.state.gridHeight._value !== this.gridHeightTarget) {
-      Animated.timing(this.state.gridHeight, {
-        toValue: this.gridHeightTarget,
-        duration: this.blockTransitionDuration,
-        useNativeDriver: false,
-      }).start();
-    }
-  };
 
   _getDistanceTo = point => {
     const xDistance = this.dragPosition.x + this.activeBlockOffset.x - point.x;
@@ -268,7 +258,7 @@ class SortableGrid extends React.PureComponent {
   _getGridStyle = () => [
     styles.sortableGrid,
     this.props.style,
-    this._blockPositionsSet() && { height: this.state.gridHeight },
+    this._blockPositionsSet() && { height: this.gridHeight },
   ];
 
   _getBlockStyle = (key, blockHeight) => [
@@ -280,7 +270,7 @@ class SortableGrid extends React.PureComponent {
     this.state.activeBlock == key && this._blockActivationWiggle(),
     this._blockPositionsSet() && {
       position: 'absolute',
-      // transform: this._getBlock(key).currentPosition.getTranslateTransform(),
+      //transform: this._getBlock(key).currentPosition.getTranslateTransform(),
       top: this._getBlock(key).currentPosition.getLayout().top,
       left: this._getBlock(key).currentPosition.getLayout().left,
     },
