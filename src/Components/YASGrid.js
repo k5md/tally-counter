@@ -22,9 +22,6 @@ class SortableGrid extends PureComponent {
   activeBlockCenteringDuration = 200;
   itemsPerRow = 4;
   dragActivationTreshold = 200;
-  onDragRelease = () => {};
-  onDragStart = () => {};
-  dragStartAnimation = null;
 
   rows = null;
   dragPosition = null;
@@ -34,6 +31,7 @@ class SortableGrid extends PureComponent {
   itemOrder = {};
   panCapture = false;
   gridHeight = null;
+  startDragWiggle = new Animated.Value(0);
 
   _panResponder = PanResponder.create({
     onStartShouldSetPanResponderCapture: () => false,
@@ -47,7 +45,6 @@ class SortableGrid extends PureComponent {
   state = {
     gridLayout: null,
     blockPositions: {},
-    startDragWiggle: new Animated.Value(0),
     activeBlock: null,
     blockPositionsSetCount: 0,
   };
@@ -99,21 +96,7 @@ class SortableGrid extends PureComponent {
   };
 
   onMoveBlock = (evt, { moveX, moveY, dx, dy }) => {
-    const yChokeAmount = Math.max(
-      0,
-      this.activeBlockOffset.y + moveY - (this.state.gridLayout.height - this.props.blockHeight),
-    );
-    const xChokeAmount = Math.max(
-      0,
-      this.activeBlockOffset.x + moveX - (this.state.gridLayout.width - this.blockWidth),
-    );
-    const yMinChokeAmount = Math.min(0, this.activeBlockOffset.y + moveY);
-    const xMinChokeAmount = Math.min(0, this.activeBlockOffset.x + moveX);
-
-    const dragPosition = {
-      x: moveX - xChokeAmount - xMinChokeAmount,
-      y: moveY - yChokeAmount - yMinChokeAmount,
-    };
+    const dragPosition = { x: moveX, y: moveY };
     this.dragPosition = dragPosition;
 
     const originalPosition = this._getActiveBlock().origin;
@@ -136,11 +119,12 @@ class SortableGrid extends PureComponent {
     }
 
     if (closest !== this.state.activeBlock) {
-      Animated.timing(this._getBlock(closest).currentPosition, {
+      /*Animated.timing(this._getBlock(closest).currentPosition, {
         toValue: this._getActiveBlock().origin,
         duration: this.blockTransitionDuration,
-        useNativeDriver: false,
-      }).start();
+        useNativeDriver: true,
+      }).start();*/
+      this._getBlock(closest).currentPosition.setValue(this._getActiveBlock().origin);
       const blockPositions = this.state.blockPositions;
       this._getActiveBlock().origin = blockPositions[closest].origin;
       blockPositions[closest].origin = originalPosition;
@@ -153,15 +137,15 @@ class SortableGrid extends PureComponent {
   };
 
   onReleaseBlock = (evt, gestureState) => {
-    const activeBlockCurrentPosition = this._getActiveBlock().currentPosition;
-    activeBlockCurrentPosition.flattenOffset();
-    Animated.timing(activeBlockCurrentPosition, {
-      toValue: this._getActiveBlock().origin,
+    const activeBlock = this._getActiveBlock();
+    activeBlock.currentPosition.flattenOffset();
+    activeBlock.currentPosition.setValue(activeBlock.origin);
+    /*Animated.timing(activeBlock.currentPosition, {
+      toValue: activeBlock.origin,
       duration: this.activeBlockCenteringDuration,
-      useNativeDriver: false,
-    }).start();
-
-    this.onDragRelease({ itemOrder: this.itemOrder });
+      useNativeDriver: true,
+    });*/
+    this.props.onDragRelease && this.props.onDragRelease({ itemOrder: this.itemOrder });
     this.setState({ activeBlock: null });
     this.panCapture = false;
   };
@@ -195,18 +179,16 @@ class SortableGrid extends PureComponent {
 
   activateDrag = key => () => {
     this.panCapture = true;
-    this.onDragStart(this.itemOrder[key]);
+    this.props.onDragStart && this.props.onDragStart(this.itemOrder[key]);
     this.setState({ activeBlock: key });
-    if (!this.dragStartAnimation) {
-      this.state.startDragWiggle.setValue(20);
-      Animated.spring(this.state.startDragWiggle, {
-        toValue: 0,
-        velocity: 1000,
-        tension: 1000,
-        friction: 5,
-        useNativeDriver: false,
-      }).start();
-    }
+    this.startDragWiggle.setValue(20);
+    Animated.spring(this.startDragWiggle, {
+      toValue: 0,
+      velocity: 1000,
+      tension: 1000,
+      friction: 5,
+      useNativeDriver: true,
+    }).start();
   };
 
   // Helpers & other boring stuff
@@ -223,28 +205,12 @@ class SortableGrid extends PureComponent {
     return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
   };
 
-  _blockActivationWiggle = () => {
-    return (
-      this.dragStartAnimation || {
-        transform: [
-          {
-            rotate: this.state.startDragWiggle.interpolate({
-              inputRange: [0, 360],
-              outputRange: ['0 deg', '360 deg'],
-            }),
-          },
-        ],
-      }
-    );
-  };
-
   _assignReceivedPropertiesIntoThis = properties => {
     Object.keys(properties).forEach(property => {
       if (this[property]) {
         this[property] = properties[property];
       }
     });
-    this.dragStartAnimation = properties.dragStartAnimation;
     this.itemOrder = cloneDeep(properties.itemOrder);
   };
 
@@ -262,12 +228,21 @@ class SortableGrid extends PureComponent {
       height: blockHeight,
       justifyContent: 'center',
     },
-    this.state.activeBlock == key && this._blockActivationWiggle(),
+    this.state.activeBlock == key && {
+      transform: [
+        {
+          rotate: this.startDragWiggle.interpolate({
+            inputRange: [0, 360],
+            outputRange: ['0 deg', '360 deg'],
+          }),
+        },
+      ],
+    },
     this._blockPositionsSet() && {
       position: 'absolute',
-      //transform: this._getBlock(key).currentPosition.getTranslateTransform(),
-      top: this._getBlock(key).currentPosition.getLayout().top,
-      left: this._getBlock(key).currentPosition.getLayout().left,
+      transform: this._getBlock(key).currentPosition.getTranslateTransform(),
+      //top: this._getBlock(key).currentPosition.getLayout().top,
+      //left: this._getBlock(key).currentPosition.getLayout().left,
     },
     this.state.activeBlock == key && { zIndex: 1 },
   ];
