@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sortableGrid: {
+    backgroundColor: 'green',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class SortableGrid extends Component {
+class SortableGrid extends React.PureComponent {
   blockTransitionDuration = 300;
   activeBlockCenteringDuration = 200;
   itemsPerRow = 4;
@@ -71,6 +72,12 @@ class SortableGrid extends Component {
       });
       this.state.blockPositionsSetCount = properties.children.length;
 
+      const oldRows = this.rows;
+      this.rows = Math.ceil(properties.children.length / this.itemsPerRow);
+      if (this.state.blockWidth && oldRows !== this.rows) {
+        this._animateGridHeight();
+      }
+
       const sortedOrder = sortBy(this.itemOrder, ({ key, order }) => order);
       const flattenedOrder = sortedOrder.map((item, index) => ({ ...item, order: index }));
       flattenedOrder.forEach(({ key, order }) => {
@@ -95,20 +102,9 @@ class SortableGrid extends Component {
   };
 
   onMoveBlock = (evt, { moveX, moveY, dx, dy }) => {
-    const yChokeAmount = Math.max(
-      0,
-      this.activeBlockOffset.y + moveY - (this.state.gridLayout.height - this.props.blockHeight),
-    );
-    const xChokeAmount = Math.max(
-      0,
-      this.activeBlockOffset.x + moveX - (this.state.gridLayout.width - this.blockWidth),
-    );
-    const yMinChokeAmount = Math.min(0, this.activeBlockOffset.y + moveY);
-    const xMinChokeAmount = Math.min(0, this.activeBlockOffset.x + moveX);
-
     const dragPosition = {
-      x: moveX - xChokeAmount - xMinChokeAmount,
-      y: moveY - yChokeAmount - yMinChokeAmount,
+      x: moveX,
+      y: moveY,
     };
     this.dragPosition = dragPosition;
     const originalPosition = this._getActiveBlock().origin;
@@ -185,7 +181,7 @@ class SortableGrid extends Component {
         origin: thisPosition,
       };
       this.setState({ blockPositions, blockPositionsSetCount });
-
+      
       if (this._blockPositionsSet()) {
         const oldRows = this.rows;
         this.rows = Math.ceil(this.props.children.length / this.itemsPerRow);
