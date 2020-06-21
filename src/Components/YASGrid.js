@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { StyleSheet, Animated, TouchableWithoutFeedback, PanResponder, View } from 'react-native';
 import { sortBy, cloneDeep } from 'lodash';
 
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class SortableGrid extends React.PureComponent {
+class SortableGrid extends PureComponent {
   blockTransitionDuration = 300;
   activeBlockCenteringDuration = 200;
   itemsPerRow = 4;
@@ -81,11 +81,7 @@ class SortableGrid extends React.PureComponent {
         const x = (order * this.blockWidth) % (this.itemsPerRow * this.blockWidth);
         const y = Math.floor(order / this.itemsPerRow) * this.props.blockHeight;
         this.state.blockPositions[key].origin = { x, y };
-        Animated.timing(this._getBlock(key).currentPosition, {
-          toValue: { x, y },
-          duration: this.blockTransitionDuration,
-          useNativeDriver: false,
-        }).start();
+        this._getBlock(key).currentPosition.setValue({ x, y });
       });
     }
   };
@@ -154,7 +150,6 @@ class SortableGrid extends React.PureComponent {
       this.itemOrder[this.state.activeBlock].order = this.itemOrder[closest].order;
       this.itemOrder[closest].order = tempOrder;
     }
-    console.log(JSON.stringify(Object.values(this.state.blockPositions)));
   };
 
   onReleaseBlock = (evt, gestureState) => {
