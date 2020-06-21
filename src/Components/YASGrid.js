@@ -1,5 +1,12 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Animated, TouchableWithoutFeedback, PanResponder, View } from 'react-native';
+import {
+  StyleSheet,
+  Animated,
+  TouchableWithoutFeedback,
+  PanResponder,
+  View,
+  ScrollView,
+} from 'react-native';
 import { sortBy, cloneDeep } from 'lodash';
 
 const styles = StyleSheet.create({
@@ -7,7 +14,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sortableGrid: {
-    backgroundColor: 'green',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
@@ -31,7 +37,6 @@ class SortableGrid extends PureComponent {
   itemOrder = {};
   panCapture = false;
   gridHeight = null;
-  startDragWiggle = new Animated.Value(0);
 
   _panResponder = PanResponder.create({
     onStartShouldSetPanResponderCapture: () => false,
@@ -98,10 +103,10 @@ class SortableGrid extends PureComponent {
   onMoveBlock = (evt, { moveX, moveY, dx, dy }) => {
     const dragPosition = { x: moveX, y: moveY };
     this.dragPosition = dragPosition;
+    this._getActiveBlock().currentPosition.setValue(dragPosition);
 
     const originalPosition = this._getActiveBlock().origin;
     const distanceToOrigin = this._getDistanceTo(originalPosition);
-    this._getActiveBlock().currentPosition.setValue(dragPosition);
 
     let closest = this.state.activeBlock;
     let closestDistance = distanceToOrigin;
@@ -119,17 +124,18 @@ class SortableGrid extends PureComponent {
     }
 
     if (closest !== this.state.activeBlock) {
-      /*Animated.timing(this._getBlock(closest).currentPosition, {
-        toValue: this._getActiveBlock().origin,
+      const activeBlock = this._getActiveBlock();
+      const closestBlock = this._getBlock(closest);
+      Animated.timing(closestBlock.currentPosition, {
+        toValue: activeBlock.origin,
         duration: this.blockTransitionDuration,
-        useNativeDriver: true,
-      }).start();*/
-      this._getBlock(closest).currentPosition.setValue(this._getActiveBlock().origin);
-      const blockPositions = this.state.blockPositions;
-      this._getActiveBlock().origin = blockPositions[closest].origin;
-      blockPositions[closest].origin = originalPosition;
-      this.setState({ blockPositions });
+        useNativeDriver: false,
+      }).start();
 
+      //swap block positions
+      activeBlock.origin = closestBlock.origin;
+      closestBlock.origin = originalPosition;
+      //swap item orders
       const tempOrder = this.itemOrder[this.state.activeBlock].order;
       this.itemOrder[this.state.activeBlock].order = this.itemOrder[closest].order;
       this.itemOrder[closest].order = tempOrder;
@@ -139,12 +145,11 @@ class SortableGrid extends PureComponent {
   onReleaseBlock = (evt, gestureState) => {
     const activeBlock = this._getActiveBlock();
     activeBlock.currentPosition.flattenOffset();
-    activeBlock.currentPosition.setValue(activeBlock.origin);
-    /*Animated.timing(activeBlock.currentPosition, {
+    Animated.timing(activeBlock.currentPosition, {
       toValue: activeBlock.origin,
       duration: this.activeBlockCenteringDuration,
-      useNativeDriver: true,
-    });*/
+      useNativeDriver: false,
+    }).start();
     this.props.onDragRelease && this.props.onDragRelease({ itemOrder: this.itemOrder });
     this.setState({ activeBlock: null });
     this.panCapture = false;
@@ -153,9 +158,7 @@ class SortableGrid extends PureComponent {
   saveBlockPositions = key => ({ nativeEvent }) => {
     const blockPositions = this.state.blockPositions;
     if (!blockPositions[key]) {
-      const blockPositionsSetCount = blockPositions[key]
-        ? this.state.blockPositionsSetCount
-        : ++this.state.blockPositionsSetCount;
+      this.state.blockPositionsSetCount += 1;
       const thisPosition = {
         x: nativeEvent.layout.x,
         y: nativeEvent.layout.y,
@@ -165,7 +168,6 @@ class SortableGrid extends PureComponent {
         currentPosition: new Animated.ValueXY(thisPosition),
         origin: thisPosition,
       };
-      this.setState({ blockPositions, blockPositionsSetCount });
 
       if (this._blockPositionsSet()) {
         const oldRows = this.rows;
@@ -181,14 +183,6 @@ class SortableGrid extends PureComponent {
     this.panCapture = true;
     this.props.onDragStart && this.props.onDragStart(this.itemOrder[key]);
     this.setState({ activeBlock: key });
-    this.startDragWiggle.setValue(20);
-    Animated.spring(this.startDragWiggle, {
-      toValue: 0,
-      velocity: 1000,
-      tension: 1000,
-      friction: 5,
-      useNativeDriver: true,
-    }).start();
   };
 
   // Helpers & other boring stuff
@@ -228,21 +222,9 @@ class SortableGrid extends PureComponent {
       height: blockHeight,
       justifyContent: 'center',
     },
-    this.state.activeBlock == key && {
-      transform: [
-        {
-          rotate: this.startDragWiggle.interpolate({
-            inputRange: [0, 360],
-            outputRange: ['0 deg', '360 deg'],
-          }),
-        },
-      ],
-    },
     this._blockPositionsSet() && {
       position: 'absolute',
       transform: this._getBlock(key).currentPosition.getTranslateTransform(),
-      //top: this._getBlock(key).currentPosition.getLayout().top,
-      //left: this._getBlock(key).currentPosition.getLayout().left,
     },
     this.state.activeBlock == key && { zIndex: 1 },
   ];
@@ -259,30 +241,32 @@ class SortableGrid extends PureComponent {
   };
 
   render = () => (
-    <Animated.View style={this._getGridStyle()} onLayout={this.onLayout}>
-      {this.state.gridLayout &&
-        sortBy(this.props.children, ({ key }) => this.props.itemOrder[key].order).map(item => {
-          const key = item.key;
-          return (
-            <Animated.View
-              key={key}
-              style={this._getBlockStyle(key, this.props.blockHeight)}
-              onLayout={this.saveBlockPositions(key)}
-              {...this._panResponder.panHandlers}
-            >
-              <TouchableWithoutFeedback
-                style={styles.container}
-                delayLongPress={this.dragActivationTreshold}
-                onLongPress={this.activateDrag(key)}
+    <ScrollView removeClippedSubviews scrollEnabled={false} canCancelContentTouches={false}>
+      <Animated.View style={this._getGridStyle()} onLayout={this.onLayout}>
+        {this.state.gridLayout &&
+          sortBy(this.props.children, ({ key }) => this.props.itemOrder[key].order).map(item => {
+            const key = item.key;
+            return (
+              <Animated.View
+                key={key}
+                style={this._getBlockStyle(key, this.props.blockHeight)}
+                onLayout={this.saveBlockPositions(key)}
+                {...this._panResponder.panHandlers}
               >
-                <View style={styles.itemImageContainer}>
-                  <View style={styles.container}>{item}</View>
-                </View>
-              </TouchableWithoutFeedback>
-            </Animated.View>
-          );
-        })}
-    </Animated.View>
+                <TouchableWithoutFeedback
+                  style={styles.container}
+                  delayLongPress={this.dragActivationTreshold}
+                  onLongPress={this.activateDrag(key)}
+                >
+                  <View style={styles.itemImageContainer}>
+                    <View style={styles.container}>{item}</View>
+                  </View>
+                </TouchableWithoutFeedback>
+              </Animated.View>
+            );
+          })}
+      </Animated.View>
+    </ScrollView>
   );
 }
 
