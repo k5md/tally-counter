@@ -12,8 +12,8 @@ const mapStateToProps = ({ countersReducer }, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  increment: id => dispatch(countersActions.increment(id)),
-  decrement: id => dispatch(countersActions.decrement(id)),
+  increment: (id, value, step) => dispatch(countersActions.increment(id, value, step)),
+  decrement: (id, value, step) => dispatch(countersActions.decrement(id, value, step)),
   remove: id => dispatch(countersActions.remove(id)),
   update: (id, fields) => dispatch(countersActions.update(id, fields)),
 });

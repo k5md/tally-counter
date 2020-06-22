@@ -7,7 +7,7 @@ const TABLE_NAME = 'statistics_counters';
 const FIELDS = [
   ['id', 'TEXT'],
   ['value', 'INTEGER'],
-  ['date', 'TEXT'], // YYYY-MM-DD HH:MM:SS
+  ['date', 'INTEGER'], // unix time
 ];
 
 let storage = null;
@@ -22,50 +22,58 @@ function* initialize() {
     ).join(',')});`;
     yield call(() => storage.executeSql(query));
     yield put({ type: actionTypes.STATISTICS_INITIALIZE_SUCCESS });
-  } catch (e) {
-    yield put({ type: actionTypes.STATISTICS_INITIALIZE_FAIL, message: e });
+  } catch (error) {
+    yield put({ type: actionTypes.STATISTICS_INITIALIZE_FAIL, error });
   }
 }
 
-function* onIncrement({ id }) {
-  const query = `UPDATE ${TABLE_NAME} SET value = value + 1 WHERE id=${id}`;
+function* onIncrement({ id, value, step, date }) {
+  const values = [id, value + step, date].join(',');
+  const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
   try {
-    call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS });
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
   }
 }
 
-function* onDecrement({ id }) {
-  const query = `UPDATE ${TABLE_NAME} SET value = value - 1 WHERE id=${id}`;
+function* onDecrement({ id, value, step, date }) {
+  const values = [id, value - step, date].join(',');
+  const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
   try {
-    call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS });
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
   }
 }
 
-function* onUpdate({ id, fields }) {
-  const update = Object.entries(fields)
+function* onUpdate({ id, date, fields }) {
+  const updateStorage = Object.keys(fields).includes('value');
+  if (!updateStorage) {
+    return;
+  }
+
+  const meaningfulFields = { value: fields.value };
+  const update = Object.entries(meaningfulFields)
     .map((key, value) => `${key}=${value}`)
     .join(',');
-  const query = `UPDATE ${TABLE_NAME} SET ${update} WHERE id=${id}`;
+  const query = `UPDATE ${TABLE_NAME} SET ${update} WHERE id=${id};`;
   try {
-    call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS });
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
   }
 }
 
-function* onCreate({ id, value, date }) {
+function* onCreate({ initialValue: { id, value, date } }) {
   const values = [id, value, date].join(',');
-  const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values})`;
+  const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
   try {
-    call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS });
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
   }
@@ -74,18 +82,18 @@ function* onCreate({ id, value, date }) {
 function* onRemove({ id }) {
   const query = `DELETE FROM ${TABLE_NAME} WHERE id=${id}`;
   try {
-    call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS });
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
   }
 }
 
 function* onRead({ id }) {
-  const query = `SELECT * FROM ${TABLE_NAME} ORDER BY date`;
+  const query = `SELECT * FROM ${TABLE_NAME} ORDER BY date;`;
   try {
-    const payload = call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_READ_SUCCESS, payload });
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: actionTypes.STATISTICS_READ_SUCCESS, payload: payload[0].rows.raw() });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_READ_FAIL, error });
   }

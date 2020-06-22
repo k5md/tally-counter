@@ -6,16 +6,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 const styles = StyleSheet.create({});
 
-export const Counter = ({
-  entry,
-  increment,
-  decrement,
-  remove,
-  update,
-}) => {
-  if (!entry) return null;
+export const Counter = ({ entry, increment, decrement, remove, update }) => {
+  if (!entry) {
+    return null;
+  }
   const { id, title, value, step, colorString, imageString } = entry;
-
 
   const imagePickerHandler = () => {
     ImagePicker.openPicker({
@@ -29,24 +24,12 @@ export const Counter = ({
 
   return (
     <View style={{}}>
-      <TextInput
-        label="Title"
-        value={title}
-        onChangeText={v => update(id, { title: v })}
-      />
-      <IconButton icon="minus" size={20} onPress={() => decrement(id)} />
-      <IconButton icon="plus" size={20} onPress={() => increment(id)} />
-      <IconButton icon="delete" size={20} onPress={() => remove(id)} />
-      <TextInput
-        label="Step"
-        value={step}
-        onChangeText={v => update(id, { step: Number(v) })}
-      />
-      <TextInput
-        label="Value"
-        value={value}
-        onChangeText={v => update(id, { value: Number(v) })}
-      />
+      <TextInput label="Title" value={title} onChangeText={v => update(id, { title: v })} />
+      <IconButton icon="minus" onPress={() => decrement(id, value, step)} />
+      <IconButton icon="plus" onPress={() => increment(id, value, step)} />
+      <IconButton icon="delete" onPress={() => remove(id)} />
+      <TextInput label="Step" value={step} onChangeText={v => update(id, { step: Number(v) })} />
+      <TextInput label="Value" value={value} onChangeText={v => update(id, { value: Number(v) })} />
       {/*<ColorPicker
         onColorSelected={v => update(id, { color: v })}
         style={{ flex: 0 }}

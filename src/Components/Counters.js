@@ -27,7 +27,7 @@ export const Counters = ({ nextDisplayType, setDisplayType, create }) => {
           icon={nextDisplayType.icon}
           onPress={() => setDisplayType(nextDisplayType)}
         />
-        <FAB style={styles.fab} icon="plus" onPress={() => create({})} />
+        <FAB style={styles.fab} icon="plus" onPress={() => create()} />
       </View>
     </>
   );

@@ -18,9 +18,19 @@ export const Entry = props => {
       <View style={[style, { backgroundColor: colorString }]}>
         <Text style={{ color: 'white', fontSize: 14 }}>{title}</Text>
         <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <IconButton icon="minus" color={Colors.black} size={20} onPress={() => decrement(id)} />
+          <IconButton
+            icon="minus"
+            color={Colors.black}
+            size={20}
+            onPress={() => decrement(id, value, step)}
+          />
           <Text>{value}</Text>
-          <IconButton icon="plus" color={Colors.black} size={20} onPress={() => increment(id)} />
+          <IconButton
+            icon="plus"
+            color={Colors.black}
+            size={20}
+            onPress={() => increment(id, value, step)}
+          />
 
           <IconButton
             icon="dots-vertical"
