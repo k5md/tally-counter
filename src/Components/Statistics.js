@@ -1,48 +1,124 @@
-import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
+import { Picker } from '@react-native-community/picker';
+import { Button, Paragraph, Dialog, Portal, DataTable, FAB } from 'react-native-paper';
 import { LineChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
+import * as scale from 'd3-scale';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  item: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#f9c2ff',
+    padding: 20,
+  },
+  title: {
+    fontSize: 32,
+  },
+  plot: {
+    height: '50%',
+    padding: 20,
+    flexDirection: 'row',
+  },
+  table: {
+    height: '50%',
+  },
+  fabContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
+  fab: {
+    margin: 10,
+  },
+});
+
+const Item = ({ id, date, time, value }) => {
+  return (
+    <DataTable.Row style={[styles.item]}>
+      <DataTable.Cell>{date}</DataTable.Cell>
+      <DataTable.Cell numeric>{id}</DataTable.Cell>
+      <DataTable.Cell>{time}</DataTable.Cell>
+      <DataTable.Cell numeric>{value}</DataTable.Cell>
+    </DataTable.Row>
+  );
+};
 
 export const Statistics = ({ read, data }) => {
-  useEffect(() => {
-    setInterval(() => read(), 5000);
-  }, []);
-
-  const dat = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80];
-
-  const contentInset = { top: 20, bottom: 20 };
+  const formatted = data.map(entry => {
+    const dateObject = new Date(entry.date);
+    const milliseconds = dateObject.getTime();
+    const date = dateObject.toLocaleDateString();
+    const time = dateObject.toLocaleTimeString();
+    return {
+      id: entry.id,
+      milliseconds,
+      date,
+      time,
+      value: entry.value,
+    };
+  });
 
   return (
     <>
-    <Text>{JSON.stringify(data)}</Text>
-    <View style={{ height: '100%', padding: 20, flexDirection: 'row' }}>
-      <YAxis
-        data={dat}
-        contentInset={contentInset}
-        svg={{
-          fill: 'grey',
-          fontSize: 10,
-        }}
-        numberOfTicks={10}
-        formatLabel={value => `${value}ºC`}
-      />
-      <View style={{ flex: 1, marginLeft: 10, marginRight: 10 }}>
-        <LineChart
-          style={{ flex: 1, marginLeft: 16 }}
-          data={dat}
-          svg={{ stroke: 'rgb(134, 65, 244)' }}
-          contentInset={contentInset}
-        >
-          <Grid />
-        </LineChart>
-        <XAxis
-          style={{ marginHorizontal: -10 }}
-          data={dat}
-          formatLabel={(value, index) => index}
-          contentInset={{ left: 10, right: 10 }}
-          svg={{ fontSize: 10, fill: 'black' }}
-        />
+      <View style={styles.container}>
+        <View style={styles.plot}>
+          <View style={{ flex: 1, marginLeft: 10, marginRight: 10 }}>
+            <LineChart
+              style={{ flex: 1, marginLeft: 16 }}
+              data={formatted}
+              svg={{ stroke: 'rgb(134, 65, 244)' }}
+              xAccessor={({ item }) => item.milliseconds}
+              yAccessor={({ item }) => item.value}
+              xScale={scale.scaleTime}
+            >
+              <Grid />
+            </LineChart>
+            <XAxis
+                data={formatted}
+                svg={{
+                  fill: 'black',
+                  fontSize: 8,
+
+                }}
+                style={{ marginHorizontal: 15,  }}
+                xAccessor={({ item }) => item.milliseconds}
+                scale={scale.scaleTime}
+                formatLabel={value => (new Date(value)).toLocaleTimeString()}
+                numberOfTicks={24}
+              />
+          </View>
+        </View>
+
+        <SafeAreaView style={styles.table}>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>Date</DataTable.Title>
+              <DataTable.Title>Id</DataTable.Title>
+              <DataTable.Title>Time</DataTable.Title>
+              <DataTable.Title numeric>Value</DataTable.Title>
+            </DataTable.Header>
+            <FlatList
+              data={formatted}
+              renderItem={({ item }) => (
+                <Item id={item.id} date={item.date} time={item.time} value={item.value} />
+              )}
+              keyExtractor={item => String(item.milliseconds)}
+            />
+          </DataTable>
+        </SafeAreaView>
       </View>
-    </View>
+      <View style={styles.fabContainer}>
+        <FAB style={styles.fab} icon="refresh" onPress={() => read()} />
+        <FAB style={styles.fab} label="1" />
+        <FAB style={styles.fab} label="Month" />
+      </View>
     </>
   );
 };
