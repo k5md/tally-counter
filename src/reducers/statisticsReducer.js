@@ -2,7 +2,7 @@ import update from 'immutability-helper';
 import * as types from '../constants/actionTypes';
 
 const initialState = {
-  data: {},
+  data: [],
 };
 
 const handlers = {

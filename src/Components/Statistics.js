@@ -4,10 +4,12 @@ import { Picker } from '@react-native-community/picker';
 import { Button, Paragraph, Dialog, Portal, DataTable, FAB } from 'react-native-paper';
 import { LineChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
 import * as scale from 'd3-scale';
+import * as shape from 'd3-shape';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
   },
   item: {
     flex: 1,
@@ -21,7 +23,7 @@ const styles = StyleSheet.create({
   plot: {
     height: '50%',
     padding: 20,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   table: {
     height: '50%',
@@ -39,29 +41,44 @@ const styles = StyleSheet.create({
   },
 });
 
-const Item = ({ id, date, time, value }) => {
+const Item = ({ title, date, time, value }) => {
   return (
     <DataTable.Row style={[styles.item]}>
       <DataTable.Cell>{date}</DataTable.Cell>
-      <DataTable.Cell numeric>{id}</DataTable.Cell>
+      <DataTable.Cell>{title}</DataTable.Cell>
       <DataTable.Cell>{time}</DataTable.Cell>
       <DataTable.Cell numeric>{value}</DataTable.Cell>
     </DataTable.Row>
   );
 };
 
-export const Statistics = ({ read, data }) => {
-  const formatted = data.map(entry => {
-    const dateObject = new Date(entry.date);
+export const Statistics = ({ read, stats, counters }) => {
+  if (!Object.values(counters).length) {
+    return null;
+  }
+
+  const selectableIds = Object.values(counters).map(({ id, title }) => ({ id, title }));
+  const selectableScales = [{ id: 'day', title: 'Day' }, { id: 'month', title: 'Month' }];
+
+  const [selectedId, selectId] = useState(selectableIds[0].id);
+  const [selectedScale, selectScale] = useState(selectableScales[0].id);
+
+  useEffect(() => {
+    read(selectedId, selectedScale);
+  }, [read, selectedId, selectedScale]);
+
+  const formatted = stats.map(({ value, id, date }) => {
+    const { title } = counters[id];
+    const dateObject = new Date(date);
     const milliseconds = dateObject.getTime();
-    const date = dateObject.toLocaleDateString();
-    const time = dateObject.toLocaleTimeString();
+    const localeDate = dateObject.toLocaleDateString();
+    const localeTime = dateObject.toLocaleTimeString();
     return {
-      id: entry.id,
+      value,
+      title,
       milliseconds,
-      date,
-      time,
-      value: entry.value,
+      date: localeDate,
+      time: localeTime,
     };
   });
 
@@ -69,7 +86,7 @@ export const Statistics = ({ read, data }) => {
     <>
       <View style={styles.container}>
         <View style={styles.plot}>
-          <View style={{ flex: 1, marginLeft: 10, marginRight: 10 }}>
+          <View style={{ flex: 4, marginLeft: 10, marginRight: 10 }}>
             <LineChart
               style={{ flex: 1, marginLeft: 16 }}
               data={formatted}
@@ -77,22 +94,35 @@ export const Statistics = ({ read, data }) => {
               xAccessor={({ item }) => item.milliseconds}
               yAccessor={({ item }) => item.value}
               xScale={scale.scaleTime}
+              curve={shape.curveStep}
             >
               <Grid />
             </LineChart>
             <XAxis
-                data={formatted}
-                svg={{
-                  fill: 'black',
-                  fontSize: 8,
+              data={formatted}
+              svg={{
+                fill: 'black',
+                fontSize: 8,
+              }}
+              style={{ marginHorizontal: 15 }}
+              xAccessor={({ item }) => item.milliseconds}
+              scale={scale.scaleTime}
+              formatLabel={value => new Date(value).toLocaleTimeString()}
+              numberOfTicks={24}
+            />
+          </View>
+          <View style={{ flex: 1, marginHorizontal: 10 }}>
+            <Picker selectedValue={selectedScale} onValueChange={value => selectScale(value)}>
+              {selectableScales.map(({ id, title }) => (
+                <Picker.Item label={title} value={id} key={id} />
+              ))}
+            </Picker>
 
-                }}
-                style={{ marginHorizontal: 15,  }}
-                xAccessor={({ item }) => item.milliseconds}
-                scale={scale.scaleTime}
-                formatLabel={value => (new Date(value)).toLocaleTimeString()}
-                numberOfTicks={24}
-              />
+            <Picker selectedValue={selectedId} onValueChange={value => selectId(value)}>
+              {selectableIds.map(({ id, title }) => (
+                <Picker.Item label={title} value={id} key={id} />
+              ))}
+            </Picker>
           </View>
         </View>
 
@@ -100,24 +130,23 @@ export const Statistics = ({ read, data }) => {
           <DataTable>
             <DataTable.Header>
               <DataTable.Title>Date</DataTable.Title>
-              <DataTable.Title>Id</DataTable.Title>
+              <DataTable.Title>Title</DataTable.Title>
               <DataTable.Title>Time</DataTable.Title>
               <DataTable.Title numeric>Value</DataTable.Title>
             </DataTable.Header>
             <FlatList
               data={formatted}
               renderItem={({ item }) => (
-                <Item id={item.id} date={item.date} time={item.time} value={item.value} />
+                <Item title={item.title} date={item.date} time={item.time} value={item.value} />
               )}
               keyExtractor={item => String(item.milliseconds)}
             />
           </DataTable>
         </SafeAreaView>
       </View>
+
       <View style={styles.fabContainer}>
-        <FAB style={styles.fab} icon="refresh" onPress={() => read()} />
-        <FAB style={styles.fab} label="1" />
-        <FAB style={styles.fab} label="Month" />
+        <FAB style={styles.fab} icon="refresh" onPress={() => read(selectedId, selectedScale)} />
       </View>
     </>
   );

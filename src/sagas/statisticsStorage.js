@@ -89,8 +89,8 @@ function* onRemove({ id }) {
   }
 }
 
-function* onRead({ id }) {
-  const query = `SELECT * FROM ${TABLE_NAME} ORDER BY date;`;
+function* onRead({ id, scale }) {
+  const query = `SELECT * FROM ${TABLE_NAME} WHERE id=${id} ORDER BY date;`;
   try {
     const payload = yield call(() => storage.executeSql(query));
     yield put({ type: actionTypes.STATISTICS_READ_SUCCESS, payload: payload[0].rows.raw() });
