@@ -37,36 +37,39 @@ const styles = StyleSheet.create({
   },
 });
 
-export const StatisticsPlot = ({ data }) => {
-  console.log(data, 'DATA')
+const contentInset = { top: 10, bottom: 10 }
 
-  return (
+export const StatisticsPlot = ({ data }) => {
+   return (
     <View style={styles.plot}>
-      <View style={{ flex: 4, marginLeft: 10, marginRight: 10 }}>
+      <View style={{ flex: 6, marginHorizontal: 10 }}>
 
         <LineChart
-          style={{ flex: 1, marginLeft: 16 }}
+          style={{ flex: 5 }}
           data={data}
           svg={{ stroke: 'rgb(134, 65, 244)' }}
-          xAccessor={({ item }) => item.hourString}
+          xAccessor={({ item }) => item.hour}
           yAccessor={({ item }) => item.value}
-          xScale={scale.scaleTime}
+          contentInset={contentInset}
           curve={shape.curveStepBefore}
-          numberOfTicks={24}
+ 
         >
-          <Grid />
+          <Grid/>
         </LineChart>
         <XAxis
+          style={{flex: 2}}
           data={data}
           svg={{
-            fill: 'black',
-            fontSize: 8,
+            fill: "grey",
+            fontSize: 12,
+            rotation: 45,
+            originY: 30,
+            y: 30
           }}
-          style={{ marginHorizontal: 15 }}
-          xAccessor={({ item }) => item.hourString}
-          scale={scale.scaleTime}
-          formatLabel={value => new Date(value).toLocaleTimeString()}
-          numberOfTicks={24}
+          contentInset={contentInset}
+          xAccessor={({ item }) => item.hour}
+          formatLabel={value => String(value).length < 2 ? `0${String(value)}:00` : `${String(value)}:00`}
+          numberOfTicks={26}
         />
       </View>
     </View>

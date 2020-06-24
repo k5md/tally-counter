@@ -51,23 +51,18 @@ export const Statistics = ({ read, stats, counters }) => {
     read(selectedId, selectedScale);
   }, [read, selectedId, selectedScale]);
 
-  const formattedByHour = stats[1].map(({ value, hour }) => {
-    const dateString = hour.split(' ')[0];
-    const hourString = hour.split(' ')[1];
-    return {
-      value,
-      dateString,
-      hourString,
-    };
-  });
+  const formattedByHour = stats[1].reduce((acc, { value, date, hour }, currentIndex, array) => {
+    const toPush = { value, date, hour: Number(hour) };
+    if (!acc.length && toPush.hour > 0) {
+      return [{ value, date, hour: 0 }, toPush];
+    }
+    if (currentIndex === array.length - 1 && toPush.hour < 23) {
+      return [...acc, toPush, { value, date, hour: 23 }];
+    }
+    return [...acc, toPush];
+  }, []);
 
-  const formattedByDay = stats[2].map(({ value, day }) => {
-    const dateString = day.split;
-    return {
-      value,
-      dateString,
-    };
-  });
+  const formattedByDay = stats[2];
 
   const formattedByDatetime = stats[0].map(({ value, id, date }) => {
     const { title } = counters[id];
@@ -84,12 +79,12 @@ export const Statistics = ({ read, stats, counters }) => {
     };
   });
 
-  console.log(formattedByDatetime);
+  console.log('byHour', formattedByHour, '\n', 'by day', formattedByDay);
 
   return (
     <>
       <View style={styles.container}>
-        <StatisticsPlot data={formattedByHour}/>
+        <StatisticsPlot data={formattedByHour} />
 
         <View style={{ flex: 1, marginHorizontal: 10 }}>
           <Picker selectedValue={selectedScale} onValueChange={value => selectScale(value)}>

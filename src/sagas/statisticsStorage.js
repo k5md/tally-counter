@@ -90,36 +90,28 @@ function* onRemove({ id }) {
 }
 
 function* onRead({ id, scale }) {
-  const queryDate = `SELECT
-    id,
-    value,
-    date
-  FROM ${TABLE_NAME} WHERE id=${id} ORDER BY date`;
-  const dailyLatestDatetimes = `
-    SELECT
-      id,
-      strftime('%Y-%m-%d', datetime(date / 1000, 'unixepoch')) AS day,
-      MAX(date) as date
-    FROM ${TABLE_NAME} WHERE id=${id} GROUP BY day
-  `;
-
-  const queryGroupedByDay = `
-    SELECT a.id, a.value, b.date, b.day
-    FROM ${TABLE_NAME} a
-    INNER JOIN (${dailyLatestDatetimes}) b ON a.id = b.id AND a.date = b.date
-  `;
+  const queryDate = `SELECT id, value, date FROM ${TABLE_NAME} WHERE id=${id} ORDER BY date`;
 
   const hourlyLatestDatetimes = `
     SELECT
       id,
-      strftime('%Y-%m-%d %H:00', datetime(date / 1000, 'unixepoch')) AS hour,
-      MAX(date) as date
+      strftime('%H', datetime(date / 1000, 'unixepoch')) AS hour,
+      strftime('%Y/%m/%d', datetime(date / 1000, 'unixepoch')) AS date,
+      MAX(date) as ms
     FROM ${TABLE_NAME} WHERE id=${id} GROUP BY hour
   `;
   const queryGroupedByHour = `
-    SELECT a.id, a.value, b.date, b.hour
-    FROM ${TABLE_NAME} a
-    INNER JOIN (${hourlyLatestDatetimes}) b ON a.id = b.id AND a.date = b.date
+    SELECT a.id, a.value, b.ms, b.hour, b.date 
+    FROM ${TABLE_NAME} a INNER JOIN (${hourlyLatestDatetimes}) b ON a.id = b.id AND a.date = b.ms
+  `;
+
+  const dailyLatestDatetimes = `
+    SELECT id, strftime('%Y/%m/%d', datetime(date / 1000, 'unixepoch')) AS day, MAX(date) as ms
+    FROM ${TABLE_NAME} WHERE id=${id} GROUP BY day
+  `;
+  const queryGroupedByDay = `
+    SELECT a.id, a.value, b.ms, b.day as date
+    FROM ${TABLE_NAME} a INNER JOIN (${dailyLatestDatetimes}) b ON a.id = b.id AND a.date = b.ms
   `;
 
   try {
