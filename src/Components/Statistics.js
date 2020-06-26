@@ -1,109 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
 import { Picker } from '@react-native-community/picker';
-import { Button, Paragraph, Dialog, Portal, DataTable, FAB } from 'react-native-paper';
-import { LineChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
-import * as scale from 'd3-scale';
-import * as shape from 'd3-shape';
-import { StatisticsTable, StatisticsPlot } from './';
+import { StatisticsTable } from './';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
   },
-  title: {
-    fontSize: 32,
-  },
-  plot: {
-    height: '50%',
-    padding: 20,
-    flexDirection: 'column',
+  controls: {
+    flexDirection: 'row',
   },
   table: {
-    height: '50%',
-  },
-  fabContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-  fab: {
-    margin: 10,
+    flex: 9,
   },
 });
 
 export const Statistics = ({ read, stats, counters }) => {
-  if (!Object.values(counters).length) {
-    return null;
-  }
-
-  const selectableIds = Object.values(counters).map(({ id, title }) => ({ id, title }));
-  const selectableScales = [{ id: 'day', title: 'Day' }, { id: 'month', title: 'Month' }];
-
-  const [selectedId, selectId] = useState(selectableIds[0].id);
-  const [selectedScale, selectScale] = useState(selectableScales[0].id);
+  const now = new Date();
+  const cloneDate = date => new Date(date.valueOf());
+  const selectableFrames = [
+    { title: '1d', window: [cloneDate(now).setDate(now.getDate() - 1), now.getTime()] },
+    { title: '3d', window: [cloneDate(now).setDate(now.getDate() - 3), now.getTime()] },
+    { title: 'M', window: [cloneDate(now).setMonth(now.getMonth() - 1), now.getTime()] },
+    { title: 'Y', window: [cloneDate(now).setFullYear(now.getFullYear() - 1), now.getTime()] },
+    { title: 'All', window: [0, now.getTime()] },
+  ];
+  const [selectedFrame, selectFrame] = useState(selectableFrames[0]);
 
   useEffect(() => {
-    read(selectedId, selectedScale);
-  }, [read, selectedId, selectedScale]);
+    read(selectedId.id, selectedFrame.window);
+  }, [read, selectedId, selectedFrame]);
 
-  const formattedByHour = stats[1].reduce((acc, { value, date, hour }, currentIndex, array) => {
-    const toPush = { value, date, hour: Number(hour) };
-    if (!acc.length && toPush.hour > 0) {
-      return [{ value, date, hour: 0 }, toPush];
-    }
-    if (currentIndex === array.length - 1 && toPush.hour < 23) {
-      return [...acc, toPush, { value, date, hour: 23 }];
-    }
-    return [...acc, toPush];
-  }, []);
-
-  const formattedByDay = stats[2];
-
-  const formattedByDatetime = stats[0].map(({ value, id, date }) => {
-    const { title } = counters[id];
+  const formattedStats = stats.map(({ id, value, date }) => {
     const dateObject = new Date(date);
-    const milliseconds = dateObject.getTime();
-    const localeDate = dateObject.toLocaleDateString();
-    const localeTime = dateObject.toLocaleTimeString();
     return {
       value,
-      title,
-      milliseconds,
-      date: localeDate,
-      time: localeTime,
+      title: counters[id].title,
+      milliseconds: dateObject.getTime(),
+      date: dateObject.toLocaleDateString(),
+      time: dateObject.toLocaleTimeString(),
     };
   });
 
-  console.log('byHour', formattedByHour, '\n', 'by day', formattedByDay);
+  const selectableIds = Object.values(counters).map(({ id, title }) => ({ id, title }));
+  const [selectedId, selectId] = useState(selectableIds[0]);
 
   return (
     <>
       <View style={styles.container}>
-        <StatisticsPlot data={formattedByHour} />
-
-        <View style={{ flex: 1, marginHorizontal: 10 }}>
-          <Picker selectedValue={selectedScale} onValueChange={value => selectScale(value)}>
-            {selectableScales.map(({ id, title }) => (
-              <Picker.Item label={title} value={id} key={id} />
-            ))}
-          </Picker>
-
-          <Picker selectedValue={selectedId} onValueChange={value => selectId(value)}>
+        <View style={styles.controls}>
+          {selectableFrames.map(({ title }, frameIndex) => (
+            <Button
+              mode="contained"
+              dark={title === selectedFrame.title}
+              onPress={() => selectFrame(selectableFrames[frameIndex])}
+            >
+              {title}
+            </Button>
+          ))}
+          <Picker selectedValue={selectedId} style={{ flex: 1 }} onValueChange={id => selectId(id)}>
             {selectableIds.map(({ id, title }) => (
-              <Picker.Item label={title} value={id} key={id} />
+              <Picker.Item label={title} value={id} />
             ))}
           </Picker>
         </View>
 
-        <StatisticsTable style={styles.table} data={formattedByDatetime} />
-      </View>
-      <View style={styles.fabContainer}>
-        <FAB style={styles.fab} icon="refresh" onPress={() => read(selectedId, selectedScale)} />
+        <StatisticsTable style={styles.table} data={formattedStats} />
       </View>
     </>
   );

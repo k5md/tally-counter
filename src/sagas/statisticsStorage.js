@@ -89,38 +89,17 @@ function* onRemove({ id }) {
   }
 }
 
-function* onRead({ id, scale }) {
-  const queryDate = `SELECT id, value, date FROM ${TABLE_NAME} WHERE id=${id} ORDER BY date`;
-
-  const hourlyLatestDatetimes = `
-    SELECT
-      id,
-      strftime('%H', datetime(date / 1000, 'unixepoch')) AS hour,
-      strftime('%Y/%m/%d', datetime(date / 1000, 'unixepoch')) AS date,
-      MAX(date) as ms
-    FROM ${TABLE_NAME} WHERE id=${id} GROUP BY hour
-  `;
-  const queryGroupedByHour = `
-    SELECT a.id, a.value, b.ms, b.hour, b.date 
-    FROM ${TABLE_NAME} a INNER JOIN (${hourlyLatestDatetimes}) b ON a.id = b.id AND a.date = b.ms
-  `;
-
-  const dailyLatestDatetimes = `
-    SELECT id, strftime('%Y/%m/%d', datetime(date / 1000, 'unixepoch')) AS day, MAX(date) as ms
-    FROM ${TABLE_NAME} WHERE id=${id} GROUP BY day
-  `;
-  const queryGroupedByDay = `
-    SELECT a.id, a.value, b.ms, b.day as date
-    FROM ${TABLE_NAME} a INNER JOIN (${dailyLatestDatetimes}) b ON a.id = b.id AND a.date = b.ms
+function* onRead({ id, window: [start, end] }) {
+  const queryDate = `
+    SELECT id, value, date
+    FROM ${TABLE_NAME}
+    WHERE id=${id} AND date >= ${start} AND date <= ${end}
+    ORDER BY date
   `;
 
   try {
-    const data = [
-      yield call(() => storage.executeSql(queryDate)),
-      yield call(() => storage.executeSql(queryGroupedByHour)),
-      yield call(() => storage.executeSql(queryGroupedByDay)),
-    ];
-    const payload = data.map(record => record[0].rows.raw());
+    const tableData = yield call(() => storage.executeSql(queryDate));
+    const payload = tableData[0].rows.raw();
     yield put({ type: actionTypes.STATISTICS_READ_SUCCESS, payload });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_READ_FAIL, error });

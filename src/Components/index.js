@@ -6,4 +6,3 @@ export { Statistics } from './Statistics';
 export { CountersCollection } from './CountersCollection';
 export { SortableGrid } from './YASGrid';
 export { StatisticsTable } from './StatisticsTable';
-export { StatisticsPlot } from './StatisticsPlot';

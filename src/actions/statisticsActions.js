@@ -1,7 +1,7 @@
 import * as types from '../constants/actionTypes';
 
-export const read = (id, scope) => ({
+export const read = (id, window) => ({
   id,
-  scope,
+  window,
   type: types.STATISTICS_READ,
 });

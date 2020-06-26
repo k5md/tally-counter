@@ -10,7 +10,7 @@ const mapStateToProps = ({ statisticsReducer, countersReducer }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  read: (id, stats) => dispatch(statisticsActions.read(id, stats)),
+  read: (id, window) => dispatch(statisticsActions.read(id, window)),
 });
 
 export const StatisticsContainer = connect(

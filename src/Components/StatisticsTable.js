@@ -11,16 +11,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const Item = ({ title, date, time, value }) => {
-  return (
-    <DataTable.Row style={[styles.item]}>
-      <DataTable.Cell>{date}</DataTable.Cell>
-      <DataTable.Cell>{title}</DataTable.Cell>
-      <DataTable.Cell>{time}</DataTable.Cell>
-      <DataTable.Cell numeric>{value}</DataTable.Cell>
-    </DataTable.Row>
-  );
-};
+const Item = ({ title, date, time, value }) => (
+  <DataTable.Row style={[styles.item]}>
+    <DataTable.Cell>{date}</DataTable.Cell>
+    <DataTable.Cell>{title}</DataTable.Cell>
+    <DataTable.Cell>{time}</DataTable.Cell>
+    <DataTable.Cell numeric>{value}</DataTable.Cell>
+  </DataTable.Row>
+);
 
 export const StatisticsTable = ({ style, data }) => (
   <SafeAreaView style={[style]}>
