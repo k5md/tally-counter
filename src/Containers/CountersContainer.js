@@ -1,3 +1,4 @@
+import React from 'react';
 import { connect } from 'react-redux';
 import * as uiActions from '../actions/uiActions';
 import * as countersActions from '../actions/countersActions';
@@ -24,7 +25,9 @@ const mapDispatchToProps = dispatch => ({
   create: initialValue => dispatch(countersActions.create(initialValue)),
 });
 
-export const CountersContainer = connect(
+const CountersContainer = props => <Counters {...props} />;
+
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Counters);
+)(CountersContainer);

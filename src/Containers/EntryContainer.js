@@ -1,15 +1,9 @@
+import React from 'react';
 import { connect } from 'react-redux';
 import { Entry } from '../Components';
 import * as countersActions from '../actions/countersActions';
 
-const mapStateToProps = ({ countersReducer }, ownProps) => {
-  // console.log('entrycontainer', ownProps)
-  return {};
-  const { id } = ownProps;
-  return {
-    entry: countersReducer.data[id],
-  };
-};
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = dispatch => ({
   increment: (id, value, step) => dispatch(countersActions.increment(id, value, step)),
@@ -18,7 +12,9 @@ const mapDispatchToProps = dispatch => ({
   update: (id, fields) => dispatch(countersActions.update(id, fields)),
 });
 
-export const EntryContainer = connect(
+const EntryContainer = props => <Entry {...props} />;
+
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Entry);
+)(EntryContainer);

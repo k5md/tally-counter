@@ -1,3 +1,4 @@
+import React from 'react';
 import { connect } from 'react-redux';
 import { Counter } from '../Components';
 import * as countersActions from '../actions/countersActions';
@@ -16,7 +17,9 @@ const mapDispatchToProps = dispatch => ({
   update: (id, fields) => dispatch(countersActions.update(id, fields)),
 });
 
-export const CounterContainer = connect(
+const CounterContainer = props => <Counter {...props} />;
+
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Counter);
+)(CounterContainer);

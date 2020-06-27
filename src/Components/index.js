@@ -1,8 +1,19 @@
-export { Counter } from './Counter';
-export { Counters } from './Counters';
-export { Entry } from './Entry';
-export { Modal } from './Modal';
-export { Statistics } from './Statistics';
-export { CountersCollection } from './CountersCollection';
-export { SortableGrid } from './YASGrid';
-export { StatisticsTable } from './StatisticsTable';
+import Counter from './Counter';
+import Counters from './Counters';
+import CountersCollection from './CountersCollection';
+import Entry from './Entry';
+import Modal from './Modal';
+import Statistics from './Statistics';
+import StatisticsTable from './StatisticsTable';
+import SortableGrid from './YASGrid';
+
+export {
+  Counter,
+  Counters,
+  CountersCollection,
+  Entry,
+  Modal,
+  Statistics,
+  StatisticsTable,
+  SortableGrid,
+};

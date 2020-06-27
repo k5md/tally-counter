@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Counters = ({ nextDisplayType, setDisplayType, create }) => {
+const Counters = ({ nextDisplayType, setDisplayType, create }) => {
   return (
     <>
       <CountersCollectionContainer />
@@ -32,3 +32,5 @@ export const Counters = ({ nextDisplayType, setDisplayType, create }) => {
     </>
   );
 };
+
+export default Counters;

@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Picker } from '@react-native-community/picker';
 import { StatisticsTable } from './';
+import { getPrevDay, getPrevMonth, getPrevYear } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,14 +18,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Statistics = ({ read, stats, counters }) => {
+const Statistics = ({ read, stats, counters }) => {
   const now = new Date();
   const cloneDate = date => new Date(date.valueOf());
+  
   const selectableFrames = [
-    { title: '1d', window: [cloneDate(now).setDate(now.getDate() - 1), now.getTime()] },
-    { title: '3d', window: [cloneDate(now).setDate(now.getDate() - 3), now.getTime()] },
-    { title: 'M', window: [cloneDate(now).setMonth(now.getMonth() - 1), now.getTime()] },
-    { title: 'Y', window: [cloneDate(now).setFullYear(now.getFullYear() - 1), now.getTime()] },
+    { title: '1d', window: [getPrevDay(now), now.getTime()] },
+    { title: '3d', window: [getPrevDay(now, 3), now.getTime()] },
+    { title: 'M', window: [getPrevMonth(now), now.getTime()] },
+    { title: 'Y', window: [getPrevYear(now), now.getTime()] },
     { title: 'All', window: [0, now.getTime()] },
   ];
   const [selectedFrame, selectFrame] = useState(selectableFrames[0]);
@@ -56,13 +58,14 @@ export const Statistics = ({ read, stats, counters }) => {
               mode="contained"
               dark={title === selectedFrame.title}
               onPress={() => selectFrame(selectableFrames[frameIndex])}
+              key={title}
             >
               {title}
             </Button>
           ))}
-          <Picker selectedValue={selectedId} style={{ flex: 1 }} onValueChange={id => selectId(id)}>
+          <Picker mode="dropdown" selectedValue={selectedId} style={{ flex: 1 }} onValueChange={id => selectId(id)}>
             {selectableIds.map(({ id, title }) => (
-              <Picker.Item label={title} value={id} />
+              <Picker.Item label={title} value={id} key={id} />
             ))}
           </Picker>
         </View>
@@ -72,3 +75,5 @@ export const Statistics = ({ read, stats, counters }) => {
     </>
   );
 };
+
+export default Statistics;

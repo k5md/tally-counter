@@ -14,6 +14,33 @@ let storage = null;
 SQLite.DEBUG(__DEV__);
 SQLite.enablePromise(true);
 
+function* execute(query, successAction, failAction, storage) {
+  try {
+    const payload = yield call(() => storage.executeSql(query));
+    yield put({ type: successAction, payload });
+  } catch (error) {
+    yield put({ type: failAction, error });
+  }
+}
+
+function* read(query) {
+  yield execute(
+    query,
+    actionTypes.STATISTICS_READ_SUCCESS,
+    actionTypes.STATISTICS_READ_FAIL,
+    storage,
+  );
+}
+
+function* write(query) {
+  yield execute(
+    query,
+    actionTypes.STATISTICS_WRITE_SUCCESS,
+    actionTypes.STATISTICS_WRITE_FAIL,
+    storage,
+  );
+}
+
 function* initialize() {
   try {
     storage = yield call(() => SQLite.openDatabase({ name: DB_NAME }));
@@ -30,23 +57,13 @@ function* initialize() {
 function* onIncrement({ id, value, step, date }) {
   const values = [id, value + step, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
-  try {
-    const payload = yield call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
-  } catch (error) {
-    yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
-  }
+  yield write(query);
 }
 
 function* onDecrement({ id, value, step, date }) {
   const values = [id, value - step, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
-  try {
-    const payload = yield call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
-  } catch (error) {
-    yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
-  }
+  yield write(query);
 }
 
 function* onUpdate({ id, date, fields }) {
@@ -60,33 +77,18 @@ function* onUpdate({ id, date, fields }) {
     .map((key, value) => `${key}=${value}`)
     .join(',');
   const query = `UPDATE ${TABLE_NAME} SET ${update} WHERE id=${id};`;
-  try {
-    const payload = yield call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
-  } catch (error) {
-    yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
-  }
+  yield write(query);
 }
 
 function* onCreate({ initialValue: { id, value, date } }) {
   const values = [id, value, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
-  try {
-    const payload = yield call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
-  } catch (error) {
-    yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
-  }
+  yield write(query);
 }
 
 function* onRemove({ id }) {
   const query = `DELETE FROM ${TABLE_NAME} WHERE id=${id}`;
-  try {
-    const payload = yield call(() => storage.executeSql(query));
-    yield put({ type: actionTypes.STATISTICS_WRITE_SUCCESS, payload });
-  } catch (error) {
-    yield put({ type: actionTypes.STATISTICS_WRITE_FAIL, error });
-  }
+  yield write(query);
 }
 
 function* onRead({ id, window: [start, end] }) {

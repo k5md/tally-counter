@@ -6,7 +6,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 const styles = StyleSheet.create({});
 
-export const Counter = ({ entry, increment, decrement, remove, update }) => {
+const Counter = ({ entry, increment, decrement, remove, update }) => {
   if (!entry) {
     return null;
   }
@@ -17,9 +17,11 @@ export const Counter = ({ entry, increment, decrement, remove, update }) => {
       width: 300,
       height: 400,
       cropping: false,
-    }).then(image => {
-      console.log(image);
-    });
+    })
+      .then(image => {
+        console.log(image);
+      })
+      .catch();
   };
 
   return (
@@ -28,15 +30,25 @@ export const Counter = ({ entry, increment, decrement, remove, update }) => {
       <IconButton icon="minus" onPress={() => decrement(id, value, step)} />
       <IconButton icon="plus" onPress={() => increment(id, value, step)} />
       <IconButton icon="delete" onPress={() => remove(id)} />
-      <TextInput label="Step" value={step} onChangeText={v => update(id, { step: Number(v) })} />
-      <TextInput label="Value" value={value} onChangeText={v => update(id, { value: Number(v) })} />
-      {/*<ColorPicker
+      <TextInput
+        label="Step"
+        value={String(step)}
+        onChangeText={v => update(id, { step: Number(v) })}
+      />
+      <TextInput
+        label="Value"
+        value={String(value)}
+        onChangeText={v => update(id, { value: Number(v) })}
+      />
+      <ColorPicker
         onColorSelected={v => update(id, { color: v })}
         style={{ flex: 0 }}
         hideSliders
         color={colorString}
-      />*/}
+      />
       <IconButton onPress={imagePickerHandler} icon="plus" />
     </View>
   );
 };
+
+export default Counter;

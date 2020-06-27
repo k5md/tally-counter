@@ -1,5 +1,13 @@
-export { CounterContainer } from './CounterContainer';
-export { CountersCollectionContainer } from './CountersCollectionContainer';
-export { CountersContainer } from './CountersContainer';
-export { StatisticsContainer } from './StatisticsContainer';
-export { EntryContainer } from './EntryContainer';
+import CounterContainer from './CounterContainer';
+import CountersCollectionContainer from './CountersCollectionContainer';
+import CountersContainer from './CountersContainer';
+import EntryContainer from './EntryContainer';
+import StatisticsContainer from './StatisticsContainer';
+
+export {
+  CounterContainer,
+  CountersCollectionContainer,
+  CountersContainer,
+  EntryContainer,
+  StatisticsContainer,
+};

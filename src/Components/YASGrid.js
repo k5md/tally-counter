@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class SortableGrid extends PureComponent {
+export class SortableGrid extends PureComponent {
   blockTransitionDuration = 300;
   activeBlockCenteringDuration = 200;
   itemsPerRow = 4;
@@ -270,4 +270,4 @@ class SortableGrid extends PureComponent {
   );
 }
 
-export { SortableGrid };
+export default SortableGrid;

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Modal as RNPModal, Portal } from 'react-native-paper';
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     left: '5%',
     right: '5%',
     height: '80%',
@@ -14,14 +14,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Modal = ({ visible, onClose, children }) => (
+const Modal = ({ visible, onDismiss, children }) => (
   <Portal>
-    <RNPModal
-      visible={visible}
-      onDismiss={onClose}
-      contentContainerStyle={styles.modalContainer}
-    >
+    <RNPModal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.container}>
       {children}
     </RNPModal>
   </Portal>
 );
+
+export default Modal;
