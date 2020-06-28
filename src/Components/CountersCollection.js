@@ -3,13 +3,22 @@ import { StyleSheet, View, Text } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SortableGrid } from './';
 import { EntryContainer } from '../Containers';
+import { color, fontSizes, fonts } from '../config/styles';
 
 const styles = StyleSheet.create({
   block: {
     flex: 1,
-    margin: 8,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  searchInput: {
+    backgroundColor: color.COLOR_SECONDARY,
+    color: color.COLOR_TERTIARY,
+  },
+  search: {
+    backgroundColor: color.COLOR_SECONDARY,
+    borderRadius: 0,
+    color: color.COLOR_TERTIARY,
   },
 });
 
@@ -37,11 +46,14 @@ class CountersCollection extends React.Component {
           placeholder="Search"
           onChangeText={value => this.setState(() => ({ searchQuery: value.toLowerCase() }))}
           value={searchQuery}
+          inputStyle={styles.searchInput}
+          style={styles.search}
+          iconColor={styles.search.color}
         />
         {displayType.name === 'grid' && (
           <SortableGrid
-            itemsPerRow={4}
-            blockHeight={100}
+            itemsPerRow={3}
+            blockHeight={150}
             itemOrder={order}
             onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
           >
@@ -62,7 +74,7 @@ class CountersCollection extends React.Component {
         {displayType.name === 'list' && (
           <SortableGrid
             itemsPerRow={1}
-            blockHeight={100}
+            blockHeight={120}
             itemOrder={order}
             onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
           >

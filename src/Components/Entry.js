@@ -1,21 +1,51 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { IconButton, Colors, Surface } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { IconButton, Colors, Surface, Text } from 'react-native-paper';
 import { CounterContainer } from '../Containers';
 import { Modal } from './';
+import { color, fontSizes, fonts } from '../config/styles';
 
 const styles = StyleSheet.create({
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    fontSize: fontSizes.FONT_SIZE_MINI,
+  },
   entry: {
-    marginTop: 16,
-    paddingVertical: 8,
-    borderWidth: 4,
-    borderColor: "#20232a",
-    borderRadius: 6,
-    backgroundColor: "#61dafb",
-    color: "#20232a",
-    textAlign: "center",
-    fontSize: 30,
-    fontWeight: "bold"
+    margin: 10,
+    shadowColor: color.COLOR_BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 3,
+    flex: 1,
+    alignItems: 'stretch',
+  },
+  entryTitle: {
+    fontFamily: fonts.FONT_MEDIUM,
+    fontSize: fontSizes.FONT_SIZE_MINI,
+    textAlign: 'center',
+    color: color.COLOR_TERTIARY,
+  },
+  counterControls: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  counterControlsText: {
+    fontSize: fontSizes.FONT_SIZE_SMALL,
+    color: color.COLOR_TERTIARY,
+  },
+  counterControl: {
+    flex: 0,
+  },
+  countersValue: {
+    flex: 0,
   },
 });
 
@@ -29,16 +59,42 @@ const Entry = props => {
   return (
     <>
       <Surface style={[style, styles.entry, { backgroundColor: colorString }]}>
-        <Text style={{ color: 'white', fontSize: 14 }}>{title}</Text>
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <IconButton icon="minus" onPress={() => decrement(id, value, step)} />
-          <Text>{value}</Text>
-          <IconButton icon="plus" onPress={() => increment(id, value, step)} />
+        <View style={styles.header}>
+          <IconButton
+            size={styles.header.fontSize}
+            color={styles.counterControlsText.color}
+            icon="dots-vertical"
+            onPress={() => setModalVisible(true)}
+          />
+        </View>
 
-          <IconButton icon="dots-vertical" onPress={() => setModalVisible(true)} />
+        <View style={styles.title}>
+          <Text style={styles.entryTitle}>{title}</Text>
+        </View>
+
+        <View style={styles.counterControls}>
+          <View style={style.counterControl}>
+            <IconButton
+              size={styles.counterControlsText.fontSize}
+              icon="minus"
+              color={styles.counterControlsText.color}
+              onPress={() => decrement(id, value, step)}
+            />
+          </View>
+          <View style={styles.countersValue}>
+            <Text style={styles.counterControlsText}>{value}</Text>
+          </View>
+          <View style={style.counterControl}>
+            <IconButton
+              size={styles.counterControlsText.fontSize}
+              color={styles.counterControlsText.color}
+              icon="plus"
+              onPress={() => increment(id, value, step)}
+            />
+          </View>
         </View>
       </Surface>
-      <Modal visible={modalVisible} onClose={() => setModalVisible(false)}>
+      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
         <CounterContainer id={id} />
       </Modal>
     </>

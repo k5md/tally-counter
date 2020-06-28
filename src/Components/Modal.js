@@ -4,13 +4,9 @@ import { Modal as RNPModal, Portal } from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
-    left: '5%',
-    right: '5%',
-    height: '80%',
-    width: '90%',
+
     display: 'flex',
-    backgroundColor: 'white',
-    position: 'absolute',
+
   },
 });
 

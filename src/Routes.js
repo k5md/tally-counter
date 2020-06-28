@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { BottomNavigation } from 'react-native-paper';
 import { CountersScreen, StatisticsScreen } from './Screens';
+import { color } from './config/styles';
+
+const styles = StyleSheet.create({
+  navigation: {
+    backgroundColor: color.COLOR_PRIMARY,
+  },
+});
 
 export const Routes = () => {
   const [index, setIndex] = useState(0);
@@ -19,6 +27,9 @@ export const Routes = () => {
       navigationState={navigationState}
       onIndexChange={setIndex}
       renderScene={renderScene}
+      barStyle={styles.navigation}
+      activeColor={color.COLOR_SECONDARY}
+      inactiveColor={color.COLOR_TERTIARY}
     />
   );
 };

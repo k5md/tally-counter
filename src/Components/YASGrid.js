@@ -80,7 +80,7 @@ export class SortableGrid extends PureComponent {
       const sortedOrder = sortBy(this.itemOrder, ({ key, order }) => order);
       const flattenedOrder = sortedOrder.map((item, index) => ({ ...item, order: index }));
       flattenedOrder.forEach(({ key, order }) => {
-        const x = (order * this.blockWidth) % (this.itemsPerRow * this.blockWidth);
+        const x = (order % this.itemsPerRow) * this.blockWidth;
         const y = Math.floor(order / this.itemsPerRow) * this.props.blockHeight;
         this.state.blockPositions[key].origin = { x, y };
         this._getBlock(key).currentPosition.setValue({ x, y });
@@ -218,7 +218,7 @@ export class SortableGrid extends PureComponent {
 
   _getBlockStyle = (key, blockHeight) => [
     {
-      width: this.state.blockWidth,
+      width: this.state.blockWidth - 1,
       height: blockHeight,
       justifyContent: 'center',
     },
