@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     fontSize: fontSizes.FONT_SIZE_MINI,
+    zIndex: 2,
   },
   entry: {
     margin: 10,
@@ -24,6 +25,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     flex: 1,
     alignItems: 'stretch',
+  },
+  title: {
+    flex: 1,
   },
   entryTitle: {
     fontFamily: fonts.FONT_MEDIUM,
@@ -40,12 +44,13 @@ const styles = StyleSheet.create({
   counterControlsText: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
     color: color.COLOR_TERTIARY,
+    textAlign: 'center',
   },
   counterControl: {
     flex: 0,
   },
   countersValue: {
-    flex: 0,
+    flex: 1,
   },
 });
 
@@ -69,7 +74,9 @@ const Entry = props => {
         </View>
 
         <View style={styles.title}>
-          <Text style={styles.entryTitle}>{title}</Text>
+          <Text ellipsizeMode="middle" numberOfLines={1} style={styles.entryTitle}>
+            {title}
+          </Text>
         </View>
 
         <View style={styles.counterControls}>
@@ -82,7 +89,9 @@ const Entry = props => {
             />
           </View>
           <View style={styles.countersValue}>
-            <Text style={styles.counterControlsText}>{value}</Text>
+            <Text ellipsizeMode="head" numberOfLines={1} style={styles.counterControlsText}>
+              {value}
+            </Text>
           </View>
           <View style={style.counterControl}>
             <IconButton
