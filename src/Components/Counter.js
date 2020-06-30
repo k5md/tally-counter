@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { IconButton, Button, TextInput, Surface } from 'react-native-paper';
 import { ColorPicker } from 'react-native-color-picker';
@@ -43,10 +43,15 @@ const Counter = ({ entry, increment, decrement, remove, update }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerIcon}>
-          <IconButton icon="counter" color={color.COLOR_SECONDARY} />
+        <IconButton icon="counter" color={color.COLOR_SECONDARY} />
       </View>
       <Surface style={styles.form}>
-        <TextInput label="Title" mode="outlined" value={title} onChangeText={v => update(id, { title: v })} />
+        <TextInput
+          label="Title"
+          mode="outlined"
+          value={title}
+          onChangeText={v => update(id, { title: v })}
+        />
         <IconButton icon="minus" onPress={() => decrement(id, value, step)} />
         <IconButton icon="plus" onPress={() => increment(id, value, step)} />
         <IconButton icon="delete" onPress={() => remove(id)} />

@@ -22,7 +22,7 @@ const handlers = {
     update(state, { data: { [id]: { value: { $apply: value => value - step } } } }),
 
   [types.COUNTER_UPDATE]: (state, { id, fields }) =>
-    update(state, { data: { [id]: { $merge: { fields } } } }),
+    update(state, { data: { [id]: { $merge: { ...fields } } } }),
 
   [types.COUNTER_REMOVE]: (state, { id }) =>
     update(state, { data: { $unset: [id] }, order: { $unset: [id] } }),
