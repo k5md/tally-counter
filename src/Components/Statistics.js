@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
 
 const Statistics = ({ read, stats, counters }) => {
   const now = new Date();
+  console.log('statistics rerender');
 
   const selectableFrames = [
     { title: '1d', window: [getPrevDay(now), now.getTime()] },
@@ -47,11 +48,11 @@ const Statistics = ({ read, stats, counters }) => {
   const selectableIds = Object.values(counters).map(({ id, title }) => ({ id, title }));
   const [selectedId, selectId] = useState(selectableIds[0]);
 
-
   useEffect(() => {
     read(selectedId.id, selectedFrame.window);
-  }, [read, selectedId, selectedFrame]);
+  }, [read, selectedId, selectedFrame, counters]);
 
+  console.log(stats);
   const formattedStats = stats.map(({ id, value, date }) => {
     const dateObject = new Date(date);
     return {
@@ -63,40 +64,36 @@ const Statistics = ({ read, stats, counters }) => {
     };
   });
 
-
-
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.controls}>
-          {selectableFrames.map(({ title }, frameIndex) => (
-            <Button
-              mode="contained"
-              onPress={() => selectFrame(selectableFrames[frameIndex])}
-              key={title}
-              style={styles.button}
-              labelStyle={
-                title === selectedFrame.title ? styles.buttonLabel : styles.buttonLabelActive
-              }
-            >
-              {title}
-            </Button>
-          ))}
-          <Picker
-            mode="dropdown"
-            selectedValue={selectedId}
-            style={{ flex: 1 }}
-            onValueChange={id => console.log(id) || selectId(id)}
+    <View style={styles.container}>
+      <View style={styles.controls}>
+        {selectableFrames.map(({ title }, frameIndex) => (
+          <Button
+            mode="contained"
+            onPress={() => selectFrame(selectableFrames[frameIndex])}
+            key={title}
+            style={styles.button}
+            labelStyle={
+              title === selectedFrame.title ? styles.buttonLabel : styles.buttonLabelActive
+            }
           >
-            {selectableIds.map(({ id, title }) => (
-              <Picker.Item label={title} value={id} key={id} />
-            ))}
-          </Picker>
-        </View>
-
-        <StatisticsTable style={styles.table} data={formattedStats} />
+            {title}
+          </Button>
+        ))}
+        <Picker
+          mode="dropdown"
+          selectedValue={selectedId}
+          style={{ flex: 1 }}
+          onValueChange={(id, index) => selectId(selectableIds[index])}
+        >
+          {selectableIds.map(({ id, title }) => (
+            <Picker.Item label={title} value={id} key={id} />
+          ))}
+        </Picker>
       </View>
-    </>
+
+      <StatisticsTable style={styles.table} data={formattedStats} />
+    </View>
   );
 };
 
