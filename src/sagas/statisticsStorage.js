@@ -5,7 +5,7 @@ const SQLite = require('react-native-sqlite-storage');
 const DB_NAME = 'tally_counter';
 const TABLE_NAME = 'statistics_counters';
 const FIELDS = [
-  ['id', 'INTEGER PRIMARY KEY'],
+  ['id', 'INTEGER'],
   ['value', 'INTEGER'],
   ['date', 'INTEGER'], // unix time
 ];
