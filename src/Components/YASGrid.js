@@ -77,11 +77,13 @@ export class SortableGrid extends PureComponent {
         this.gridHeight = this.rows * this.props.blockHeight;
       }
 
-      const sortedOrder = sortBy(this.itemOrder, ({ key, order }) => order);
-      const flattenedOrder = sortedOrder.map((item, index) => ({ ...item, order: index }));
-      flattenedOrder.forEach(({ key, order }) => {
-        const x = (order % this.itemsPerRow) * this.blockWidth;
-        const y = Math.floor(order / this.itemsPerRow) * this.props.blockHeight;
+      const filteredOrder = Object.values(this.itemOrder).filter(({ key }) =>
+        properties.children.find(child => child.key === key),
+      );
+      const sortedOrder = sortBy(filteredOrder, ({ key, order }) => order);
+      sortedOrder.forEach(({ key }, index) => {
+        const x = (index % this.itemsPerRow) * this.blockWidth;
+        const y = Math.floor(index / this.itemsPerRow) * this.props.blockHeight;
         this.state.blockPositions[key].origin = { x, y };
         this._getBlock(key).currentPosition.setValue({ x, y });
       });
@@ -243,34 +245,35 @@ export class SortableGrid extends PureComponent {
   render = () => {
     const items = sortBy(this.props.children, ({ key }) => this.props.itemOrder[key].order);
     return (
-    <ScrollView removeClippedSubviews scrollEnabled={false} canCancelContentTouches={false}>
-      <Animated.View style={this._getGridStyle()} onLayout={this.onLayout}>
-        {this.state.gridLayout &&
-          items.map(item => {
-            const key = item.key;
-            const { inactive } = item.props;
-            return (
-              <Animated.View
-                key={key}
-                style={this._getBlockStyle(key, this.props.blockHeight)}
-                onLayout={this.saveBlockPositions(key)}
-                {...this._panResponder.panHandlers}
-              >
-                <TouchableWithoutFeedback
-                  style={styles.container}
-                  delayLongPress={this.dragActivationTreshold}
-                  onLongPress={inactive || this.activateDrag(key)}
+      <ScrollView removeClippedSubviews scrollEnabled={false} canCancelContentTouches={false}>
+        <Animated.View style={this._getGridStyle()} onLayout={this.onLayout}>
+          {this.state.gridLayout &&
+            items.map(item => {
+              const key = item.key;
+              const { inactive } = item.props;
+              return (
+                <Animated.View
+                  key={key}
+                  style={this._getBlockStyle(key, this.props.blockHeight)}
+                  onLayout={this.saveBlockPositions(key)}
+                  {...this._panResponder.panHandlers}
                 >
-                  <View style={styles.itemImageContainer}>
-                    <View style={styles.container}>{item}</View>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Animated.View>
-            );
-          })}
-      </Animated.View>
-    </ScrollView>
-  );};
+                  <TouchableWithoutFeedback
+                    style={styles.container}
+                    delayLongPress={this.dragActivationTreshold}
+                    onLongPress={inactive || this.activateDrag(key)}
+                  >
+                    <View style={styles.itemImageContainer}>
+                      <View style={styles.container}>{item}</View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </Animated.View>
+              );
+            })}
+        </Animated.View>
+      </ScrollView>
+    );
+  };
 }
 
 export default SortableGrid;
