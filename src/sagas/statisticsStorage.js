@@ -5,7 +5,7 @@ const SQLite = require('react-native-sqlite-storage');
 const DB_NAME = 'tally_counter';
 const TABLE_NAME = 'statistics_counters';
 const FIELDS = [
-  ['id', 'TEXT'],
+  ['id', 'INTEGER PRIMARY KEY'],
   ['value', 'INTEGER'],
   ['date', 'INTEGER'], // unix time
 ];
@@ -80,10 +80,19 @@ function* onUpdate({ id, date, fields }) {
   yield write(query);
 }
 
-function* onCreate({ initialValue: { id, value, date } }) {
-  const values = [id, value, date].join(',');
-  const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
-  yield write(query);
+function* onCreate({ initialValue: { value = 0, date = Date.now() } }) {
+  const values = [value, date].join(',');
+  const query = `INSERT INTO ${TABLE_NAME} (value, date) VALUES (${values});`;
+
+  try {
+    const createdCounter = yield call(() => storage.executeSql(query));
+    yield put({
+      type: actionTypes.COUNTER_CREATE_SUCCESS,
+      payload: { id: createdCounter[0].insertId, value, date },
+    });
+  } catch (error) {
+    yield put({ type: actionTypes.COUNTER_CREATE_FAIL, error });
+  }
 }
 
 function* onRemove({ id }) {

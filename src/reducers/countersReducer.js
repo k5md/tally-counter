@@ -1,16 +1,25 @@
 import update from 'immutability-helper';
 import * as types from '../constants/actionTypes';
+import { randomRGB } from '../utils';
 
 const initialState = {
-  data: {}, // EXAMPLE: '0': { id: '0', title: 'Example', value: 0, step: 1, imageString: '', colorString: randomRGB(),
-  order: {}, // EXAMPLE: '0': { key: '0', order: 0 }
+  data: {}, // EXAMPLE: '0': { id: 0, title: 'Example', value: 0, step: 1, imageString: '', colorString: randomRGB(),
+  order: {}, // EXAMPLE: '0': { key: 0, order: 0 }
 };
 
 const handlers = {
-  [types.COUNTER_CREATE]: (state, { initialValue }) => {
-    const { id } = initialValue;
+  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, value, date } }) => {
+    const counter = {
+      id,
+      value,
+      date,
+      title: 'New counter',
+      step: 1,
+      imageString: null,
+      colorString: randomRGB(),
+    };
     return update(state, {
-      data: { [id]: { $set: initialValue } },
+      data: { [id]: { $set: counter } },
       order: { $merge: { [id]: { key: id, order: Object.keys(state.order).length } } },
     });
   },
