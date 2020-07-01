@@ -50,48 +50,25 @@ class CountersCollection extends React.Component {
           style={styles.search}
           iconColor={styles.search.color}
         />
-        {displayType.name === 'grid' && (
-          <SortableGrid
-            itemsPerRow={3}
-            blockHeight={150}
-            itemOrder={order}
-            onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
-          >
-            {filtered.map(entry => {
-              const { id } = entry;
-              return (
-                <EntryContainer
-                  key={id}
-                  id={id}
-                  entry={entry}
-                  style={styles.block}
-                  inactive={!sortable}
-                />
-              );
-            })}
-          </SortableGrid>
-        )}
-        {displayType.name === 'list' && (
-          <SortableGrid
-            itemsPerRow={1}
-            blockHeight={120}
-            itemOrder={order}
-            onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
-          >
-            {filtered.map(entry => {
-              const { id } = entry;
-              return (
-                <EntryContainer
-                  key={id}
-                  id={id}
-                  entry={entry}
-                  style={styles.block}
-                  inactive={!sortable}
-                />
-              );
-            })}
-          </SortableGrid>
-        )}
+        <SortableGrid
+          itemsPerRow={displayType.name === 'grid' ? 3 : 1}
+          blockHeight={displayType.name === 'grid' ? 150 : 120}
+          itemOrder={order}
+          onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
+        >
+          {filtered.map(entry => {
+            const { id } = entry;
+            return (
+              <EntryContainer
+                key={id}
+                id={id}
+                entry={entry}
+                style={styles.block}
+                inactive={!sortable}
+              />
+            );
+          })}
+        </SortableGrid>
       </>
     );
   }
