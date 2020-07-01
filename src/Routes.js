@@ -5,7 +5,7 @@ import { CountersScreen, StatisticsScreen } from './Screens';
 import { color } from './config/styles';
 
 const styles = StyleSheet.create({
-  navigation: {
+  navigationBar: {
     backgroundColor: color.COLOR_PRIMARY,
   },
 });
@@ -27,7 +27,7 @@ export const Routes = () => {
       navigationState={navigationState}
       onIndexChange={setIndex}
       renderScene={renderScene}
-      barStyle={styles.navigation}
+      barStyle={styles.navigationBar}
       activeColor={color.COLOR_SECONDARY}
       inactiveColor={color.COLOR_TERTIARY}
     />

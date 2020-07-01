@@ -240,12 +240,15 @@ export class SortableGrid extends PureComponent {
     }
   };
 
-  render = () => (
+  render = () => {
+    const items = sortBy(this.props.children, ({ key }) => this.props.itemOrder[key].order);
+    return (
     <ScrollView removeClippedSubviews scrollEnabled={false} canCancelContentTouches={false}>
       <Animated.View style={this._getGridStyle()} onLayout={this.onLayout}>
         {this.state.gridLayout &&
-          sortBy(this.props.children, ({ key }) => this.props.itemOrder[key].order).map(item => {
+          items.map(item => {
             const key = item.key;
+            const { inactive } = item.props;
             return (
               <Animated.View
                 key={key}
@@ -256,7 +259,7 @@ export class SortableGrid extends PureComponent {
                 <TouchableWithoutFeedback
                   style={styles.container}
                   delayLongPress={this.dragActivationTreshold}
-                  onLongPress={this.activateDrag(key)}
+                  onLongPress={inactive || this.activateDrag(key)}
                 >
                   <View style={styles.itemImageContainer}>
                     <View style={styles.container}>{item}</View>
@@ -267,7 +270,7 @@ export class SortableGrid extends PureComponent {
           })}
       </Animated.View>
     </ScrollView>
-  );
+  );};
 }
 
 export default SortableGrid;

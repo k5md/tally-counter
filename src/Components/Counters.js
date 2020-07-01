@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { CountersCollectionContainer } from '../Containers';
 import { color } from '../config/styles';
+import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
   container: {

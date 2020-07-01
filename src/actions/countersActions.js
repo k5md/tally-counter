@@ -25,7 +25,7 @@ export const create = initialValue => {
     title: 'New counter',
     step: 1,
     value: 0,
-    imageString: '',
+    imageString: null,
     colorString: randomRGB(),
     date: Date.now(),
   };

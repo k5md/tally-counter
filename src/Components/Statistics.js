@@ -74,6 +74,7 @@ const Statistics = ({ read, stats, counters }) => {
         {selectableFrames.map(({ title }, frameIndex) => (
           <Button
             mode="contained"
+            disabled={title === selectedFrame.title}
             onPress={() => selectFrame(selectableFrames[frameIndex])}
             key={title}
             style={styles.button}

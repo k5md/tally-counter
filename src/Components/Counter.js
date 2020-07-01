@@ -41,6 +41,7 @@ const Counter = ({ entry, increment, decrement, remove, update }) => {
   if (!entry) {
     return null;
   }
+  console.log(entry);
   const { id, title, value, step, colorString, imageString } = entry;
 
   const imagePickerHandler = () => {
