@@ -1,9 +1,10 @@
 /* eslint-disable eqeqeq */
-import React, { PureComponent, Component } from 'react';
+import React, { Component } from 'react';
 import { Animated, TouchableWithoutFeedback, PanResponder, View, ScrollView } from 'react-native';
-import { sortBy, cloneDeep, noop, merge } from 'lodash';
-import styles from './styles';
+import { sortBy, cloneDeep, noop } from 'lodash';
+import { styles } from './styles';
 import { animateTiming } from './utils';
+import { SortableGridDefaultProps, SortableGridPropTypes } from './types';
 
 export class SortableGrid extends Component {
   itemOrder = {};
@@ -28,14 +29,14 @@ export class SortableGrid extends Component {
   }
 
   UNSAFE_componentWillUpdate = ({ itemOrder, children, itemsPerRow, blockHeight }) => {
-    console.log('will update');
-    this.itemOrder = cloneDeep(itemOrder);
+    this.itemOrder = itemOrder.reduce((acc, key, order) => ({ ...acc, [key]: { key, order } }), {});
+    console.log(this.itemOrder);
     this.gridHeight = blockHeight * Math.ceil(children.length / itemsPerRow);
 
     const oldBlockPositions = Object.keys(this.blockPositions);
-    oldBlockPositions.forEach(key => {
-      !children.find(child => child.key == key) && delete this.blockPositions[key];
-    });
+    oldBlockPositions.forEach(
+      key => !children.find(child => child.key == key) && delete this.blockPositions[key],
+    );
 
     const filteredOrder = Object.values(this.itemOrder).filter(({ key }) =>
       children.find(child => child.key == key),
@@ -46,7 +47,6 @@ export class SortableGrid extends Component {
       const x = (index % itemsPerRow) * this.blockWidth;
       const y = Math.floor(index / itemsPerRow) * blockHeight;
 
-      //console.log(this.blockPositions[key]);
       if (!this.blockPositions[key]) {
         this.blockPositions[key] = {
           currentPosition: new Animated.ValueXY({ x, y }),
@@ -57,7 +57,6 @@ export class SortableGrid extends Component {
         this.getBlock(key).currentPosition.setValue({ x, y });
       }
     });
-    // this.forceUpdate();
   };
 
   onGrantBlock = (evt, gestureState) => {
@@ -72,42 +71,39 @@ export class SortableGrid extends Component {
     });
   };
 
-  onMoveBlock = (evt, { moveX, moveY }) => {
-    this.dragPosition = { x: moveX, y: moveY };
-    this.getActiveBlock().currentPosition.setValue(this.dragPosition);
+  onMoveBlock = (evt, gestureState) => {
+    this.dragPosition = { x: gestureState.moveX, y: gestureState.moveY };
+    const activeBlock = this.getActiveBlock();
+    activeBlock.currentPosition.setValue(this.dragPosition);
 
-    const originalPosition = this.getActiveBlock().origin;
-    const distanceToOrigin = this.getDistanceTo(originalPosition);
+    const originalPosition = activeBlock.origin;
 
     let closest = this.activeBlock;
-    let closestDistance = distanceToOrigin;
+    let closestDistance = this.getDistanceTo(originalPosition);
     for (let key in this.blockPositions) {
       const block = this.blockPositions[key];
-      if (key !== this.activeBlock && block.origin) {
-        const blockPosition = block.origin;
-        const distance = this.getDistanceTo(blockPosition);
-
-        if (distance < closestDistance && distance < this.blockWidth) {
-          closest = key;
-          closestDistance = distance;
-        }
+      const blockPosition = block.origin;
+      const distance = this.getDistanceTo(blockPosition);
+      if (distance < closestDistance && distance < this.blockWidth) {
+        closest = key;
+        closestDistance = distance;
       }
     }
 
-    if (closest !== this.activeBlock) {
-      const activeBlock = this.getActiveBlock();
-      const closestBlock = this.getBlock(closest);
-      animateTiming(closestBlock.currentPosition, activeBlock.origin);
-
-      //swap block positions
-      activeBlock.origin = closestBlock.origin;
-      closestBlock.origin = originalPosition;
-
-      //swap item orders
-      const tempOrder = this.itemOrder[this.activeBlock].order;
-      this.itemOrder[this.activeBlock].order = this.itemOrder[closest].order;
-      this.itemOrder[closest].order = tempOrder;
+    if (closest == this.activeBlock) {
+      return;
     }
+
+    //swap block positions
+    const closestBlock = this.getBlock(closest);
+    animateTiming(closestBlock.currentPosition, activeBlock.origin);
+    activeBlock.origin = closestBlock.origin;
+    closestBlock.origin = originalPosition;
+
+    //swap item orders
+    const tempOrder = this.itemOrder[this.activeBlock].order;
+    this.itemOrder[this.activeBlock].order = this.itemOrder[closest].order;
+    this.itemOrder[closest].order = tempOrder;
   };
 
   onReleaseBlock = () => {
@@ -119,9 +115,9 @@ export class SortableGrid extends Component {
 
   deactivateDrag = () => {
     this.panCapture = false;
-    this.props.onDragRelease({ itemOrder: this.itemOrder });
+    this.props.onDragRelease({ itemOrder: sortBy(Object.values(this.itemOrder), item => item.order).map(item => item.key) });
     this.activeBlock = null;
-    this.forceUpdate();
+    //this.forceUpdate();
   };
 
   activateDrag = key => () => {
@@ -129,8 +125,6 @@ export class SortableGrid extends Component {
     this.activeBlock = key;
     this.forceUpdate();
   };
-
-  // Helpers & other boring stuff
 
   getActiveBlock = () => this.blockPositions[this.activeBlock];
 
@@ -145,12 +139,9 @@ export class SortableGrid extends Component {
   };
 
   onGridLayout = ({ nativeEvent }) => {
-    console.log('grid layout');
     this.blockWidth = nativeEvent.layout.width / this.props.itemsPerRow;
     this.forceUpdate();
   };
-
-  // Style getters
 
   getGridStyle = () => ({ ...styles.sortableGrid, height: this.gridHeight });
 
@@ -191,5 +182,8 @@ export class SortableGrid extends Component {
     </ScrollView>
   );
 }
+
+SortableGrid.propTypes = SortableGridPropTypes;
+SortableGrid.defaultProps = SortableGridDefaultProps;
 
 export default SortableGrid;

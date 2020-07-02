@@ -1,9 +1,3 @@
-import { SortableGridType, SortableGridDefaults } from './types';
-import SortableGrid from './YASGrid';
-
-export { SortableGrid };
-
-SortableGrid.propTypes = SortableGridType;
-SortableGrid.defaultProps = SortableGridDefaults;
+import SortableGrid from './YASG';
 
 export default SortableGrid;

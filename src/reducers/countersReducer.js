@@ -5,7 +5,7 @@ import { randomRGB } from '../utils';
 
 const initialState = {
   data: {}, // EXAMPLE: '0': { id: 0, title: 'Example', value: 0, step: 1, imageString: '', colorString: randomRGB(),
-  order: {}, // EXAMPLE: '0': { key: 0, order: 0 }
+  order: [], // EXAMPLE: [0, 1] - array of data ids
 };
 
 const handlers = {
@@ -19,10 +19,7 @@ const handlers = {
       imageString: null,
       colorString: randomRGB(),
     };
-    return update(state, {
-      data: { [id]: { $set: counter } },
-      order: { $merge: { [id]: { key: id, order: Object.keys(state.order).length } } },
-    });
+    return update(state, { data: { [id]: { $set: counter } }, order: { $push: [id] } });
   },
 
   [types.COUNTER_INCREMENT]: (state, { id, step }) =>

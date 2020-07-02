@@ -1,6 +1,6 @@
 import { shape, number, string, objectOf, oneOfType, arrayOf, func } from 'prop-types';
 
-export const SortableGridType = shape({
+export const SortableGridPropTypes = shape({
   blockTransitionDuration: number,
   activeBlockCenteringDuration: number,
   itemsPerRow: number,
@@ -20,7 +20,7 @@ export const SortableGridType = shape({
   blockHeight: number,
 });
 
-export const SortableGridDefaults = {
+export const SortableGridDefaultProps = {
   blockTransitionDuration: 300,
   activeBlockCenteringDuration: 200,
   itemsPerRow: 4,
