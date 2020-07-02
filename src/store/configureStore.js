@@ -11,21 +11,21 @@ import rootSaga from '../sagas';
 const config = {
   key: 'not-root', // refer to redux-persist issue on rp converting arrays in root storage to plain objects
   storage: AsyncStorage,
-  debug: __DEV__,
+  debug: !__DEV__,
 };
 
 const sagaMiddleware = createSagaMiddleware(rootSaga);
 const middleware = [sagaMiddleware];
 
 if (__DEV__) {
-  middleware.push(createLogger());
+  // middleware.push(createLogger());
 }
 
 const reducers = persistCombineReducers(config, rootReducers);
 const enhancers = [applyMiddleware(...middleware)];
 const persistConfig = { enhancers };
 
-export const store = createStore(reducers, undefined, compose(...enhancers));
+const store = createStore(reducers, undefined, compose(...enhancers));
 const persistor = persistStore(store, persistConfig, () => {});
 const configureStore = () => ({ persistor, store });
 

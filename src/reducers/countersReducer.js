@@ -1,4 +1,5 @@
 import update from 'immutability-helper';
+import { uniqueId } from 'lodash';
 import * as types from '../constants/actionTypes';
 import { randomRGB } from '../utils';
 
@@ -13,7 +14,7 @@ const handlers = {
       id,
       value,
       date,
-      title: 'New counter',
+      title: uniqueId(),
       step: 1,
       imageString: null,
       colorString: randomRGB(),

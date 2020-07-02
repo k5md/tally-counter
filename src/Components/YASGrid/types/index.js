@@ -10,10 +10,10 @@ export const SortableGridType = shape({
       key: oneOfType([number, string]),
       order: number,
     }),
-  ).isRequired,
+  ),
   children: arrayOf(
     shape({
-      key: string.isRequired,
+      key: string,
     }),
   ),
   onDragRelease: func,
