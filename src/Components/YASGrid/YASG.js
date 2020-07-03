@@ -1,17 +1,18 @@
 /* eslint-disable eqeqeq */
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { Animated, TouchableWithoutFeedback, PanResponder, View, ScrollView } from 'react-native';
-import { sortBy, cloneDeep, noop } from 'lodash';
+import { sortBy, cloneDeep, omit, noop } from 'lodash';
 import { styles } from './styles';
 import { animateTiming } from './utils';
 import { SortableGridDefaultProps, SortableGridPropTypes } from './types';
 
-export class SortableGrid extends Component {
+export class SortableGrid extends PureComponent {
   itemOrder = {};
   blockPositions = {};
   activeBlock = null;
   blockPositionsSetCount = 0;
   gridHeight = 0;
+  blockWidth = 0;
   dragPosition = null;
   activeBlockOffset = null;
   panCapture = false;
@@ -28,22 +29,19 @@ export class SortableGrid extends Component {
     super();
   }
 
-  UNSAFE_componentWillUpdate = ({ itemOrder, children, itemsPerRow, blockHeight }) => {
-    this.itemOrder = itemOrder.reduce((acc, key, order) => ({ ...acc, [key]: { key, order } }), {});
-    console.log(this.itemOrder);
+  UNSAFE_componentWillUpdate = (nextProps, nextState) => {
+    const { itemOrder, children, itemsPerRow, blockHeight } = nextProps;
     this.gridHeight = blockHeight * Math.ceil(children.length / itemsPerRow);
+    this.blockWidth = (this.blockWidth * this.props.itemsPerRow) / itemsPerRow;
 
     const oldBlockPositions = Object.keys(this.blockPositions);
     oldBlockPositions.forEach(
       key => !children.find(child => child.key == key) && delete this.blockPositions[key],
     );
 
-    const filteredOrder = Object.values(this.itemOrder).filter(({ key }) =>
-      children.find(child => child.key == key),
-    );
-    const sortedOrder = sortBy(filteredOrder, ({ order }) => order);
-
-    sortedOrder.forEach(({ key }, index) => {
+    this.itemOrder = {};
+    itemOrder.forEach((key, index) => {
+      this.itemOrder[key] = { key, order: index };
       const x = (index % itemsPerRow) * this.blockWidth;
       const y = Math.floor(index / itemsPerRow) * blockHeight;
 
@@ -115,9 +113,11 @@ export class SortableGrid extends Component {
 
   deactivateDrag = () => {
     this.panCapture = false;
-    this.props.onDragRelease({ itemOrder: sortBy(Object.values(this.itemOrder), item => item.order).map(item => item.key) });
+    this.props.onDragRelease({
+      itemOrder: sortBy(Object.values(this.itemOrder), item => item.order).map(item => item.key),
+    });
     this.activeBlock = null;
-    //this.forceUpdate();
+    this.forceUpdate();
   };
 
   activateDrag = key => () => {
@@ -130,7 +130,7 @@ export class SortableGrid extends Component {
 
   getBlock = key => this.blockPositions[key];
 
-  blockPositionsSet = () => Object.keys(this.blockPositions).length === this.props.children.length;
+  blockPositionsSet = () => Object.keys(this.blockPositions).length == this.props.children.length;
 
   getDistanceTo = point => {
     const xDistance = this.dragPosition.x + this.activeBlockOffset.x - point.x;
@@ -143,18 +143,23 @@ export class SortableGrid extends Component {
     this.forceUpdate();
   };
 
-  getGridStyle = () => ({ ...styles.sortableGrid, height: this.gridHeight });
+  getGridStyle = () => [
+    styles.sortableGrid,
+    this.blockPositionsSet() && { height: this.gridHeight },
+  ];
 
-  getBlockStyle = key => ({
-    width: this.blockWidth,
-    height: this.props.blockHeight,
-    justifyContent: 'center',
-    position: 'absolute',
-    transform: this.blockPositionsSet()
-      ? this.getBlock(key).currentPosition.getTranslateTransform()
-      : [],
-    zIndex: this.activeBlock == key ? 1 : 0,
-  });
+  getBlockStyle = key => [
+    {
+      width: this.blockWidth,
+      height: this.props.blockHeight,
+      justifyContent: 'center',
+    },
+    this.blockPositionsSet() && {
+      position: 'absolute',
+      transform: this.getBlock(key).currentPosition.getTranslateTransform(),
+    },
+    this.activeBlock == key && { zIndex: 1 },
+  ];
 
   renderEntry = item => (
     <Animated.View

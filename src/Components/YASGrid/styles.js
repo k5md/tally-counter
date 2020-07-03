@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
   sortableGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: 'green',
   },
   itemImageContainer: {
     flex: 1,
