@@ -1,16 +1,11 @@
 import { shape, number, string, objectOf, oneOfType, arrayOf, func } from 'prop-types';
 
-export const SortableGridPropTypes = shape({
+export const SortableGridPropTypes = {
   blockTransitionDuration: number,
   activeBlockCenteringDuration: number,
   itemsPerRow: number,
   dragActivationTreshold: number,
-  itemOrder: objectOf(
-    shape({
-      key: oneOfType([number, string]),
-      order: number,
-    }),
-  ),
+  itemOrder: arrayOf(number),
   children: arrayOf(
     shape({
       key: string,
@@ -18,7 +13,7 @@ export const SortableGridPropTypes = shape({
   ),
   onDragRelease: func,
   blockHeight: number,
-});
+};
 
 export const SortableGridDefaultProps = {
   blockTransitionDuration: 300,

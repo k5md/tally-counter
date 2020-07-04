@@ -1,12 +1,12 @@
 /* eslint-disable eqeqeq */
 import React, { Component, PureComponent } from 'react';
 import { Animated, TouchableWithoutFeedback, PanResponder, View, ScrollView } from 'react-native';
-import { sortBy, cloneDeep, omit, noop } from 'lodash';
+import { sortBy, noop, cloneDeep } from 'lodash';
 import { styles } from './styles';
 import { animateTiming } from './utils';
 import { SortableGridDefaultProps, SortableGridPropTypes } from './types';
 
-export class SortableGrid extends PureComponent {
+export class SortableGrid extends Component {
   itemOrder = {};
   blockPositions = {};
   activeBlock = null;
@@ -24,6 +24,10 @@ export class SortableGrid extends PureComponent {
     onPanResponderMove: (evt, gestureState) => this.onMoveBlock(evt, gestureState),
     onPanResponderRelease: (evt, gestureState) => this.onReleaseBlock(evt, gestureState),
   });
+  scrollView = React.createRef();
+  containerHeight = 0;
+  scrollOffset = { x: 0, y: 0 };
+  shouldScrollInterval = null;
 
   constructor() {
     super();
@@ -60,28 +64,65 @@ export class SortableGrid extends PureComponent {
   onGrantBlock = (evt, gestureState) => {
     const activeBlockPosition = this.getActiveBlock().origin;
     const x = activeBlockPosition.x - gestureState.x0;
-    const y = activeBlockPosition.y - gestureState.y0;
+    const y = activeBlockPosition.y - gestureState.y0 - this.scrollOffset.y;
     this.activeBlockOffset = { x, y };
-    this.getActiveBlock().currentPosition.setOffset({ x, y });
-    this.getActiveBlock().currentPosition.setValue({
-      x: gestureState.moveX,
-      y: gestureState.moveY,
-    });
+    console.log(x, y, this.scrollOffset.y);
   };
 
   onMoveBlock = (evt, gestureState) => {
-    this.dragPosition = { x: gestureState.moveX, y: gestureState.moveY };
+    const dragPosition = { x: gestureState.moveX + this.activeBlockOffset.x, y: gestureState.moveY + this.activeBlockOffset.y};
     const activeBlock = this.getActiveBlock();
-    activeBlock.currentPosition.setValue(this.dragPosition);
-
     const originalPosition = activeBlock.origin;
+    //scroll part
+    const scrollThreshold = this.props.blockHeight / 5;
+    const scrollUp = dragPosition.y < scrollThreshold;
+    const scrollDown = dragPosition.y > this.containerHeight - scrollThreshold;
+    const scrollBy = (scrollUp * -1 + scrollDown * 1) * scrollThreshold;
 
+    if (this.scrolling) {
+      if (scrollUp || scrollDown) {
+        //console.log('scroll', dragPosition);
+        this.scrollView.current.scrollTo({ y: this.scrollOffset.y + scrollBy });
+        this.moveBlock(originalPosition, {
+          x: dragPosition.x,
+          y: dragPosition.y + this.scrollOffset.y,
+        });
+        activeBlock.currentPosition.setValue({
+          x: dragPosition.x,
+          y: dragPosition.y + this.scrollOffset.y,
+        });
+      } else {
+        this.scrolling = false;
+        //console.log('scroll => no scroll', dragPosition);
+      }
+    } else {
+      if (scrollUp || scrollDown) {
+        this.scrolling = true;
+        //console.log('no scroll => scroll');
+      } else {
+        //console.log('no scroll', dragPosition);
+        activeBlock.currentPosition.setValue({
+          x: dragPosition.x,
+          y: dragPosition.y + this.scrollOffset.y,
+        });
+        this.moveBlock(originalPosition, {
+          x: dragPosition.x,
+          y: dragPosition.y + this.scrollOffset.y,
+        });
+      }
+    }
+    //scroll part
+  };
+
+  moveBlock = (originalPosition, currentPosition) => {
+    const activeBlock = this.getActiveBlock();
     let closest = this.activeBlock;
-    let closestDistance = this.getDistanceTo(originalPosition);
+    let closestDistance = this.getDistanceTo(currentPosition, originalPosition);
+
     for (let key in this.blockPositions) {
       const block = this.blockPositions[key];
       const blockPosition = block.origin;
-      const distance = this.getDistanceTo(blockPosition);
+      const distance = this.getDistanceTo(currentPosition, blockPosition);
       if (distance < closestDistance && distance < this.blockWidth) {
         closest = key;
         closestDistance = distance;
@@ -106,7 +147,7 @@ export class SortableGrid extends PureComponent {
 
   onReleaseBlock = () => {
     const activeBlock = this.getActiveBlock();
-    activeBlock.currentPosition.flattenOffset();
+    // activeBlock.currentPosition.flattenOffset();
     animateTiming(activeBlock.currentPosition, activeBlock.origin);
     this.deactivateDrag();
   };
@@ -132,15 +173,23 @@ export class SortableGrid extends PureComponent {
 
   blockPositionsSet = () => Object.keys(this.blockPositions).length == this.props.children.length;
 
-  getDistanceTo = point => {
-    const xDistance = this.dragPosition.x + this.activeBlockOffset.x - point.x;
-    const yDistance = this.dragPosition.y + this.activeBlockOffset.y - point.y;
+  getDistanceTo = (pointA, pointB) => {
+    const xDistance = pointA.x - pointB.x;
+    const yDistance = pointA.y - pointB.y;
     return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
   };
 
   onGridLayout = ({ nativeEvent }) => {
     this.blockWidth = nativeEvent.layout.width / this.props.itemsPerRow;
     this.forceUpdate();
+  };
+
+  onScrollLayout = ({ nativeEvent }) => {
+    this.containerHeight = nativeEvent.layout.height;
+  };
+
+  onScroll = ({ nativeEvent }) => {
+    this.scrollOffset = nativeEvent.contentOffset;
   };
 
   getGridStyle = () => [
@@ -170,6 +219,7 @@ export class SortableGrid extends PureComponent {
       <TouchableWithoutFeedback
         style={styles.container}
         delayLongPress={this.props.dragActivationTreshold}
+        onPress={() => console.log(this.blockPositions[item.key])}
         onLongPress={item.inactive ? noop : this.activateDrag(item.key)}
       >
         <View style={styles.itemImageContainer}>
@@ -180,7 +230,14 @@ export class SortableGrid extends PureComponent {
   );
 
   render = () => (
-    <ScrollView removeClippedSubviews scrollEnabled={false} canCancelContentTouches={false}>
+    <ScrollView
+      removeClippedSubviews
+      scrollEnabled={false}
+      ref={this.scrollView}
+      onLayout={this.onScrollLayout}
+      onScroll={this.onScroll}
+      scrollEventThrottle={0}
+    >
       <Animated.View style={this.getGridStyle()} onLayout={this.onGridLayout}>
         {this.props.children.map(this.renderEntry)}
       </Animated.View>
