@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Animated, TouchableWithoutFeedback, PanResponder, View, ScrollView } from 'react-native';
-import { sortBy, noop, cloneDeep } from 'lodash';
+import { sortBy, noop } from 'lodash';
 import { styles } from './styles';
 import { animateTiming } from './utils';
 import { SortableGridDefaultProps, SortableGridPropTypes } from './types';
@@ -10,11 +10,8 @@ export class SortableGrid extends Component {
   itemOrder = {};
   blockPositions = {};
   activeBlock = null;
-  blockPositionsSetCount = 0;
   gridHeight = 0;
   blockWidth = 0;
-  dragPosition = null;
-  activeBlockOffset = null;
   panCapture = false;
   panResponder = PanResponder.create({
     onStartShouldSetPanResponderCapture: () => false,
@@ -24,10 +21,13 @@ export class SortableGrid extends Component {
     onPanResponderMove: (evt, gestureState) => this.onMoveBlock(evt, gestureState),
     onPanResponderRelease: (evt, gestureState) => this.onReleaseBlock(evt, gestureState),
   });
+
+  // scrollable properties
+  activeBlockOffset = null;
   scrollView = React.createRef();
   containerHeight = 0;
   scrollOffset = { x: 0, y: 0 };
-  shouldScrollInterval = null;
+  keepScrolling = null;
 
   constructor() {
     super();
@@ -66,11 +66,13 @@ export class SortableGrid extends Component {
     const x = activeBlockPosition.x - gestureState.x0;
     const y = activeBlockPosition.y - gestureState.y0 - this.scrollOffset.y;
     this.activeBlockOffset = { x, y };
-    console.log(x, y, this.scrollOffset.y);
   };
 
   onMoveBlock = (evt, gestureState) => {
-    const dragPosition = { x: gestureState.moveX + this.activeBlockOffset.x, y: gestureState.moveY + this.activeBlockOffset.y};
+    const dragPosition = {
+      x: gestureState.moveX + this.activeBlockOffset.x,
+      y: gestureState.moveY + this.activeBlockOffset.y,
+    };
     const activeBlock = this.getActiveBlock();
     const originalPosition = activeBlock.origin;
     //scroll part
@@ -79,37 +81,21 @@ export class SortableGrid extends Component {
     const scrollDown = dragPosition.y > this.containerHeight - scrollThreshold;
     const scrollBy = (scrollUp * -1 + scrollDown * 1) * scrollThreshold;
 
-    if (this.scrolling) {
-      if (scrollUp || scrollDown) {
-        //console.log('scroll', dragPosition);
-        this.scrollView.current.scrollTo({ y: this.scrollOffset.y + scrollBy });
-        this.moveBlock(originalPosition, {
-          x: dragPosition.x,
-          y: dragPosition.y + this.scrollOffset.y,
-        });
-        activeBlock.currentPosition.setValue({
-          x: dragPosition.x,
-          y: dragPosition.y + this.scrollOffset.y,
-        });
-      } else {
-        this.scrolling = false;
-        //console.log('scroll => no scroll', dragPosition);
+    if (scrollUp || scrollDown) {
+      if (!this.keepScrolling) {
+        this.keepScrolling = setInterval(() => {
+          this.scrollView.current.scrollTo({ y: this.scrollOffset.y + scrollBy });
+          const dragPositionWithScroll = { x: dragPosition.x, y: dragPosition.y + this.scrollOffset.y };
+          //activeBlock.currentPosition.setValue(dragPositionWithScroll);
+          animateTiming(activeBlock.currentPosition, dragPositionWithScroll);
+          this.moveBlock(originalPosition, dragPositionWithScroll);
+        }, 100);
       }
     } else {
-      if (scrollUp || scrollDown) {
-        this.scrolling = true;
-        //console.log('no scroll => scroll');
-      } else {
-        //console.log('no scroll', dragPosition);
-        activeBlock.currentPosition.setValue({
-          x: dragPosition.x,
-          y: dragPosition.y + this.scrollOffset.y,
-        });
-        this.moveBlock(originalPosition, {
-          x: dragPosition.x,
-          y: dragPosition.y + this.scrollOffset.y,
-        });
-      }
+      this.keepScrolling = clearInterval(this.keepScrolling);
+      const dragPositionWithScroll = { x: dragPosition.x, y: dragPosition.y + this.scrollOffset.y };
+      activeBlock.currentPosition.setValue(dragPositionWithScroll);
+      this.moveBlock(originalPosition, dragPositionWithScroll);
     }
     //scroll part
   };
@@ -119,6 +105,7 @@ export class SortableGrid extends Component {
     let closest = this.activeBlock;
     let closestDistance = this.getDistanceTo(currentPosition, originalPosition);
 
+    // find closest block
     for (let key in this.blockPositions) {
       const block = this.blockPositions[key];
       const blockPosition = block.origin;
@@ -146,17 +133,16 @@ export class SortableGrid extends Component {
   };
 
   onReleaseBlock = () => {
+    this.keepScrolling = clearInterval(this.keepScrolling);
     const activeBlock = this.getActiveBlock();
-    // activeBlock.currentPosition.flattenOffset();
     animateTiming(activeBlock.currentPosition, activeBlock.origin);
     this.deactivateDrag();
   };
 
   deactivateDrag = () => {
+    const itemOrder = sortBy(this.itemOrder, item => item.order).map(item => item.key);
     this.panCapture = false;
-    this.props.onDragRelease({
-      itemOrder: sortBy(Object.values(this.itemOrder), item => item.order).map(item => item.key),
-    });
+    this.props.onDragRelease({ itemOrder });
     this.activeBlock = null;
     this.forceUpdate();
   };
@@ -184,14 +170,6 @@ export class SortableGrid extends Component {
     this.forceUpdate();
   };
 
-  onScrollLayout = ({ nativeEvent }) => {
-    this.containerHeight = nativeEvent.layout.height;
-  };
-
-  onScroll = ({ nativeEvent }) => {
-    this.scrollOffset = nativeEvent.contentOffset;
-  };
-
   getGridStyle = () => [
     styles.sortableGrid,
     this.blockPositionsSet() && { height: this.gridHeight },
@@ -209,6 +187,14 @@ export class SortableGrid extends Component {
     },
     this.activeBlock == key && { zIndex: 1 },
   ];
+
+  onScrollLayout = ({ nativeEvent }) => {
+    this.containerHeight = nativeEvent.layout.height;
+  };
+
+  onScroll = ({ nativeEvent }) => {
+    this.scrollOffset = nativeEvent.contentOffset;
+  };
 
   renderEntry = item => (
     <Animated.View
@@ -231,12 +217,10 @@ export class SortableGrid extends Component {
 
   render = () => (
     <ScrollView
-      removeClippedSubviews
       scrollEnabled={false}
       ref={this.scrollView}
       onLayout={this.onScrollLayout}
       onScroll={this.onScroll}
-      scrollEventThrottle={0}
     >
       <Animated.View style={this.getGridStyle()} onLayout={this.onGridLayout}>
         {this.props.children.map(this.renderEntry)}
