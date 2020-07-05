@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
 });
 
 const Entry = props => {
-  console.log('entry rerender');
   const { entry, style, increment, decrement } = props;
   const { id, title, value, step, colorString } = entry;
 
