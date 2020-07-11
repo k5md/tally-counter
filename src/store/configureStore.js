@@ -11,13 +11,13 @@ import rootSaga from '../sagas';
 const config = {
   key: 'not-root', // refer to redux-persist issue on rp converting arrays in root storage to plain objects
   storage: AsyncStorage,
-  debug: __DEV__,
+  debug: !__DEV__,
 };
 
 const sagaMiddleware = createSagaMiddleware(rootSaga);
 const middleware = [sagaMiddleware];
 
-if (__DEV__) {
+if (!__DEV__) {
   middleware.push(createLogger());
 }
 
