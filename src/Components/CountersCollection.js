@@ -4,8 +4,12 @@ import { Searchbar } from 'react-native-paper';
 import { SortableGrid } from './';
 import { EntryContainer } from '../Containers';
 import { color, fontSizes, fonts } from '../config/styles';
+import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
+  countersCollection: {
+    marginBottom: metrics.navBarHeight,
+  },
   block: {
     flex: 1,
     justifyContent: 'center',
@@ -41,7 +45,7 @@ class CountersCollection extends React.Component {
     const sortable = searchQuery === '';
 
     return (
-      <>
+      <View style={styles.countersCollection}>
         <Searchbar
           placeholder="Search"
           onChangeText={value => this.setState(() => ({ searchQuery: value.toLowerCase() }))}
@@ -51,8 +55,8 @@ class CountersCollection extends React.Component {
           iconColor={styles.search.color}
         />
         <SortableGrid
-          itemsPerRow={displayType.name === 'grid' ? 3 : 1}
-          blockHeight={displayType.name === 'grid' ? 150 : 120}
+          itemsPerRow={displayType.name === 'grid' ? metrics.blocksPerLine : 1}
+          blockHeight={displayType.name === 'grid' ? metrics.blockHeightGrid : metrics.blockHeightList}
           itemOrder={order}
           onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
         >
@@ -69,7 +73,7 @@ class CountersCollection extends React.Component {
             );
           })}
         </SortableGrid>
-      </>
+      </View>
     );
   }
 }

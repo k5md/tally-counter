@@ -188,7 +188,7 @@ export class SortableGrid extends Component {
   };
 
   activateDrag = key => () => {
-    animateSpring(this.startDragWiggle, 20, 0);
+    animateSpring(this.startDragWiggle, 10, 0);
     this.panCapture = true;
     this.activeBlock = key;
     this.forceUpdate();
@@ -275,7 +275,6 @@ export class SortableGrid extends Component {
       onLayout={this.onScrollLayout}
       onScroll={this.onScroll}
       showsVerticalScrollIndicator={false}
-      scrollEventThrottle={1}
       canCancelContentTouches={false}
     >
       <Animated.View style={this.getGridStyle()} onLayout={this.onGridLayout}>

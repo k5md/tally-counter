@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { Picker } from '@react-native-community/picker';
 import { StatisticsTable } from './';
 import { getPrevDay, getPrevMonth, getPrevYear } from '../utils';
 import { color } from '../config/styles';
+import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,29 +12,39 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: color.COLOR_SECONDARY,
   },
-  controls: {
+  control: {
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    paddingVertical: 10,
   },
   table: {
-    flex: 9,
+    flex: 10,
+    marginBottom: metrics.navBarHeight,
   },
   button: {
     backgroundColor: color.COLOR_PRIMARY,
     borderRadius: 10,
-    marginHorizontal: 10,
-    marginVertical: 5,
+    textAlignVertical: 'center',
+    textAlign: 'center',
+  },
+  buttonContent: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
   buttonLabel: {
     color: color.COLOR_TERTIARY,
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
   buttonLabelActive: {
+    textAlignVertical: 'center',
     color: color.COLOR_SECONDARY,
+    textAlign: 'center',
   },
 });
 
 const current = {
   get date() {
-    console.log('REQUEST TIME');
     return new Date();
   },
 };
@@ -51,6 +61,11 @@ const Statistics = ({ read, stats, counters }) => {
   const [selectedFrame, selectFrame] = useState(selectableFrames[0]);
 
   const selectableIds = Object.values(counters).map(({ id, title }) => ({ id, title }));
+
+  if (!selectableIds.length) {
+    return null;
+  }
+
   const [selectedId, selectId] = useState(selectableIds[0]);
 
   useEffect(() => {
@@ -71,30 +86,22 @@ const Statistics = ({ read, stats, counters }) => {
   return (
     <View style={styles.container}>
       <View style={styles.controls}>
-        {selectableFrames.map(({ title }, frameIndex) => (
-          <Button
-            mode="contained"
-            disabled={title === selectedFrame.title}
-            onPress={() => selectFrame(selectableFrames[frameIndex])}
-            key={title}
-            style={styles.button}
-            labelStyle={
-              title === selectedFrame.title ? styles.buttonLabel : styles.buttonLabelActive
-            }
-          >
-            {title}
-          </Button>
-        ))}
-        <Picker
-          mode="dropdown"
-          selectedValue={selectedId}
-          style={{ flex: 1 }}
-          onValueChange={(id, index) => selectId(selectableIds[index])}
-        >
-          {selectableIds.map(({ id, title }) => (
-            <Picker.Item label={title} value={id} key={id} />
+        <View style={styles.control}>
+          {selectableFrames.map(({ title }, frameIndex) => (
+            <Button
+              disabled={title === selectedFrame.title}
+              onPress={() => selectFrame(selectableFrames[frameIndex])}
+              key={title}
+              style={styles.button}
+              contentStyle={styles.buttonContent}
+              labelStyle={
+                title === selectedFrame.title ? styles.buttonLabel : styles.buttonLabelActive
+              }
+            >
+              {title}
+            </Button>
           ))}
-        </Picker>
+        </View>
       </View>
 
       <StatisticsTable style={styles.table} data={formattedStats} />
