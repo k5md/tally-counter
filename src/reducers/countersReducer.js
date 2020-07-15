@@ -9,12 +9,12 @@ const initialState = {
 };
 
 const handlers = {
-  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, value, date } }) => {
+  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, value, date, title } }) => {
     const counter = {
       id,
       value,
       date,
-      title: uniqueId(),
+      title,
       step: 1,
       imageString: null,
       colorString: randomRGB(),

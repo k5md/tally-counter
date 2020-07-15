@@ -3,16 +3,17 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { CounterContainer } from '../Containers';
-import { Modal } from './';
+import { Modal, IconButton } from './';
 import { color, fontSizes, fonts } from '../config/styles';
+
 
 const styles = StyleSheet.create({
   header: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    fontSize: fontSizes.FONT_SIZE_SMALL,
     zIndex: 2,
+    color: color.COLOR_TERTIARY,
   },
   entry: {
     margin: 10,
@@ -29,10 +30,11 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
+    marginHorizontal: 10,
   },
   entryTitle: {
     fontFamily: fonts.FONT_MEDIUM,
-    fontSize: fontSizes.FONT_SIZE_MINI,
+    fontSize: fontSizes.FONT_SIZE_SMALL,
     textAlign: 'center',
     color: color.COLOR_TERTIARY,
   },
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
   counterControl: {
     flex: 0,
   },
-  countersValue: {
+  counterValue: {
     flex: 1,
   },
 });
@@ -63,50 +65,45 @@ const Entry = props => {
 
   return (
     <>
-      <Surface style={[style, styles.entry, { backgroundColor: colorString }]}>
+      <Surface style={[styles.entry, { backgroundColor: colorString }]}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Icon
-              size={styles.header.fontSize}
-              color={styles.counterControlsText.color}
-              name="dots-vertical"
-            />
-          </TouchableOpacity>
+          <IconButton
+            name="dots-vertical"
+            color={styles.header.color}
+            onPress={() => setModalVisible(true)}
+            transparent
+          />
         </View>
-
         <View style={styles.title}>
           <Text ellipsizeMode="middle" numberOfLines={1} style={styles.entryTitle}>
             {title}
           </Text>
         </View>
-
         <View style={styles.counterControls}>
           <View style={style.counterControl}>
-            <TouchableOpacity onPress={() => decrement(id, value, step)}>
-              <Icon
-                size={styles.counterControlsText.fontSize}
-                name="minus"
-                color={styles.counterControlsText.color}
-              />
-            </TouchableOpacity>
+            <IconButton
+              name="minus"
+              color={styles.counterControlsText.color}
+              onPress={() => decrement(id, value, step)}
+              transparent
+            />
           </View>
-          <View style={styles.countersValue}>
+          <View style={styles.counterValue}>
             <Text ellipsizeMode="head" numberOfLines={1} style={styles.counterControlsText}>
               {value}
             </Text>
           </View>
           <View style={style.counterControl}>
-            <TouchableOpacity onPress={() => increment(id, value, step)}>
-              <Icon
-                size={styles.counterControlsText.fontSize}
-                color={styles.counterControlsText.color}
-                name="plus"
-              />
-            </TouchableOpacity>
+            <IconButton
+              name="plus"
+              color={styles.counterControlsText.color}
+              onPress={() => increment(id, value, step)}
+              transparent
+            />
           </View>
         </View>
       </Surface>
-      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
+      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} icon="counter">
         <CounterContainer id={id} />
       </Modal>
     </>

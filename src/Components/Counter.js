@@ -1,69 +1,52 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
+import { IconButton } from './';
 
 const styles = StyleSheet.create({
-  modal: {
-    marginHorizontal: 10,
+  container: {
+    flex: 1,
   },
-  formActionsContainer: {
+  actions: {
     position: 'absolute',
-    top: -20,
     right: 20,
-    left: 20,
-    zIndex: 2,
-  },
-  formActions: {
+    bottom: -20,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: 200,
   },
-  formAction: {
-    backgroundColor: color.COLOR_PRIMARY,
-    borderRadius: 10,
-    height: fontSizes.FONT_SIZE_NORMAL,
-    width: fontSizes.FONT_SIZE_NORMAL,
-    fontSize: fontSizes.FONT_SIZE_SMALL,
-  },
-  formContent: {
-    backgroundColor: color.COLOR_SECONDARY,
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
-  formLoadables: {
+  loadables: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  formLoadable: {
+  loadable: {
     height: metrics.blockHeightGrid,
-    width: metrics.blockWidthGrid,
+    width: metrics.screenWidth / 3,
     marginVertical: 20,
     borderWidth: 1,
   },
-  formLoadableImage: {
+  image: {
     height: metrics.blockHeightGrid,
-    width: metrics.blockWidthGrid,
+    width: metrics.screenWidth / 3,
     resizeMode: 'stretch',
   },
-  formLoadableControls: {
-    position: 'absolute',
+  loadableControl: {
     height: metrics.blockHeightGrid,
-    width: metrics.blockWidthGrid,
-    top: 0,
-    left: 0,
-    flex: 1,
-    flexDirection: 'row',
-  },
-  formLoadableControl: {
-    width: metrics.blockWidthGrid,
-    height: '100%',
+    width: metrics.screenWidth / 3,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'grey',
     opacity: 0.5,
+  },
+  loadableControlText: {
+    fontSize: fontSizes.FONT_SIZE_SMALL,
   },
 });
 
@@ -87,68 +70,60 @@ const Counter = ({ entry, remove, update }) => {
   };
 
   return (
-    <View style={styles.modal}>
-      <View style={styles.formActionsContainer}>
-        <View style={styles.formActions}>
-          <View style={styles.formAction}>
-            <Icon name="counter" size={styles.formAction.fontSize} color={color.COLOR_SECONDARY} />
-          </View>
-          <View style={styles.formAction}>
-            <Icon color={color.COLOR_SECONDARY} name="delete" onPress={() => remove(id)} />
-          </View>
+    <>
+      <TextInput
+        label="Title"
+        mode="outlined"
+        value={title}
+        onChangeText={v => update(id, { title: v })}
+        keyboardType="numeric"
+      />
+      <TextInput
+        label="Step"
+        mode="outlined"
+        value={String(step)}
+        onChangeText={v => update(id, { step: Number(v) })}
+        keyboardType="numeric"
+      />
+      <TextInput
+        label="Value"
+        mode="outlined"
+        value={String(value)}
+        onChangeText={v => update(id, { value: Number(v) })}
+        keyboardType="numeric"
+      />
+      <View style={styles.loadables}>
+        <View style={styles.loadable}>
+          <ColorPicker
+            onColorSelected={v => update(id, { colorString: v })}
+            style={styles.container}
+            hideSliders
+            defaultColor={colorString}
+          />
+        </View>
+        <View style={styles.loadable}>
+          {imageString && <Image style={styles.image} source={imageString} />}
+          {imageString && (
+            <TouchableOpacity
+              style={styles.loadableControl}
+              onPress={() => update(id, { imageString: null })}
+            >
+              <Icon name="delete" size={styles.loadableControlText.fontSize} color={color.COLOR_SECONDARY} />
+            </TouchableOpacity>
+          )}
+          {!imageString && (
+            <TouchableOpacity style={styles.loadableControl} onPress={imagePickerHandler}>
+              <Text style={styles.loadableControlText}>Select image</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
-      <View style={styles.formContent}>
-        <TextInput
-          label="Title"
-          mode="outlined"
-          value={title}
-          onChangeText={v => update(id, { title: v })}
-        />
-        <TextInput
-          label="Step"
-          mode="outlined"
-          value={String(step)}
-          onChangeText={v => update(id, { step: Number(v) })}
-        />
-        <TextInput
-          label="Value"
-          mode="outlined"
-          value={String(value)}
-          onChangeText={v => update(id, { value: Number(v) })}
-        />
-        <View style={styles.formLoadables}>
-          <View style={styles.formLoadable}>
-            <ColorPicker
-              onColorSelected={v => update(id, { colorString: v })}
-              style={{ flex: 1 }}
-              hideSliders
-              defaultColor={colorString}
-            />
-          </View>
-          <View style={styles.formLoadable}>
-            {imageString && <Image style={styles.formLoadableImage} source={imageString} />}
-            <View style={styles.formLoadableControls}>
-              {imageString ? (
-                <TouchableOpacity
-                  contentStyle={styles.formLoadableControl}
-                  onPress={() => update(id, { imageString: null })}
-                >
-                  <Icon name="delete" color={color.COLOR_SECONDARY} />
-                </TouchableOpacity>
-              ) : (
-                <Button
-                  color={color.COLOR_SECONDARY}
-                  contentStyle={styles.formLoadableControl}
-                  onPress={imagePickerHandler}
-                  title="Select image"
-                />
-              )}
-            </View>
-          </View>
-        </View>
+      <View style={styles.actions}>
+        <IconButton name="delete" onPress={() => remove(id)} rounded />
+        <IconButton name="cancel" onPress={() => update(id)} rounded />
+        <IconButton name="check" onPress={() => update(id)} rounded />
       </View>
-    </View>
+    </>
   );
 };
 

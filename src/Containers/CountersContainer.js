@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as uiActions from '../actions/uiActions';
 import * as countersActions from '../actions/countersActions';
 import { Counters } from '../Components';
+import { uniqueId } from 'lodash';
 
 const getNextDisplayType = (displayTypes, displayType) => {
   if (!displayTypes) {
@@ -22,7 +23,7 @@ const mapStateToProps = ({ uiReducer: { displayTypes, displayType } }) => {
 
 const mapDispatchToProps = dispatch => ({
   setDisplayType: displayType => dispatch(uiActions.setDisplayType(displayType)),
-  create: initialValue => dispatch(countersActions.create(initialValue)),
+  create: () => dispatch(countersActions.create({ title: uniqueId() })),
 });
 
 const CountersContainer = props => <Counters {...props} />;

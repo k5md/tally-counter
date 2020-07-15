@@ -21,9 +21,18 @@ const initialState = {
 };
 
 const handlers = {
-  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id } }) => update(state, { selectableIds: { $push: [{ id, selected: false }]}}),
+  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, title } }) => update(state, { selectableIds: { $push: [{ id, title, selected: false }]}}),
 
   [types.COUNTER_REMOVE]: (state, { id }) => update(state, { selectableIds: { $set: state.selectableIds.filter(item => item.id !== id)}}),
+
+  [types.COUNTER_UPDATE]: (state, { id, fields }) => {
+    if (Object.keys(fields).includes('title')) {
+      const updatedSelectableIds = state.selectableIds.map(item => item.id === id ? ({...item, title: fields.title }) : item);
+      return update(state, { selectableIds: { $set: updatedSelectableIds } });
+    } else {
+      return state;
+    }
+  },
 
   [types.STATISTICS_READ_SUCCESS]: (state, { payload }) =>
     update(state, { data: { $set: payload } }),

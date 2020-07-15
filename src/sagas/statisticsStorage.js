@@ -1,4 +1,5 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
+import { uniqueId } from 'lodash';
 import { getPrevDay, getPrevMonth, getPrevYear } from '../utils';
 import * as actionTypes from '../constants/actionTypes';
 const SQLite = require('react-native-sqlite-storage');
@@ -95,7 +96,7 @@ function* onUpdate({ id, date, fields }) {
   yield write(query);
 }
 
-function* onCreate({ initialValue: { value = 0, date = Date.now() } }) {
+function* onCreate({ initialValue: { value = 0, date = Date.now(), title = uniqueId() } }) {
   const values = [value, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (value, date) VALUES (${values});`;
 
@@ -103,7 +104,7 @@ function* onCreate({ initialValue: { value = 0, date = Date.now() } }) {
     const createdCounter = yield call(() => storage.executeSql(query));
     yield put({
       type: actionTypes.COUNTER_CREATE_SUCCESS,
-      payload: { id: createdCounter[0].insertId, value, date },
+      payload: { id: createdCounter[0].insertId, value, date, title },
     });
   } catch (error) {
     yield put({ type: actionTypes.COUNTER_CREATE_FAIL, error });

@@ -9,11 +9,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  modal: {
-    marginHorizontal: metrics.navBarHeight,
-    maxHeight: metrics.screenHeight - 4 * metrics.navBarHeight,
-    maxWidth: metrics.screenWidth - metrics.navBarHeight,
-  },
   formActionsContainer: {
     position: 'absolute',
     top: -20,
@@ -57,35 +52,29 @@ const styles = StyleSheet.create({
 });
 
 const StatisticsFilters = ({ selectables, onSelect }) => (
-  <View style={styles.modal}>
-    <View style={styles.formActionsContainer}>
-      <View style={styles.formActions}>
-        <View style={styles.formAction}>
-          <Icon name="counter" color={color.COLOR_SECONDARY} />
+  <View style={styles.formContent}>
+    <FlatList
+      data={selectables}
+      renderItem={({ item: { id, title, selected } }) => (
+        <View style={styles.filter}>
+          <View style={styles.container}>
+            <Text ellipsizeMode="head" numberOfLines={1} style={styles.selectableTitleText}>
+              {title}
+            </Text>
+          </View>
+          <View style={styles.container}>
+            <Checkbox
+              status={selected ? 'checked' : 'unchecked'}
+              onPress={() => onSelect(id, !selected)}
+            />
+          </View>
         </View>
-      </View>
-    </View>
-    <View style={styles.formContent}>
-        <FlatList
-          data={selectables}
-          renderItem={({ item: { id, title, selected } }) => (
-            <View style={styles.filter}>
-              <View style={styles.container}>
-                <Text ellipsizeMode="head" numberOfLines={1} style={styles.selectableTitleText}>
-                  {title}
-                </Text>
-              </View>
-              <View style={styles.container}>
-                <Checkbox status={selected ? 'checked' : 'unchecked'} onPress={() => onSelect(id, !selected)} />
-              </View>
-            </View>
-          )}
-          keyExtractor={({ id }) => String(id)}
-          numColumns={2}
-          contentContainerStyle={styles.filters}
-          removeClippedSubviews={false}
-        />
-    </View>
+      )}
+      keyExtractor={({ id }) => String(id)}
+      numColumns={2}
+      contentContainerStyle={styles.filters}
+      removeClippedSubviews={false}
+    />
   </View>
 );
 

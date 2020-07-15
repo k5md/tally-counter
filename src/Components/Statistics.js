@@ -4,7 +4,7 @@ import { FAB, Checkbox, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { StatisticsTable, Modal, StatisticsFilters } from './';
 
-import { color } from '../config/styles';
+import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
@@ -23,14 +23,13 @@ const styles = StyleSheet.create({
     marginBottom: metrics.navBarHeight,
   },
   button: {
-    flex: 1,
+    flex: 0,
     backgroundColor: color.COLOR_PRIMARY,
-    borderRadius: 10,
-    textAlignVertical: 'center',
-    textAlign: 'center',
+
+    paddingHorizontal: 20,
   },
   buttonActive: {
-    backgroundColor: color.COLOR_TERTIARY,
+    color: color.COLOR_PRIMARY,
   },
   fabContainer: {
     display: 'flex',
@@ -45,6 +44,12 @@ const styles = StyleSheet.create({
     backgroundColor: color.COLOR_PRIMARY,
     borderRadius: 10,
   },
+
+  controlsText: {
+    fontSize: fontSizes.FONT_SIZE_SMALL,
+    color: color.COLOR_TERTIARY,
+    textAlign: 'center',
+  },
 });
 
 
@@ -58,20 +63,7 @@ const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, se
     read(selectedIds, selectedFrame);
   }, [read, selectableIds, selectableFrames]);
 
-  const formattedStats = stats.map(({ id, value, date }) => {
-    const dateObject = new Date(date);
-    return {
-      value,
-      title: counters[id].title,
-      milliseconds: dateObject.getTime(),
-      date: dateObject.toLocaleDateString(),
-      time: dateObject.toLocaleTimeString(),
-    };
-  });
-
   const [modalVisible, setModalVisible] = useState(false);
-
-  console.log(selectableFrames);
 
   return (
     <>
@@ -84,19 +76,19 @@ const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, se
                 key={id}
                 style={[styles.button, selected && styles.buttonActive]}
               >
-                <Text>{title}</Text>
+                <Text style={styles.controlsText}>{title}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-        <StatisticsTable style={styles.table} data={formattedStats} />
+        <StatisticsTable style={styles.table} data={stats} />
 
         <View style={styles.fabContainer}>
           {selectableIds.length ? (<FAB style={styles.fab} icon="filter" onPress={() => setModalVisible(true)} />) : null}
         </View>
       </View>
-      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
+      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} icon="filter">
         <StatisticsFilters selectables={selectableIds} onSelect={selectId} />
       </Modal>
     </>
