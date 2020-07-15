@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { CounterContainer } from '../Containers';
 import { Modal, IconButton } from './';
 import { color, fontSizes, fonts } from '../config/styles';
-
+import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
   header: {
@@ -55,17 +55,25 @@ const styles = StyleSheet.create({
   counterValue: {
     flex: 1,
   },
+  image: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    resizeMode: 'stretch',
+    opacity: 0.6,
+  },
 });
 
 const Entry = props => {
   const { entry, style, increment, decrement } = props;
-  const { id, title, value, step, colorString } = entry;
+  const { id, title, value, step, colorString, imageString } = entry;
 
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <>
-      <Surface style={[styles.entry, { backgroundColor: colorString }]}>
+      <Surface style={[styles.entry, !imageString && { backgroundColor: colorString }]}>
+        {imageString ? <Image style={styles.image} source={imageString} /> : null}
         <View style={styles.header}>
           <IconButton
             name="dots-vertical"
