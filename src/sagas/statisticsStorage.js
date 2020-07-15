@@ -1,4 +1,5 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
+import { getPrevDay, getPrevMonth, getPrevYear } from '../utils';
 import * as actionTypes from '../constants/actionTypes';
 const SQLite = require('react-native-sqlite-storage');
 
@@ -13,6 +14,20 @@ const FIELDS = [
 let storage = null;
 SQLite.DEBUG(__DEV__);
 SQLite.enablePromise(true);
+
+const current = {
+  get date() {
+    return new Date();
+  },
+};
+
+const selectableFrames = [
+  { id: '1d', window: () => [getPrevDay(current.date), current.date.getTime()]},
+  { id: '3d', window: () => [getPrevDay(current.date, 3), current.date.getTime()]},
+  { id: 'M', window: () => [getPrevMonth(current.date), current.date.getTime()]},
+  { id: 'Y', window: () => [getPrevYear(current.date), current.date.getTime()]},
+  { id: 'All', window: () => [0, current.date.getTime()]},
+];
 
 function* execute(query, successAction, failAction, storage) {
   try {
@@ -100,11 +115,13 @@ function* onRemove({ id }) {
   yield write(query);
 }
 
-function* onRead({ id, window: [start, end] }) {
+function* onRead({ ids, selectedFrame }) {
+  const [start, end] = selectableFrames.find(({ id }) => id === selectedFrame.id).window();
+
   const queryDate = `
     SELECT id, value, date
     FROM ${TABLE_NAME}
-    WHERE id=${id} AND date >= ${start} AND date <= ${end}
+    WHERE id IN (${ids.map(item => item.id).join(',')}) AND date >= ${start} AND date <= ${end}
     ORDER BY date
   `;
 

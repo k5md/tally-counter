@@ -4,12 +4,14 @@ import { Statistics } from '../Components';
 import * as statisticsActions from '../actions/statisticsActions';
 
 const mapStateToProps = ({
-  statisticsReducer: { data: stats },
+  statisticsReducer: { data: stats, selectableIds, selectableFrames },
   countersReducer: { data: counters },
-}) => ({ stats, counters });
+}) => ({ stats, counters, selectableFrames, selectableIds: selectableIds.map(item => ({ ...item, title: counters[item.id].title })) });
 
 const mapDispatchToProps = dispatch => ({
-  read: (id, window) => dispatch(statisticsActions.read(id, window)),
+  read: (ids, window) => dispatch(statisticsActions.read(ids, window)),
+  selectId: (id, selected) => dispatch(statisticsActions.selectId(id, selected)),
+  selectFrame: id => dispatch(statisticsActions.selectFrame(id)),
 });
 
 const StatisticsContainer = props => <Statistics {...props} />;

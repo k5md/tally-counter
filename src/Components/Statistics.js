@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button, ScrollView } from 'react-native';
+import { View, StyleSheet, Button, ScrollView, TouchableOpacity } from 'react-native';
 import { FAB, Checkbox, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
-import { StatisticsTable, Modal } from './';
-import { getPrevDay, getPrevMonth, getPrevYear } from '../utils';
+import { StatisticsTable, Modal, StatisticsFilters } from './';
+
 import { color } from '../config/styles';
 import metrics from '../config/metrics';
 
@@ -23,24 +23,14 @@ const styles = StyleSheet.create({
     marginBottom: metrics.navBarHeight,
   },
   button: {
+    flex: 1,
     backgroundColor: color.COLOR_PRIMARY,
     borderRadius: 10,
     textAlignVertical: 'center',
     textAlign: 'center',
   },
-  buttonContent: {
-    textAlignVertical: 'center',
-    textAlign: 'center',
-  },
-  buttonLabel: {
-    color: color.COLOR_TERTIARY,
-    textAlignVertical: 'center',
-    textAlign: 'center',
-  },
-  buttonLabelActive: {
-    textAlignVertical: 'center',
-    color: color.COLOR_SECONDARY,
-    textAlign: 'center',
+  buttonActive: {
+    backgroundColor: color.COLOR_TERTIARY,
   },
   fabContainer: {
     display: 'flex',
@@ -55,57 +45,18 @@ const styles = StyleSheet.create({
     backgroundColor: color.COLOR_PRIMARY,
     borderRadius: 10,
   },
-
-  modal: {
-    marginHorizontal: 10,
-  },
-  formActionsContainer: {
-    position: 'absolute',
-    top: -20,
-    right: 20,
-    left: 20,
-    zIndex: 2,
-  },
-  formActions: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  formContent: {
-    backgroundColor: color.COLOR_SECONDARY,
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
 });
 
-const current = {
-  get date() {
-    return new Date();
-  },
-};
 
-const selectableFrames = [
-  { title: '1d', window: () => [getPrevDay(current.date), current.date.getTime()] },
-  { title: '3d', window: () => [getPrevDay(current.date, 3), current.date.getTime()] },
-  { title: 'M', window: () => [getPrevMonth(current.date), current.date.getTime()] },
-  { title: 'Y', window: () => [getPrevYear(current.date), current.date.getTime()] },
-  { title: 'All', window: () => [0, current.date.getTime()] },
-];
-
-const Statistics = ({ read, stats, counters }) => {
-  const [selectedFrame, selectFrame] = useState(selectableFrames[0]);
-
-  const selectableIds = Object.values(counters).map(({ id, title }) => ({ id, title }));
-
-  if (!selectableIds.length) {
-    return null;
-  }
-
-  const [selectedId, selectId] = useState(selectableIds[0]);
-
+const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, selectId, selectFrame }) => {
   useEffect(() => {
-    read(selectedId.id, selectedFrame.window());
-  }, [read, selectedId, selectedFrame, counters]);
+    const selectedIds = selectableIds.filter(({ selected }) => selected);
+    const selectedFrame = selectableFrames.find(({ selected }) => selected);
+    if (!selectableIds.length && !selectedIds.length) {
+      return;
+    }
+    read(selectedIds, selectedFrame);
+  }, [read, selectableIds, selectableFrames]);
 
   const formattedStats = stats.map(({ id, value, date }) => {
     const dateObject = new Date(date);
@@ -120,23 +71,21 @@ const Statistics = ({ read, stats, counters }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  console.log(selectableFrames);
+
   return (
     <>
       <View style={styles.container}>
         <View style={styles.controls}>
           <View style={styles.control}>
-            {selectableFrames.map(({ title }, frameIndex) => (
-              <Button
-                disabled={title === selectedFrame.title}
-                onPress={() => selectFrame(selectableFrames[frameIndex])}
-                key={title}
-                style={styles.button}
-                contentStyle={styles.buttonContent}
-                labelStyle={
-                  title === selectedFrame.title ? styles.buttonLabel : styles.buttonLabelActive
-                }
-                title={title}
-              />
+            {selectableFrames.map(({ id, title, selected }) => (
+              <TouchableOpacity
+                onPress={() => selectFrame(id)}
+                key={id}
+                style={[styles.button, selected && styles.buttonActive]}
+              >
+                <Text>{title}</Text>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -144,35 +93,11 @@ const Statistics = ({ read, stats, counters }) => {
         <StatisticsTable style={styles.table} data={formattedStats} />
 
         <View style={styles.fabContainer}>
-          <FAB style={styles.fab} icon="filter" onPress={() => setModalVisible(true)} />
+          {selectableIds.length ? (<FAB style={styles.fab} icon="filter" onPress={() => setModalVisible(true)} />) : null}
         </View>
       </View>
       <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
-        <View style={styles.modal}>
-          <View style={styles.formActionsContainer}>
-            <View style={styles.formActions}>
-              <View style={styles.formAction}>
-                <Icon
-                  name="counter"
-
-                  color={color.COLOR_SECONDARY}
-                />
-              </View>
-              <View style={styles.formAction}>
-                <ScrollView>
-                  {selectableIds.map(({ id, title }) => (
-                    <View>
-                      <Text>{title}</Text>
-                      <Checkbox />
-                    </View>
-
-                  ))}
-                </ScrollView>
-              </View>
-            </View>
-          </View>
-          <View style={styles.formContent} />
-        </View>
+        <StatisticsFilters selectables={selectableIds} onSelect={selectId} />
       </Modal>
     </>
   );

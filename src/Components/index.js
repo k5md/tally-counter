@@ -5,6 +5,7 @@ import Entry from './Entry';
 import Modal from './Modal';
 import Statistics from './Statistics';
 import StatisticsTable from './StatisticsTable';
+import StatisticsFilters from './StatisticsFilters';
 import SortableGrid from './YASGrid';
 
 export {
@@ -15,5 +16,6 @@ export {
   Modal,
   Statistics,
   StatisticsTable,
+  StatisticsFilters,
   SortableGrid,
 };
