@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { IconButton, Colors, Surface, Text } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Surface, Text } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { CounterContainer } from '../Containers';
 import { Modal } from './';
 import { color, fontSizes, fonts } from '../config/styles';
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    fontSize: fontSizes.FONT_SIZE_MINI,
+    fontSize: fontSizes.FONT_SIZE_SMALL,
     zIndex: 2,
   },
   entry: {
@@ -64,12 +65,13 @@ const Entry = props => {
     <>
       <Surface style={[style, styles.entry, { backgroundColor: colorString }]}>
         <View style={styles.header}>
-          <IconButton
-            size={styles.header.fontSize}
-            color={styles.counterControlsText.color}
-            icon="dots-vertical"
-            onPress={() => setModalVisible(true)}
-          />
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Icon
+              size={styles.header.fontSize}
+              color={styles.counterControlsText.color}
+              name="dots-vertical"
+            />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.title}>
@@ -80,12 +82,13 @@ const Entry = props => {
 
         <View style={styles.counterControls}>
           <View style={style.counterControl}>
-            <IconButton
-              size={styles.counterControlsText.fontSize}
-              icon="minus"
-              color={styles.counterControlsText.color}
-              onPress={() => decrement(id, value, step)}
-            />
+            <TouchableOpacity onPress={() => decrement(id, value, step)}>
+              <Icon
+                size={styles.counterControlsText.fontSize}
+                name="minus"
+                color={styles.counterControlsText.color}
+              />
+            </TouchableOpacity>
           </View>
           <View style={styles.countersValue}>
             <Text ellipsizeMode="head" numberOfLines={1} style={styles.counterControlsText}>
@@ -93,12 +96,13 @@ const Entry = props => {
             </Text>
           </View>
           <View style={style.counterControl}>
-            <IconButton
-              size={styles.counterControlsText.fontSize}
-              color={styles.counterControlsText.color}
-              icon="plus"
-              onPress={() => increment(id, value, step)}
-            />
+            <TouchableOpacity onPress={() => increment(id, value, step)}>
+              <Icon
+                size={styles.counterControlsText.fontSize}
+                color={styles.counterControlsText.color}
+                name="plus"
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </Surface>

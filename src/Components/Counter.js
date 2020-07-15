@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text } from 'react-native';
-import { IconButton, Button, TextInput, Surface } from 'react-native-paper';
+import { View, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
+import { TextInput } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
-import { color } from '../config/styles';
+import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
@@ -25,6 +26,9 @@ const styles = StyleSheet.create({
   formAction: {
     backgroundColor: color.COLOR_PRIMARY,
     borderRadius: 10,
+    height: fontSizes.FONT_SIZE_NORMAL,
+    width: fontSizes.FONT_SIZE_NORMAL,
+    fontSize: fontSizes.FONT_SIZE_SMALL,
   },
   formContent: {
     backgroundColor: color.COLOR_SECONDARY,
@@ -76,7 +80,9 @@ const Counter = ({ entry, remove, update }) => {
       cropping: false,
       mediaType: 'photo',
     })
-      .then(({ path, width, height, mime }) => update(id, { imageString: { uri: path, width, height, mime } }))
+      .then(({ path, width, height, mime }) =>
+        update(id, { imageString: { uri: path, width, height, mime } }),
+      )
       .catch(e => console.log(e));
   };
 
@@ -85,10 +91,10 @@ const Counter = ({ entry, remove, update }) => {
       <View style={styles.formActionsContainer}>
         <View style={styles.formActions}>
           <View style={styles.formAction}>
-            <IconButton icon="counter" color={color.COLOR_SECONDARY} />
+            <Icon name="counter" size={styles.formAction.fontSize} color={color.COLOR_SECONDARY} />
           </View>
           <View style={styles.formAction}>
-            <IconButton color={color.COLOR_SECONDARY} icon="delete" onPress={() => remove(id)} />
+            <Icon color={color.COLOR_SECONDARY} name="delete" onPress={() => remove(id)} />
           </View>
         </View>
       </View>
@@ -124,20 +130,19 @@ const Counter = ({ entry, remove, update }) => {
             {imageString && <Image style={styles.formLoadableImage} source={imageString} />}
             <View style={styles.formLoadableControls}>
               {imageString ? (
-                <Button
-                  color={color.COLOR_SECONDARY}
+                <TouchableOpacity
                   contentStyle={styles.formLoadableControl}
                   onPress={() => update(id, { imageString: null })}
-                  icon="delete"
-                />
+                >
+                  <Icon name="delete" color={color.COLOR_SECONDARY} />
+                </TouchableOpacity>
               ) : (
                 <Button
                   color={color.COLOR_SECONDARY}
                   contentStyle={styles.formLoadableControl}
                   onPress={imagePickerHandler}
-                >
-                  Select image
-                </Button>
+                  title="Select image"
+                />
               )}
             </View>
           </View>
