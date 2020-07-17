@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Button, ScrollView, TouchableOpacity } from 'react-native';
-import { FAB, Checkbox, Text } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
-import { StatisticsTable, Modal, StatisticsFilters } from './';
+import { FAB, Text } from 'react-native-paper';
+import { StatisticsTable, Modal, StatisticsFilters, IconButton } from './';
 
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
@@ -21,12 +20,6 @@ const styles = StyleSheet.create({
   table: {
     flex: 10,
     marginBottom: metrics.navBarHeight,
-  },
-  button: {
-    flex: 0,
-    backgroundColor: color.COLOR_PRIMARY,
-
-    paddingHorizontal: 20,
   },
   buttonActive: {
     color: color.COLOR_PRIMARY,
@@ -52,8 +45,15 @@ const styles = StyleSheet.create({
   },
 });
 
-
-const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, selectId, selectFrame }) => {
+const Statistics = ({
+  read,
+  stats,
+  counters,
+  selectableIds,
+  selectableFrames,
+  selectId,
+  selectFrame,
+}) => {
   useEffect(() => {
     const selectedIds = selectableIds.filter(({ selected }) => selected);
     const selectedFrame = selectableFrames.find(({ selected }) => selected);
@@ -71,13 +71,14 @@ const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, se
         <View style={styles.controls}>
           <View style={styles.control}>
             {selectableFrames.map(({ id, title, selected }) => (
-              <TouchableOpacity
+              <IconButton
+                label={title}
+                labelStyle={styles.controlsText}
                 onPress={() => selectFrame(id)}
                 key={id}
                 style={[styles.button, selected && styles.buttonActive]}
-              >
-                <Text style={styles.controlsText}>{title}</Text>
-              </TouchableOpacity>
+                rounded
+              />
             ))}
           </View>
         </View>
@@ -85,7 +86,9 @@ const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, se
         <StatisticsTable style={styles.table} data={stats} />
 
         <View style={styles.fabContainer}>
-          {selectableIds.length ? (<FAB style={styles.fab} icon="filter" onPress={() => setModalVisible(true)} />) : null}
+          {selectableIds.length ? (
+            <FAB style={styles.fab} icon="filter" onPress={() => setModalVisible(true)} />
+          ) : null}
         </View>
       </View>
       <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} icon="filter">

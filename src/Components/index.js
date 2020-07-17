@@ -8,6 +8,8 @@ import StatisticsTable from './StatisticsTable';
 import StatisticsFilters from './StatisticsFilters';
 import SortableGrid from './YASGrid';
 import IconButton from './IconButton';
+import TextInput from './TextInput';
+import LabeledView from './LabeledView';
 
 export {
   Counter,
@@ -20,4 +22,6 @@ export {
   StatisticsFilters,
   SortableGrid,
   IconButton,
+  TextInput,
+  LabeledView,
 };

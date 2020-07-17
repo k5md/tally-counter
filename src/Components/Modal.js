@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     margin: metrics.navBarHeight,
     maxHeight: metrics.screenHeight - 4 * metrics.navBarHeight,
-    maxWidth: metrics.screenWidth - metrics.navBarHeight,
+    maxWidth: metrics.screenWidth - 2 * metrics.navBarHeight,
   },
   header: {
     position: 'absolute',
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: color.COLOR_SECONDARY,
-    paddingVertical: 50,
+    paddingVertical: 40,
     paddingHorizontal: 20,
   },
 });

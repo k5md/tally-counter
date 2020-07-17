@@ -4,6 +4,7 @@ import { Checkbox, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
+import { LabeledView } from './';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,7 +32,6 @@ const styles = StyleSheet.create({
   },
   formContent: {
     flex: 0,
-    backgroundColor: color.COLOR_SECONDARY,
     paddingVertical: 50,
     paddingHorizontal: 20,
     zIndex: 2,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 });
 
 const StatisticsFilters = ({ selectables, onSelect }) => (
-  <View style={styles.formContent}>
+  <LabeledView label="Select items to show" style={styles.formContent}>
     <FlatList
       data={selectables}
       renderItem={({ item: { id, title, selected } }) => (
@@ -75,7 +75,7 @@ const StatisticsFilters = ({ selectables, onSelect }) => (
       contentContainerStyle={styles.filters}
       removeClippedSubviews={false}
     />
-  </View>
+  </LabeledView>
 );
 
 export default StatisticsFilters;

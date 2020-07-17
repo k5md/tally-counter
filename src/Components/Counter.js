@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
-import { IconButton } from './';
+import { IconButton, TextInput, LabeledView } from './';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
   },
   loadables: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    paddingTop: 20,
   },
   loadable: {
     height: metrics.blockHeightGrid,
     width: metrics.screenWidth / 3,
     marginVertical: 20,
-    borderWidth: 1,
   },
   image: {
     height: metrics.blockHeightGrid,
@@ -42,6 +42,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  add: {
+    backgroundColor: color.COLOR_SECONDARY,
+  },
+  delete: {
     backgroundColor: 'grey',
     opacity: 0.5,
   },
@@ -71,57 +76,48 @@ const Counter = ({ entry, remove, update }) => {
 
   return (
     <>
-      <TextInput
-        label="Title"
-        mode="outlined"
-        value={title}
-        onChangeText={v => update(id, { title: v })}
-        keyboardType="numeric"
-      />
+      <TextInput label="Title" value={title} onChangeText={v => update(id, { title: v })} />
       <TextInput
         label="Step"
-        mode="outlined"
         value={String(step)}
         onChangeText={v => update(id, { step: Number(v) })}
         keyboardType="numeric"
       />
       <TextInput
         label="Value"
-        mode="outlined"
         value={String(value)}
         onChangeText={v => update(id, { value: Number(v) })}
         keyboardType="numeric"
       />
       <View style={styles.loadables}>
-        <View style={styles.loadable}>
+        <LabeledView label="Color" style={styles.loadable}>
           <ColorPicker
             onColorSelected={v => update(id, { colorString: v })}
             style={styles.container}
             hideSliders
             defaultColor={colorString}
           />
-        </View>
-        <View style={styles.loadable}>
+        </LabeledView>
+        <LabeledView label="Image" style={styles.loadable}>
           {imageString && <Image style={styles.image} source={imageString} />}
-          {imageString && (
-            <TouchableOpacity
-              style={styles.loadableControl}
+          {imageString ? (
+            <IconButton
+              name="delete"
+              style={[styles.loadableControl, styles.delete]}
               onPress={() => update(id, { imageString: null })}
-            >
-              <Icon name="delete" size={styles.loadableControlText.fontSize} color={color.COLOR_SECONDARY} />
-            </TouchableOpacity>
+              size={styles.loadableControlText.fontSize}
+              color={color.COLOR_SECONDARY}
+            />
+          ) : (
+            <IconButton
+              name="plus"
+              style={[styles.loadableControl, styles.add]}
+              onPress={imagePickerHandler}
+              size={styles.loadableControlText.fontSize}
+              color={color.COLOR_PRIMARY}
+            />
           )}
-          {!imageString && (
-            <TouchableOpacity style={styles.loadableControl} onPress={imagePickerHandler}>
-              <Text style={styles.loadableControlText}>Select image</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-      <View style={styles.actions}>
-        <IconButton name="delete" onPress={() => remove(id)} rounded />
-        <IconButton name="cancel" onPress={() => update(id)} rounded />
-        <IconButton name="check" onPress={() => update(id)} rounded />
+        </LabeledView>
       </View>
     </>
   );

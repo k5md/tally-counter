@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { color as colors, fontSizes } from '../config/styles';
 
@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
 
 const IconButton = ({
   name,
+  label,
   onPress,
   style,
   color = colors.COLOR_SECONDARY,
@@ -48,7 +49,8 @@ const IconButton = ({
   const iconSize = fontSizes.FONT_SIZE_SMALL || (small && fontSizes.FONT_SIZE_BASE) || (large && fontSizes.FONT_SIZE_NORMAL);
   return (
     <TouchableOpacity style={buttonStyle} onPress={onPress}>
-      <Icon color={color} size={iconSize} name={name} />
+      {name ? <Icon color={color} size={iconSize} name={name} /> : null}
+      {label ? <Text>{label}</Text> : null}
     </TouchableOpacity>
   );
 };
