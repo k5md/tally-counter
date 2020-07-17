@@ -12,21 +12,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  counter: {},
   actions: {
-    position: 'absolute',
-    right: 20,
-    bottom: -20,
-    flex: 1,
+    flex: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 200,
   },
   loadables: {
-    flexDirection: 'row',
+    /*flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: 20,
+    flexWrap: 'wrap',*/
+    //paddingVertical: 20,
   },
   loadable: {
+    flex: 0,
     height: metrics.blockHeightGrid,
     width: metrics.screenWidth / 3,
     marginVertical: 20,
@@ -47,18 +46,23 @@ const styles = StyleSheet.create({
     backgroundColor: color.COLOR_SECONDARY,
   },
   delete: {
-    backgroundColor: 'grey',
-    opacity: 0.5,
+
   },
   loadableControlText: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
   },
+  deleteConfirmed: {
+    backgroundColor: color.COLOR_TERTIARY,
+  },
 });
 
-const Counter = ({ entry, remove, update }) => {
+const Counter = ({ entry, remove, update, dismiss }) => {
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+
   if (!entry) {
     return null;
   }
+
   const { id, title, value, step, colorString, imageString } = entry;
 
   const imagePickerHandler = () => {
@@ -75,18 +79,18 @@ const Counter = ({ entry, remove, update }) => {
   };
 
   return (
-    <>
-      <TextInput label="Title" value={title} onChangeText={v => update(id, { title: v })} />
+    <View style={styles.counter}>
+      <TextInput label="Title" value={title} onChange={v => update(id, { title: v })} />
       <TextInput
         label="Step"
         value={String(step)}
-        onChangeText={v => update(id, { step: Number(v) })}
+        onChange={v => update(id, { step: Number(v) })}
         keyboardType="numeric"
       />
       <TextInput
         label="Value"
         value={String(value)}
-        onChangeText={v => update(id, { value: Number(v) })}
+        onChange={v => update(id, { value: Number(v) })}
         keyboardType="numeric"
       />
       <View style={styles.loadables}>
@@ -106,7 +110,7 @@ const Counter = ({ entry, remove, update }) => {
               style={[styles.loadableControl, styles.delete]}
               onPress={() => update(id, { imageString: null })}
               size={styles.loadableControlText.fontSize}
-              color={color.COLOR_SECONDARY}
+              transparent
             />
           ) : (
             <IconButton
@@ -119,7 +123,20 @@ const Counter = ({ entry, remove, update }) => {
           )}
         </LabeledView>
       </View>
-    </>
+      <View style={styles.actions}>
+        <IconButton
+          name="delete"
+          onPress={deleteConfirmed ? () => remove(id) : () => setDeleteConfirmed(true)}
+          rounded
+          style={deleteConfirmed && styles.deleteConfirmed}
+        />
+        <IconButton
+          name="close"
+          onPress={dismiss}
+          rounded
+        />
+      </View>
+    </View>
   );
 };
 

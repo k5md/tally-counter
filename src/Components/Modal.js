@@ -10,13 +10,12 @@ const styles = StyleSheet.create({
     margin: metrics.navBarHeight,
     maxHeight: metrics.screenHeight - 4 * metrics.navBarHeight,
     maxWidth: metrics.screenWidth - 2 * metrics.navBarHeight,
+    padding: 20,
   },
   header: {
     position: 'absolute',
-    top: -20,
-    right: 20,
-    left: 20,
-    zIndex: 2,
+    left: 40,
+    zIndex: 1,
   },
   headerIcon: {
     backgroundColor: color.COLOR_PRIMARY,
@@ -29,7 +28,8 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: color.COLOR_SECONDARY,
-    paddingVertical: 40,
+    paddingTop: 40,
+    paddingBottom: 20,
     paddingHorizontal: 20,
   },
 });

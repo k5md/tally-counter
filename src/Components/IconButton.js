@@ -37,6 +37,7 @@ const IconButton = ({
   small = false,
   large = false,
   transparent = false,
+  labelStyle = {},
 }) => {
   const buttonStyle = [
     styles.container,
@@ -50,7 +51,7 @@ const IconButton = ({
   return (
     <TouchableOpacity style={buttonStyle} onPress={onPress}>
       {name ? <Icon color={color} size={iconSize} name={name} /> : null}
-      {label ? <Text>{label}</Text> : null}
+      {label ? <Text style={labelStyle}>{label}</Text> : null}
     </TouchableOpacity>
   );
 };

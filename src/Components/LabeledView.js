@@ -8,20 +8,25 @@ const styles = StyleSheet.create({
     flex: 0,
     borderWidth: 1,
     borderRadius: 10,
-    margin: 5,
+    margin: fontSizes.FONT_SIZE_SMALL / 2,
   },
   label: {
     position: 'absolute',
-    top: -10,
-    left: 10,
-    paddingHorizontal: 5,
+    top: -fontSizes.FONT_SIZE_SMALL / 2,
+    left: fontSizes.FONT_SIZE_SMALL / 2,
+    paddingHorizontal: fontSizes.FONT_SIZE_SMALL / 2,
+  },
+  labelText: {
+    fontSize: fontSizes.FONT_SIZE_SMALL,
+    color: color.COLOR_TERTIARY,
+    textAlign: 'center',
   },
 });
 
-const LabeledView = ({ label, backgroundColor = color.COLOR_SECONDARY, children, style }) => (
+const LabeledView = ({ label, backgroundColor = color.COLOR_SECONDARY, children, style, labelStyle = {} }) => (
   <View style={[styles.container, { backgroundColor }]}>
     <View style={[styles.label, { backgroundColor }]}>
-      <Text>{label}</Text>
+      <Text style={[styles.labelText, labelStyle]}>{label}</Text>
     </View>
     <View style={style}>{children}</View>
   </View>
