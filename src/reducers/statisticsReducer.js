@@ -21,7 +21,8 @@ const initialState = {
 };
 
 const handlers = {
-  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, title } }) => update(state, { selectableIds: { $push: [{ id, title, selected: false }]}}),
+  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, title } }) => 
+    ({ ...state, selectableIds: [ ...state.selectableIds, { id, title, selected: false }]}),
 
   [types.COUNTER_REMOVE]: (state, { id }) => update(state, { selectableIds: { $set: state.selectableIds.filter(item => item.id !== id)}}),
 
@@ -34,17 +35,10 @@ const handlers = {
     }
   },
 
-  [types.STATISTICS_READ_SUCCESS]: (state, { payload }) =>
-    update(state, { data: { $set: payload } }),
+  [types.STATISTICS_READ_SUCCESS]: (state, { payload: data }) => ({ ...state, data }),
 
-  [types.STATISTICS_SELECT_ID]: (state, { id, selected}) => {
-    const updatedSelectableIds = state.selectableIds.map(item => item.id === id ? ({ ...item, selected }) : item);
-    return update(state, { selectableIds: { $set: updatedSelectableIds } });
-  },
-  [types.STATISTICS_SELECT_FRAME]: (state, { id }) => {
-    const updatedSelectableFrames = state.selectableFrames.map(item => ({ ...item, selected: item.id === id }));
-    return update(state, { selectableFrames: { $set: updatedSelectableFrames } });
-  },
+  [types.STATISTICS_SELECT_ID]: (state, { id, selected }) => ({ ...state, selectableIds: state.selectableIds.map(item => item.id === id ? ({ ...item, selected }) : item)}),
+  [types.STATISTICS_SELECT_FRAME]: (state, { id }) => ({ ...state, selectableFrames:  state.selectableFrames.map(item => ({ ...item, selected: item.id === id }))}), 
 };
 
 const statisticsReducer = (state = initialState, action) => {

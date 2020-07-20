@@ -60,10 +60,15 @@ function* write(query) {
 function* initialize() {
   try {
     storage = yield call(() => SQLite.openDatabase({ name: DB_NAME }));
-    const query = `CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(${FIELDS.map(entry =>
+    const table = `CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(${FIELDS.map(entry =>
       entry.join(' '),
     ).join(',')});`;
-    yield call(() => storage.executeSql(query));
+    const index = `
+      CREATE INDEX IF NOT EXISTS id ON ${TABLE_NAME} id;
+      CREATE INDEX IF NOT EXISTS id_value_date ON ${TABLE_NAME} (id, value, date);
+    `;
+    yield call(() => storage.executeSql(table));
+    yield call(() => storage.executeSql(index));
     yield put({ type: actionTypes.STATISTICS_INITIALIZE_SUCCESS });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_INITIALIZE_FAIL, error });

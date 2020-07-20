@@ -1,5 +1,4 @@
 import update from 'immutability-helper';
-import { uniqueId } from 'lodash';
 import * as types from '../constants/actionTypes';
 import { randomRGB } from '../utils';
 
@@ -9,32 +8,42 @@ const initialState = {
 };
 
 const handlers = {
-  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, value, date, title } }) => {
-    const counter = {
-      id,
-      value,
-      date,
-      title,
-      step: 1,
-      imageString: null,
-      colorString: randomRGB(),
-    };
-    return update(state, { data: { [id]: { $set: counter } }, order: { $push: [id] } });
-  },
+  [types.COUNTER_CREATE_SUCCESS]: (state, { payload: { id, value, date, title } }) => ({
+    ...state,
+    data: {
+      ...state.data,
+      [id]: {
+        id,
+        value,
+        date,
+        title,
+        step: 1,
+        imageString: null,
+        colorString: randomRGB(),
+      },
+    },
+    order: [...state.order, id],
+  }),
 
-  [types.COUNTER_INCREMENT]: (state, { id, step }) =>
-    update(state, { data: { [id]: { value: { $apply: value => value + step } } } }),
+  [types.COUNTER_INCREMENT]: (state, { id, step }) => ({
+    ...state,
+    data: { ...state.data, [id]: { ...state.data[id], value: state.data[id].value + step } },
+  }),
 
-  [types.COUNTER_DECREMENT]: (state, { id, step }) =>
-    update(state, { data: { [id]: { value: { $apply: value => value - step } } } }),
+  [types.COUNTER_DECREMENT]: (state, { id, step }) => ({
+    ...state,
+    data: { ...state.data, [id]: { ...state.data[id], value: state.data[id].value - step } },
+  }),
 
-  [types.COUNTER_UPDATE]: (state, { id, fields }) =>
-    update(state, { data: { [id]: { $merge: { ...fields } } } }),
+  [types.COUNTER_UPDATE]: (state, { id, fields }) => ({
+    ...state,
+    data: { ...state.data, [id]: { ...state.data[id], ...fields } },
+  }),
 
   [types.COUNTER_REMOVE]: (state, { id }) =>
     update(state, { data: { $unset: [id] }, order: { $unset: [id] } }),
 
-  [types.COUNTER_REARRANGE]: (state, { order }) => update(state, { order: { $set: order } }),
+  [types.COUNTER_REARRANGE]: (state, { order }) => ({ ...state, order }),
 };
 
 const countersReducer = (state = initialState, action) => {
