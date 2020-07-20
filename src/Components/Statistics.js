@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { FAB, Text } from 'react-native-paper';
+import { View, StyleSheet, Text } from 'react-native';
+import { FAB } from 'react-native-paper';
 import { StatisticsTable, Modal, StatisticsFilters, Button } from './';
 
 import { color, fontSizes } from '../config/styles';

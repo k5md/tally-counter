@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, StyleSheet, Modal as RNModal } from 'react-native';
-import { Modal as RNPModal, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { Button } from './';
 import { color, fontSizes } from '../config/styles';
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
 });
 
 const Modal = ({ visible, dismiss, icon, children }) => (
-  <Portal>
+
     <RNModal visible={visible} dismissable={false} transparent>
       <View style={styles.backdrop} />
       <View style={styles.modalContainer}>
@@ -65,7 +64,7 @@ const Modal = ({ visible, dismiss, icon, children }) => (
         <View style={styles.content}>{children}</View>
       </View>
     </RNModal>
-  </Portal>
+
 );
 
 export default Modal;

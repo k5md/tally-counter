@@ -1,10 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Checkbox, Text } from 'react-native-paper';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { color, fontSizes } from '../config/styles';
-import metrics from '../config/metrics';
-import { LabeledView, Button } from './';
 
 const styles = StyleSheet.create({
   container: {

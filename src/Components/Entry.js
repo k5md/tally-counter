@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
+import { View, StyleSheet, Image, Text } from 'react-native';
 import { CounterContainer } from '../Containers';
 import { Modal, Button } from './';
 import { color, fontSizes, fonts } from '../config/styles';
-import metrics from '../config/metrics';
 
 const styles = StyleSheet.create({
   header: {
@@ -72,7 +69,7 @@ const Entry = props => {
 
   return (
     <>
-      <Surface style={[styles.entry, !imageString && { backgroundColor: colorString }]}>
+      <View style={[styles.entry, !imageString && { backgroundColor: colorString }]}>
         {imageString ? <Image style={styles.image} source={imageString} /> : null}
         <View style={styles.header}>
           <Button
@@ -110,7 +107,7 @@ const Entry = props => {
             />
           </View>
         </View>
-      </Surface>
+      </View>
       <Modal visible={modalVisible} dismiss={() => setModalVisible(false)} icon="counter">
         <CounterContainer id={id} />
       </Modal>
