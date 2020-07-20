@@ -10,9 +10,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     alignSelf: 'center',
-    zIndex: 1,
+    justifyContent: 'center',
     maxHeight: metrics.screenHeight - 4 * metrics.navBarHeight,
-    maxWidth: metrics.screenWidth - 2 * metrics.navBarHeight,
+    width: metrics.screenWidth - metrics.navBarHeight,
+    zIndex: 1,
   },
   header: {
     top: 20,
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     zIndex: 2,
+    backgroundColor: 'transparent',
   },
   icon: {
     backgroundColor: color.COLOR_PRIMARY,
@@ -31,14 +33,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    height: metrics.screenHeight - 2 * metrics.navBarHeight,
-    width: metrics.screenWidth - 2 * metrics.navBarHeight,
-    paddingTop: 40,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
+    maxHeight: metrics.screenHeight - 2 * metrics.navBarHeight,
+    width: metrics.screenWidth - metrics.navBarHeight,
     backgroundColor: color.COLOR_SECONDARY,
     zIndex: 1,
     justifyContent: 'center',
+    borderRadius: 10,
   },
   backdrop: {
     position: 'absolute',

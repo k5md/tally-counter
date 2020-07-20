@@ -11,10 +11,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formContent: {
-    height: '100%',
+    height: '90%',
     alignContent: 'stretch',
-    paddingTop: 20,
-    paddingHorizontal: 20,
+    padding: 20,
+    paddingTop: 40,
     zIndex: 2,
   },
   filter: {
@@ -22,27 +22,49 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  text: {
+    flex: 1,
+    padding: 10,
+  },
   selectableText: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
     color: color.COLOR_TERTIARY,
     textAlign: 'center',
   },
+  header: {
+    paddingBottom: 10,
+  },
+  headerText: {
+    fontSize: fontSizes.FONT_SIZE_SMALL,
+    color: color.COLOR_TERTIARY,
+    textAlign: 'center',
+  },
+  checkbox: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
 });
 
 const StatisticsFilters = ({ selectables, onSelect }) => (
-  <LabeledView label="Select items to show" style={styles.formContent}>
+  <View style={styles.formContent}>
+    <View style={styles.header}>
+      <Text style={styles.headerText}>Select items to show:</Text>
+    </View>
     <FlatList
       data={selectables}
       renderItem={({ item: { id, title, selected } }) => (
         <View style={styles.filter}>
-          <View style={styles.container}>
+          <View style={styles.text}>
             <Text ellipsizeMode="head" numberOfLines={1} style={styles.selectableText}>
               {title}
             </Text>
           </View>
-          <View style={styles.container}>
-            <Checkbox
-              status={selected ? 'checked' : 'unchecked'}
+          <View style={styles.checkbox}>
+            <Icon
+              size={styles.selectableText.fontSize}
+              name={selected ? 'checkbox-marked' : 'checkbox-blank-outline'}
+              color={color.COLOR_PRIMARY}
               onPress={() => onSelect(id, !selected)}
             />
           </View>
@@ -53,7 +75,7 @@ const StatisticsFilters = ({ selectables, onSelect }) => (
       removeClippedSubviews={false}
       overScrollMode="never"
     />
-  </LabeledView>
+  </View>
 );
 
 export default StatisticsFilters;

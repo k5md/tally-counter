@@ -11,36 +11,41 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   counter: {
-
+    paddingHorizontal: 10,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   actions: {
     flex: 0,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    marginTop: 10,
+    marginRight: 10,
   },
   loadables: {
-    /*flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',*/
-    //paddingVertical: 20,
+    flex: 0,
+    flexDirection: 'row',
+    //justifyContent: 'center',
   },
   loadable: {
-    flex: 0,
+    flex: 1,
     height: metrics.blockHeightGrid,
-    width: '100%',
+    width: metrics.screenWidth / 2.5,
     justifyContent: 'center',
-    marginVertical: 20,
+    padding: 10,
+    paddingTop: 15,
+
   },
   image: {
-    flex: 1,
+    flex: 0,
     alignSelf: 'center',
-    height: metrics.blockHeightGrid,
-    width: metrics.screenWidth / 3,
+    height: '100%',
+    width: '100%',
     resizeMode: 'stretch',
   },
   loadableControl: {
-    height: metrics.blockHeightGrid,
-    width: metrics.screenWidth / 3,
+    height: '100%',
+    width: '100%',
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
     
   },
   loadableControlText: {
-    fontSize: fontSizes.FONT_SIZE_SMALL,
+    fontSize: fontSizes.FONT_SIZE_LARGE,
   },
   deleteConfirmed: {
     backgroundColor: color.COLOR_TERTIARY,

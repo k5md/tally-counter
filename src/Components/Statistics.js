@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     height: 'auto',
 
     paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   buttonActive: {
     backgroundColor: color.COLOR_TERTIARY,
