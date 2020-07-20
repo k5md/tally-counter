@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { FAB, Text } from 'react-native-paper';
-import { StatisticsTable, Modal, StatisticsFilters, IconButton } from './';
+import { StatisticsTable, Modal, StatisticsFilters, Button } from './';
 
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     marginBottom: metrics.navBarHeight,
   },
   buttonActive: {
-    color: color.COLOR_PRIMARY,
+    backgroundColor: color.COLOR_TERTIARY,
   },
   fabContainer: {
     display: 'flex',
@@ -39,9 +39,10 @@ const styles = StyleSheet.create({
   },
 
   controlsText: {
-    fontSize: fontSizes.FONT_SIZE_SMALL,
     color: color.COLOR_TERTIARY,
-    textAlign: 'center',
+  },
+  controlsTextActive: {
+    color: color.COLOR_SECONDARY,
   },
 });
 
@@ -71,13 +72,14 @@ const Statistics = ({
         <View style={styles.controls}>
           <View style={styles.control}>
             {selectableFrames.map(({ id, title, selected }) => (
-              <IconButton
+              <Button
                 label={title}
-                labelStyle={styles.controlsText}
+                labelStyle={[styles.controlsText, selected && styles.controlsTextActive]}
                 onPress={() => selectFrame(id)}
                 key={id}
                 style={[styles.button, selected && styles.buttonActive]}
                 rounded
+                large
               />
             ))}
           </View>

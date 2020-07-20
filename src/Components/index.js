@@ -7,7 +7,7 @@ import Statistics from './Statistics';
 import StatisticsTable from './StatisticsTable';
 import StatisticsFilters from './StatisticsFilters';
 import SortableGrid from './YASGrid';
-import IconButton from './IconButton';
+import Button from './Button';
 import TextInput from './TextInput';
 import LabeledView from './LabeledView';
 
@@ -21,7 +21,7 @@ export {
   StatisticsTable,
   StatisticsFilters,
   SortableGrid,
-  IconButton,
+  Button,
   TextInput,
   LabeledView,
 };

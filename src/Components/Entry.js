@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { CounterContainer } from '../Containers';
-import { Modal, IconButton } from './';
+import { Modal, Button } from './';
 import { color, fontSizes, fonts } from '../config/styles';
 import metrics from '../config/metrics';
 
@@ -75,9 +75,9 @@ const Entry = props => {
       <Surface style={[styles.entry, !imageString && { backgroundColor: colorString }]}>
         {imageString ? <Image style={styles.image} source={imageString} /> : null}
         <View style={styles.header}>
-          <IconButton
-            name="dots-vertical"
-            color={styles.header.color}
+          <Button
+            icon="dots-vertical"
+            iconColor={styles.header.color}
             onPress={() => setModalVisible(true)}
             transparent
           />
@@ -89,9 +89,9 @@ const Entry = props => {
         </View>
         <View style={styles.counterControls}>
           <View style={style.counterControl}>
-            <IconButton
-              name="minus"
-              color={styles.counterControlsText.color}
+            <Button
+              icon="minus"
+              iconColor={styles.counterControlsText.color}
               onPress={() => decrement(id, value, step)}
               transparent
             />
@@ -102,9 +102,9 @@ const Entry = props => {
             </Text>
           </View>
           <View style={style.counterControl}>
-            <IconButton
-              name="plus"
-              color={styles.counterControlsText.color}
+            <Button
+              icon="plus"
+              iconColor={styles.counterControlsText.color}
               onPress={() => increment(id, value, step)}
               transparent
             />

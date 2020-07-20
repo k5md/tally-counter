@@ -27,33 +27,34 @@ const styles = StyleSheet.create({
   },
 });
 
-const IconButton = ({
-  name,
+const Button = ({
+  icon,
   label,
   onPress,
-  style,
-  color = colors.COLOR_SECONDARY,
-  rounded = false,
+  style = {}, // touchableOpacity style
+  labelStyle = {}, // text style
+  iconStyle = {}, // icon style
+  iconColor = colors.COLOR_SECONDARY,
   small = false,
   large = false,
+  rounded = false,
   transparent = false,
-  labelStyle = {},
 }) => {
-  const buttonStyle = [
+  const containerStyle = [
     styles.container,
-    rounded && styles.rounded,
-    small && styles.small,
-    large && styles.large,
-    transparent && styles.transparent,
+    rounded ? styles.rounded : {},
+    small ? styles.small : {},
+    large ? styles.large : {},
+    transparent ? styles.transparent : {},
     style,
   ];
   const iconSize = fontSizes.FONT_SIZE_SMALL || (small && fontSizes.FONT_SIZE_BASE) || (large && fontSizes.FONT_SIZE_NORMAL);
   return (
-    <TouchableOpacity style={buttonStyle} onPress={onPress}>
-      {name ? <Icon color={color} size={iconSize} name={name} /> : null}
+    <TouchableOpacity style={containerStyle} onPress={onPress}>
+      {icon ? <Icon color={iconColor} size={iconSize} name={icon} style={iconStyle} /> : null}
       {label ? <Text style={labelStyle}>{label}</Text> : null}
     </TouchableOpacity>
   );
 };
 
-export default IconButton;
+export default Button;

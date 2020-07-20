@@ -1,12 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
+import { View, StyleSheet, Image } from 'react-native';
 import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
-import { IconButton, TextInput, LabeledView } from './';
+import { Button, TextInput, LabeledView } from './';
 
 const styles = StyleSheet.create({
   container: {
@@ -105,16 +103,16 @@ const Counter = ({ entry, remove, update, dismiss }) => {
         <LabeledView label="Image" style={styles.loadable}>
           {imageString && <Image style={styles.image} source={imageString} />}
           {imageString ? (
-            <IconButton
-              name="delete"
+            <Button
+              icon="delete"
               style={[styles.loadableControl, styles.delete]}
               onPress={() => update(id, { imageString: null })}
               size={styles.loadableControlText.fontSize}
               transparent
             />
           ) : (
-            <IconButton
-              name="plus"
+            <Button
+              icon="plus"
               style={[styles.loadableControl, styles.add]}
               onPress={imagePickerHandler}
               size={styles.loadableControlText.fontSize}
@@ -124,14 +122,14 @@ const Counter = ({ entry, remove, update, dismiss }) => {
         </LabeledView>
       </View>
       <View style={styles.actions}>
-        <IconButton
-          name="delete"
+        <Button
+          icon="delete"
           onPress={deleteConfirmed ? () => remove(id) : () => setDeleteConfirmed(true)}
           rounded
           style={deleteConfirmed && styles.deleteConfirmed}
         />
-        <IconButton
-          name="close"
+        <Button
+          icon="close"
           onPress={dismiss}
           rounded
         />

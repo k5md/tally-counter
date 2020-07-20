@@ -21,7 +21,24 @@ const styles = StyleSheet.create({
   },
 });
 
-const Item = ({ title, date, time, value }) => (
+const Header = () => (
+  <DataTable.Header>
+    <DataTable.Title>
+      <Text style={styles.headerText}>Date</Text>
+    </DataTable.Title>
+    <DataTable.Title>
+      <Text style={styles.headerText}>Title</Text>
+    </DataTable.Title>
+    <DataTable.Title>
+      <Text style={styles.headerText}>Time</Text>
+    </DataTable.Title>
+    <DataTable.Title numeric>
+      <Text style={styles.headerText}>Value</Text>
+    </DataTable.Title>
+  </DataTable.Header>
+);
+
+const Row = ({ title, date, time, value }) => (
   <DataTable.Row style={styles.item}>
     <DataTable.Cell>
       <Text style={styles.cellText}>{date}</Text>
@@ -41,23 +58,10 @@ const Item = ({ title, date, time, value }) => (
 export const StatisticsTable = ({ style, data }) => (
   <SafeAreaView style={[styles.tableContainer, style]}>
     <DataTable>
-      <DataTable.Header>
-        <DataTable.Title>
-          <Text style={styles.headerText}>Date</Text>
-        </DataTable.Title>
-        <DataTable.Title>
-          <Text style={styles.headerText}>Title</Text>
-        </DataTable.Title>
-        <DataTable.Title>
-          <Text style={styles.headerText}>Time</Text>
-        </DataTable.Title>
-        <DataTable.Title numeric>
-          <Text style={styles.headerText}>Value</Text>
-        </DataTable.Title>
-      </DataTable.Header>
+      <Header />
       <FlatList
         data={data}
-        renderItem={({ item }) => <Item {...item} />}
+        renderItem={({ item }) => <Row {...item} />}
         keyExtractor={item => String(item.milliseconds)}
       />
     </DataTable>
