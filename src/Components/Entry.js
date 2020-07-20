@@ -111,7 +111,7 @@ const Entry = props => {
           </View>
         </View>
       </Surface>
-      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} icon="counter">
+      <Modal visible={modalVisible} dismiss={() => setModalVisible(false)} icon="counter">
         <CounterContainer id={id} />
       </Modal>
     </>

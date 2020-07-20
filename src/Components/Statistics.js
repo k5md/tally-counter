@@ -21,6 +21,12 @@ const styles = StyleSheet.create({
     flex: 10,
     marginBottom: metrics.navBarHeight,
   },
+  button: {
+    width: 'auto',
+    height: 'auto',
+
+    paddingHorizontal: 20,
+  },
   buttonActive: {
     backgroundColor: color.COLOR_TERTIARY,
   },
@@ -40,6 +46,7 @@ const styles = StyleSheet.create({
 
   controlsText: {
     color: color.COLOR_TERTIARY,
+    fontSize: fontSizes.FONT_SIZE_SMALL,
   },
   controlsTextActive: {
     color: color.COLOR_SECONDARY,
@@ -79,7 +86,6 @@ const Statistics = ({
                 key={id}
                 style={[styles.button, selected && styles.buttonActive]}
                 rounded
-                large
               />
             ))}
           </View>
@@ -93,7 +99,7 @@ const Statistics = ({
           ) : null}
         </View>
       </View>
-      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} icon="filter">
+      <Modal visible={modalVisible} dismiss={() => setModalVisible(false)} icon="filter">
         <StatisticsFilters selectables={selectableIds} onSelect={selectId} />
       </Modal>
     </>

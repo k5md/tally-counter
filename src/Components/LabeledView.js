@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
-    top: -fontSizes.FONT_SIZE_SMALL / 2,
+    top: -fontSizes.FONT_SIZE_SMALL / 1.2,
     left: fontSizes.FONT_SIZE_SMALL / 2,
     paddingHorizontal: fontSizes.FONT_SIZE_SMALL / 2,
   },

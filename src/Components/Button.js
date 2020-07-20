@@ -49,6 +49,7 @@ const Button = ({
     style,
   ];
   const iconSize = fontSizes.FONT_SIZE_SMALL || (small && fontSizes.FONT_SIZE_BASE) || (large && fontSizes.FONT_SIZE_NORMAL);
+
   return (
     <TouchableOpacity style={containerStyle} onPress={onPress}>
       {icon ? <Icon color={iconColor} size={iconSize} name={icon} style={iconStyle} /> : null}

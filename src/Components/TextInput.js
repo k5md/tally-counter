@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, TextInput as TextInputRN } from 'react-native';
-import { Text } from 'react-native-paper';
-import { color, fontSizes } from '../config/styles';
+import { StyleSheet, TextInput as TextInputRN } from 'react-native';
 import { LabeledView } from './';
+import { color, fontSizes } from '../config/styles';
 
 const styles = StyleSheet.create({
-  textInput: {
+  text: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
+    paddingHorizontal: fontSizes.FONT_SIZE_SMALL / 2,
   },
 });
 
@@ -16,11 +16,16 @@ const TextInput = ({
   onChange,
   keyboardType = 'default',
   backgroundColor = color.COLOR_SECONDARY,
-  textInputStyle = {},
+  textStyle = {},
   labelStyle = {},
 }) => (
   <LabeledView label={label} backgroundColor={backgroundColor} labelStyle={labelStyle}>
-    <TextInputRN value={value} onChangeText={onChange} keyboardType={keyboardType} style={[styles.textInput, textInputStyle]}/>
+    <TextInputRN
+      value={value}
+      onChangeText={onChange}
+      keyboardType={keyboardType}
+      style={[styles.text, textStyle]}
+    />
   </LabeledView>
 );
 

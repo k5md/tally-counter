@@ -4,35 +4,16 @@ import { Checkbox, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { color, fontSizes } from '../config/styles';
 import metrics from '../config/metrics';
-import { LabeledView } from './';
+import { LabeledView, Button } from './';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  formActionsContainer: {
-    position: 'absolute',
-    top: -20,
-    right: 20,
-    left: 20,
-    bottom: 20,
-    zIndex: 2,
-  },
-  formActions: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  formAction: {
-    backgroundColor: color.COLOR_PRIMARY,
-    borderRadius: 10,
-    height: fontSizes.FONT_SIZE_NORMAL,
-    width: fontSizes.FONT_SIZE_NORMAL,
-    fontSize: fontSizes.FONT_SIZE_SMALL,
-  },
   formContent: {
-    flex: 0,
-    paddingVertical: 50,
+    height: '100%',
+    alignContent: 'stretch',
+    paddingTop: 20,
     paddingHorizontal: 20,
     zIndex: 2,
   },
@@ -41,10 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  filters: {
-    flex: 0,
-  },
-  selectableTitleText: {
+  selectableText: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
     color: color.COLOR_TERTIARY,
     textAlign: 'center',
@@ -58,7 +36,7 @@ const StatisticsFilters = ({ selectables, onSelect }) => (
       renderItem={({ item: { id, title, selected } }) => (
         <View style={styles.filter}>
           <View style={styles.container}>
-            <Text ellipsizeMode="head" numberOfLines={1} style={styles.selectableTitleText}>
+            <Text ellipsizeMode="head" numberOfLines={1} style={styles.selectableText}>
               {title}
             </Text>
           </View>
@@ -72,8 +50,8 @@ const StatisticsFilters = ({ selectables, onSelect }) => (
       )}
       keyExtractor={({ id }) => String(id)}
       numColumns={2}
-      contentContainerStyle={styles.filters}
       removeClippedSubviews={false}
+      overScrollMode="never"
     />
   </LabeledView>
 );
