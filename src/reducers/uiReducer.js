@@ -1,4 +1,3 @@
-import update from 'immutability-helper';
 import * as types from '../constants/actionTypes';
 
 const displayTypes = [{ name: 'list', icon: 'view-list' }, { name: 'grid', icon: 'view-grid' }];
@@ -9,8 +8,7 @@ const initialState = {
 };
 
 const handlers = {
-  [types.UI_SET_DISPLAY_TYPE]: (state, { displayType }) =>
-    update(state, { displayType: { $merge: displayType } }),
+  [types.UI_SET_DISPLAY_TYPE]: (state, { displayType }) => ({ ...state, displayType }),
 };
 
 const uiReducer = (state = initialState, action) => {

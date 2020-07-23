@@ -8,6 +8,7 @@ export const randomRGB = () => {
 };
 
 export const cloneDate = date => new Date(date.valueOf());
-export const getPrevYear = (date, dt = 1) => cloneDate(date).setFullYear(date.getFullYear() - dt);
-export const getPrevMonth = (date, dt = 1) => cloneDate(date).setMonth(date.getMonth() - dt);
-export const getPrevDay = (date, dt = 1) => cloneDate(date).setDate(date.getDate() - dt);
+export const prevYear = (date = new Date(), dt = 1) => cloneDate(date).setFullYear(date.getFullYear() - dt);
+export const prevMonth = (date = new Date(), dt = 1) => cloneDate(date).setMonth(date.getMonth() - dt);
+export const prevDay = (date = new Date(), dt = 1) => cloneDate(date).setDate(date.getDate() - dt);
+export const dateRange = (start, end = Date.now()) => [start, end];

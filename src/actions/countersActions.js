@@ -4,7 +4,6 @@ export const increment = (id, value, step) => ({
   id,
   value,
   step,
-  date: Date.now(),
   type: types.COUNTER_INCREMENT,
 });
 
@@ -12,7 +11,6 @@ export const decrement = (id, value, step) => ({
   id,
   value,
   step,
-  date: Date.now(),
   type: types.COUNTER_DECREMENT,
 });
 
@@ -21,11 +19,34 @@ export const create = (initialValue = {}) => ({
   type: types.COUNTER_CREATE,
 });
 
-export const update = (id, fields) => ({
+export const setTitle = (id, title) => ({
   id,
-  date: Date.now(),
-  fields,
-  type: types.COUNTER_UPDATE,
+  title,
+  type: types.COUNTER_SET_TITLE,
+});
+
+export const setStep = (id, step) => ({
+  id,
+  step,
+  type: types.COUNTER_SET_STEP,
+});
+
+export const setValue = (id, value) => ({
+  id,
+  value,
+  type: types.COUNTER_SET_VALUE,
+});
+
+export const setColorString = (id, colorString) => ({
+  id,
+  colorString,
+  type: types.COUNTER_SET_COLORSTRING,
+});
+
+export const setImageString = (id, imageString) => ({
+  id,
+  imageString,
+  type: types.COUNTER_SET_IMAGESTRING,
 });
 
 export const remove = id => ({

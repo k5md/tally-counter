@@ -14,7 +14,11 @@ const mapDispatchToProps = dispatch => ({
   increment: (id, value, step) => dispatch(countersActions.increment(id, value, step)),
   decrement: (id, value, step) => dispatch(countersActions.decrement(id, value, step)),
   remove: id => dispatch(countersActions.remove(id)),
-  update: (id, fields) => dispatch(countersActions.update(id, fields)),
+  setValue: (id, value) => dispatch(countersActions.setValue(id, value)),
+  setStep: (id, step) => dispatch(countersActions.setStep(id, step)),
+  setTitle: (id, title) => dispatch(countersActions.setTitle(id, title)),
+  setColorString: (id, colorString) => dispatch(countersActions.setColorString(id, colorString)),
+  setImageString: (id, imageString) => dispatch(countersActions.setImageString(id, imageString)),
 });
 
 const CounterContainer = props => <Counter {...props} />;

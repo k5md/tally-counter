@@ -14,6 +14,7 @@ const TextInput = ({
   label,
   value,
   onChange,
+  onEndEditing = () => {},
   keyboardType = 'default',
   backgroundColor = color.COLOR_SECONDARY,
   textStyle = {},
@@ -23,6 +24,7 @@ const TextInput = ({
     <TextInputRN
       value={value}
       onChangeText={onChange}
+      onEndEditing={onEndEditing}
       keyboardType={keyboardType}
       style={[styles.text, textStyle]}
     />

@@ -1,6 +1,6 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 import { uniqueId } from 'lodash';
-import { getPrevDay, getPrevMonth, getPrevYear } from '../utils';
+import { prevDay, prevMonth, prevYear, dateRange, randomRGB } from '../utils';
 import * as actionTypes from '../constants/actionTypes';
 const SQLite = require('react-native-sqlite-storage');
 
@@ -16,18 +16,12 @@ let storage = null;
 SQLite.DEBUG(__DEV__);
 SQLite.enablePromise(true);
 
-const current = {
-  get date() {
-    return new Date();
-  },
-};
-
 const selectableFrames = [
-  { id: '1d', window: () => [getPrevDay(current.date), current.date.getTime()]},
-  { id: '3d', window: () => [getPrevDay(current.date, 3), current.date.getTime()]},
-  { id: 'M', window: () => [getPrevMonth(current.date), current.date.getTime()]},
-  { id: 'Y', window: () => [getPrevYear(current.date), current.date.getTime()]},
-  { id: 'All', window: () => [0, current.date.getTime()]},
+  { id: '1d', window: () => dateRange(prevDay()) },
+  { id: '3d', window: () => dateRange(prevDay(new Date(), 3)) },
+  { id: 'M', window: () => dateRange(prevMonth()) },
+  { id: 'Y', window: () => dateRange(prevYear()) },
+  { id: 'All', window: () => dateRange(0) },
 ];
 
 function* execute(query, successAction, failAction, storage) {
@@ -37,15 +31,6 @@ function* execute(query, successAction, failAction, storage) {
   } catch (error) {
     yield put({ type: failAction, error });
   }
-}
-
-function* read(query) {
-  yield execute(
-    query,
-    actionTypes.STATISTICS_READ_SUCCESS,
-    actionTypes.STATISTICS_READ_FAIL,
-    storage,
-  );
 }
 
 function* write(query) {
@@ -63,45 +48,50 @@ function* initialize() {
     const table = `CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(${FIELDS.map(entry =>
       entry.join(' '),
     ).join(',')});`;
-    const index = `
-      CREATE INDEX IF NOT EXISTS id ON ${TABLE_NAME} id;
-      CREATE INDEX IF NOT EXISTS id_value_date ON ${TABLE_NAME} (id, value, date);
-    `;
+    const indexId = `CREATE INDEX IF NOT EXISTS id ON ${TABLE_NAME} (id);`;
+    const indexIdValueDate = `CREATE INDEX IF NOT EXISTS id_value_date ON ${TABLE_NAME} (id, value, date);`;
     yield call(() => storage.executeSql(table));
-    yield call(() => storage.executeSql(index));
+    yield call(() => storage.executeSql(indexId));
+    yield call(() => storage.executeSql(indexIdValueDate));
     yield put({ type: actionTypes.STATISTICS_INITIALIZE_SUCCESS });
   } catch (error) {
     yield put({ type: actionTypes.STATISTICS_INITIALIZE_FAIL, error });
   }
 }
 
-function* onIncrement({ id, value, step, date }) {
+function* onIncrement({ id, value, step, date = Date.now() }) {
   const values = [id, value + step, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
   yield write(query);
 }
 
-function* onDecrement({ id, value, step, date }) {
+function* onDecrement({ id, value, step, date = Date.now() }) {
   const values = [id, value - step, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
   yield write(query);
 }
 
-function* onUpdate({ id, date, fields }) {
-  const updateStorage = Object.keys(fields).includes('value');
-  if (!updateStorage) {
-    return;
-  }
-
-  const meaningfulFields = { value: fields.value };
-  const update = Object.entries(meaningfulFields)
-    .map((key, value) => `${key}=${value}`)
-    .join(',');
-  const query = `UPDATE ${TABLE_NAME} SET ${update} WHERE id=${id};`;
+function* onSetTitle({ id, title }) {
+  const query = `UPDATE ${TABLE_NAME} SET title = ${title} WHERE id=${id};`;
   yield write(query);
 }
 
-function* onCreate({ initialValue: { value = 0, date = Date.now(), title = uniqueId() } }) {
+function* onSetValue({ id, value, date = Date.now() }) {
+  const values = [id, value, date].join(',');
+  const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
+  yield write(query);
+}
+
+function* onCreate({
+  initialValue: {
+    value = 0,
+    date = Date.now(),
+    title = uniqueId(),
+    step = 1,
+    imageString = null,
+    colorString = randomRGB(),
+  },
+}) {
   const values = [value, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (value, date) VALUES (${values});`;
 
@@ -109,7 +99,15 @@ function* onCreate({ initialValue: { value = 0, date = Date.now(), title = uniqu
     const createdCounter = yield call(() => storage.executeSql(query));
     yield put({
       type: actionTypes.COUNTER_CREATE_SUCCESS,
-      payload: { id: createdCounter[0].insertId, value, date, title },
+      payload: {
+        id: createdCounter[0].insertId,
+        value,
+        date,
+        title,
+        step,
+        imageString,
+        colorString,
+      },
     });
   } catch (error) {
     yield put({ type: actionTypes.COUNTER_CREATE_FAIL, error });
@@ -146,7 +144,8 @@ export default function* statisticsStorage() {
   yield takeEvery(actionTypes.COUNTER_CREATE, onCreate);
   yield takeEvery(actionTypes.COUNTER_DECREMENT, onDecrement);
   yield takeEvery(actionTypes.COUNTER_INCREMENT, onIncrement);
-  yield takeEvery(actionTypes.COUNTER_UPDATE, onUpdate);
+  yield takeEvery(actionTypes.COUNTER_SET_TITLE, onSetTitle);
+  yield takeEvery(actionTypes.COUNTER_SET_VALUE, onSetValue);
   yield takeEvery(actionTypes.COUNTER_REMOVE, onRemove);
   yield takeEvery(actionTypes.STATISTICS_READ, onRead);
 }

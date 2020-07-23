@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
   loadables: {
     flex: 0,
     flexDirection: 'row',
-    //justifyContent: 'center',
   },
   loadable: {
     flex: 1,
@@ -34,7 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
     paddingTop: 15,
-
   },
   image: {
     flex: 0,
@@ -66,7 +64,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Counter = ({ entry, remove, update }) => {
+const Counter = ({ entry, remove, setTitle, setValue, setStep, setColorString, setImageString }) => {
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
 
   if (!entry) {
@@ -83,7 +81,7 @@ const Counter = ({ entry, remove, update }) => {
       mediaType: 'photo',
     })
       .then(({ path, width, height, mime }) =>
-        update(id, { imageString: { uri: path, width, height, mime } }),
+        setImageString(id, { uri: path, width, height, mime }),
       )
       .catch(e => console.log(e));
   };
@@ -91,23 +89,23 @@ const Counter = ({ entry, remove, update }) => {
   return (
     <View style={styles.counter}>
       <ScrollView>
-        <TextInput label="Title" value={title} onChange={v => update(id, { title: v })} />
+        <TextInput label="Title" value={title} onChange={v => setTitle(id, v)} />
         <TextInput
           label="Step"
           value={String(step)}
-          onChange={v => update(id, { step: Number(v) })}
+          onChange={v => setStep(id, Number(v))}
           keyboardType="numeric"
         />
         <TextInput
           label="Value"
           value={String(value)}
-          onChange={v => update(id, { value: Number(v) })}
+          onChange={v => setValue(id, Number(v) || 0)}
           keyboardType="numeric"
         />
         <View style={styles.loadables}>
           <LabeledView label="Color" style={styles.loadable}>
             <ColorPicker
-              onColorSelected={v => update(id, { colorString: v })}
+              onColorSelected={v => setColorString(id, v)}
               style={styles.container}
               hideSliders
               defaultColor={colorString}
@@ -119,7 +117,7 @@ const Counter = ({ entry, remove, update }) => {
               <Button
                 icon="delete"
                 style={[styles.loadableControl, styles.delete]}
-                onPress={() => update(id, { imageString: null })}
+                onPress={() => setImageString(id, null)}
                 size={styles.loadableControlText.fontSize}
                 transparent
               />
