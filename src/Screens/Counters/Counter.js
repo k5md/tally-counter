@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
-import { color, fontSizes } from '../config/styles';
-import { blockHeightGrid, screenWidth, blockWidthGrid } from '../config/metrics';
-import { Button, TextInput, LabeledView } from './';
+import { color, fontSizes } from '../../config/styles';
+import { blockHeightGrid, screenWidth, blockWidthGrid } from '../../config/metrics';
+import { Button, TextInput, LabeledView } from '../../Elements';
 
 const styles = StyleSheet.create({
   container: {

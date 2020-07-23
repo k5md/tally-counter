@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView, FlatList, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
-import { color, fontSizes, fonts } from '../config/styles';
+import { color, fontSizes, fonts } from '../../config/styles';
 
 const styles = StyleSheet.create({
   item: {

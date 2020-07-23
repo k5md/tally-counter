@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
-import { CountersCollectionContainer } from '../Containers';
-import { color } from '../config/styles';
+import CountersCollectionContainer from './CountersCollectionContainer';
+import { color } from '../../config/styles';
 
 const styles = StyleSheet.create({
   container: {

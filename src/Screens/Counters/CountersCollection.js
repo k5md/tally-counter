@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import { SortableGrid } from './';
-import { EntryContainer } from '../Containers';
-import { color } from '../config/styles';
-import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../config/metrics';
+import { SortableGrid } from '../../Elements';
+import EntryContainer from './EntryContainer';
+import { color } from '../../config/styles';
+import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../../config/metrics';
 
 const styles = StyleSheet.create({
   countersCollection: {

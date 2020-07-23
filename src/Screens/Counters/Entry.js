@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, Text } from 'react-native';
-import { CounterContainer } from '../Containers';
-import { Modal, Button } from './';
-import { color, fontSizes, fonts } from '../config/styles';
+import CounterContainer from './CounterContainer';
+import { Modal, Button } from '../../Elements';
+import { color, fontSizes, fonts } from '../../config/styles';
 
 const styles = StyleSheet.create({
   header: {

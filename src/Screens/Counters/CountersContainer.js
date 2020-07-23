@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as uiActions from '../actions/uiActions';
-import * as countersActions from '../actions/countersActions';
-import { Counters } from '../Components';
+import * as uiActions from '../../actions/uiActions';
+import * as countersActions from '../../actions/countersActions';
+import Counters from './Counters';
 import { uniqueId } from 'lodash';
 
 const getNextDisplayType = (displayTypes, displayType) => {

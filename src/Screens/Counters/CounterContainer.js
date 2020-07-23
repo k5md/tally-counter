@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Counter } from '../Components';
-import * as countersActions from '../actions/countersActions';
+import Counter from './Counter';
+import * as countersActions from '../../actions/countersActions';
 
 const mapStateToProps = ({ countersReducer }, ownProps) => {
   const { id } = ownProps;

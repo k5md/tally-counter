@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
-import { StatisticsTable, Modal, StatisticsFilters, Button } from './';
+import StatisticsTable from './StatisticsTable';
+import StatisticsFilters from './StatisticsFilters';
+import { Modal, Button } from '../../Elements';
 
-import { color, fontSizes } from '../config/styles';
-import { navBarHeight } from '../config/metrics';
+import { color, fontSizes } from '../../config/styles';
+import { navBarHeight } from '../../config/metrics';
 
 const styles = StyleSheet.create({
   container: {

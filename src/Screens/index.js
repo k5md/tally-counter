@@ -1,2 +1,4 @@
-export { CountersScreen } from './CountersScreen';
-export { StatisticsScreen } from './StatisticsScreen';
+import CountersScreen from './Counters/CountersScreen';
+import StatisticsScreen from './Statistics/StatisticsScreen';
+
+export { CountersScreen, StatisticsScreen };

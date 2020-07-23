@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Statistics } from '../Components';
-import * as statisticsActions from '../actions/statisticsActions';
+import Statistics from './Statistics';
+import * as statisticsActions from '../../actions/statisticsActions';
 
 const mapStateToProps = ({
   statisticsReducer: { data: stats, selectableIds, selectableFrames },
