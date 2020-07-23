@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { StatisticsTable, Modal, StatisticsFilters, Button } from './';
 
 import { color, fontSizes } from '../config/styles';
-import metrics from '../config/metrics';
+import { navBarHeight } from '../config/metrics';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   table: {
     flex: 10,
-    marginBottom: metrics.navBarHeight,
+    marginBottom: navBarHeight,
   },
   button: {
     width: 'auto',

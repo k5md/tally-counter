@@ -3,15 +3,15 @@ import { View, StyleSheet, Modal as RNModal } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { Button } from './';
 import { color, fontSizes } from '../config/styles';
-import metrics from '../config/metrics';
+import { screenHeight, navBarHeight, screenWidth } from '../config/metrics';
 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'center',
-    maxHeight: metrics.screenHeight - 4 * metrics.navBarHeight,
-    width: metrics.screenWidth - metrics.navBarHeight,
+    maxHeight: screenHeight - 4 * navBarHeight,
+    width: screenWidth - navBarHeight,
     zIndex: 1,
   },
   header: {
@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    maxHeight: metrics.screenHeight - 2 * metrics.navBarHeight,
-    width: metrics.screenWidth - metrics.navBarHeight,
+    maxHeight: screenHeight - 2 * navBarHeight,
+    width: screenWidth - navBarHeight,
     backgroundColor: color.COLOR_SECONDARY,
     zIndex: 1,
     justifyContent: 'center',
@@ -49,22 +49,20 @@ const styles = StyleSheet.create({
 });
 
 const Modal = ({ visible, dismiss, icon, children }) => (
-
-    <RNModal visible={visible} dismissable={false} transparent>
-      <View style={styles.backdrop} />
-      <View style={styles.modalContainer}>
-        <View style={styles.header}>
-          <View style={styles.icon}>
-            <Icon name={icon} size={styles.icon.fontSize} color={color.COLOR_SECONDARY} />
-          </View>
-          <View style={styles.action}>
-            <Button icon="close" onPress={dismiss} rounded />
-          </View>
+  <RNModal visible={visible} dismissable={false} transparent>
+    <View style={styles.backdrop} />
+    <View style={styles.modalContainer}>
+      <View style={styles.header}>
+        <View style={styles.icon}>
+          <Icon name={icon} size={styles.icon.fontSize} color={color.COLOR_SECONDARY} />
         </View>
-        <View style={styles.content}>{children}</View>
+        <View style={styles.action}>
+          <Button icon="close" onPress={dismiss} rounded />
+        </View>
       </View>
-    </RNModal>
-
+      <View style={styles.content}>{children}</View>
+    </View>
+  </RNModal>
 );
 
 export default Modal;

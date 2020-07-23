@@ -3,7 +3,7 @@ import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../config/styles';
-import metrics from '../config/metrics';
+import { blockHeightGrid, screenWidth, blockWidthGrid } from '../config/metrics';
 import { Button, TextInput, LabeledView } from './';
 
 const styles = StyleSheet.create({
@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
   },
   loadable: {
     flex: 1,
-    height: metrics.blockHeightGrid,
-    width: metrics.screenWidth / 2.5,
+    height: blockHeightGrid,
+    width: screenWidth / 2.5,
     justifyContent: 'center',
     padding: 10,
     paddingTop: 15,
@@ -53,9 +53,6 @@ const styles = StyleSheet.create({
   add: {
     backgroundColor: color.COLOR_SECONDARY,
   },
-  delete: {
-    
-  },
   loadableControlText: {
     fontSize: fontSizes.FONT_SIZE_LARGE,
   },
@@ -64,7 +61,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Counter = ({ entry, remove, setTitle, setValue, setStep, setColorString, setImageString }) => {
+const Counter = ({
+  entry,
+  remove,
+  setTitle,
+  setValue,
+  setStep,
+  setColorString,
+  setImageString,
+}) => {
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
 
   if (!entry) {
@@ -75,8 +80,8 @@ const Counter = ({ entry, remove, setTitle, setValue, setStep, setColorString, s
 
   const imagePickerHandler = () => {
     ImagePicker.openPicker({
-      width: metrics.blockWidthGrid,
-      height: metrics.blockHeightGrid,
+      width: blockWidthGrid,
+      height: blockHeightGrid,
       cropping: false,
       mediaType: 'photo',
     })

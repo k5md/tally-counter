@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SortableGrid } from './';
 import { EntryContainer } from '../Containers';
-import { color, fontSizes, fonts } from '../config/styles';
-import metrics from '../config/metrics';
+import { color } from '../config/styles';
+import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../config/metrics';
 
 const styles = StyleSheet.create({
   countersCollection: {
-    marginBottom: metrics.navBarHeight,
+    marginBottom: navBarHeight,
   },
   block: {
     flex: 1,
@@ -55,8 +55,8 @@ class CountersCollection extends React.Component {
           iconColor={styles.search.color}
         />
         <SortableGrid
-          itemsPerRow={displayType.name === 'grid' ? metrics.blocksPerLine : 1}
-          blockHeight={displayType.name === 'grid' ? metrics.blockHeightGrid : metrics.blockHeightList}
+          itemsPerRow={displayType.name === 'grid' ? blocksPerRow : 1}
+          blockHeight={displayType.name === 'grid' ? blockHeightGrid : blockHeightList}
           itemOrder={order}
           onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
         >
