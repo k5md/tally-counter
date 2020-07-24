@@ -36,6 +36,11 @@ target 'TallyCounter' do
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
+
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+
+  pod 'RNFBAdMob', :path => '../node_modules/@react-native-firebase/admob'
+
   target 'TallyCounterTests' do
     inherit! :search_paths
     # Pods for testing

@@ -11,7 +11,6 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
 
-      <!-- Add this SplashActivity -->
       <activity
         android:name=".SplashActivity"
         android:theme="@style/SplashTheme"
