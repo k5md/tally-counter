@@ -7,6 +7,7 @@ import { Modal, Button } from '../../Elements';
 
 import { color, fontSizes } from '../../config/styles';
 import { navBarHeight } from '../../config/metrics';
+import { translate } from '../../localizations';
 
 const styles = StyleSheet.create({
   container: {
@@ -72,7 +73,7 @@ const Statistics = ({
       return;
     }
     read(selectedIds, selectedFrame);
-  }, [read, selectableIds, selectableFrames]);
+  }, [read, selectableIds, selectableFrames, counters]);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -83,7 +84,7 @@ const Statistics = ({
           <View style={styles.control}>
             {selectableFrames.map(({ id, title, selected }) => (
               <Button
-                label={title}
+                label={translate(title)}
                 labelStyle={[styles.controlsText, selected && styles.controlsTextActive]}
                 onPress={() => selectFrame(id)}
                 key={id}

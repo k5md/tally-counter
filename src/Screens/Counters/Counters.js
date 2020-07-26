@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 import CountersCollectionContainer from './CountersCollectionContainer';
 import { color } from '../../config/styles';
-import { Banner } from '../../Elements';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +27,6 @@ const styles = StyleSheet.create({
 const Counters = ({ nextDisplayType, setDisplayType, create }) => {
   return (
     <View style={styles.container}>
-      <Banner />
       <CountersCollectionContainer />
       <View style={styles.fabContainer}>
         <FAB

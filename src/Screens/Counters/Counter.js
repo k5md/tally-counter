@@ -5,12 +5,18 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../../config/styles';
 import { blockHeightGrid, screenWidth, blockWidthGrid } from '../../config/metrics';
 import { Button, TextInput, LabeledView } from '../../Elements';
+import { translate } from '../../localizations';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   counter: {
+    flex: 0,
     paddingHorizontal: 10,
     paddingTop: 40,
     paddingBottom: 20,
@@ -22,17 +28,26 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginRight: 10,
   },
+  action: {
+    marginRight: 10,
+  },
   loadables: {
     flex: 0,
     flexDirection: 'row',
+    justifyContent: 'center',
   },
   loadable: {
     flex: 1,
     height: blockHeightGrid,
-    width: screenWidth / 2.5,
     justifyContent: 'center',
-    padding: 10,
-    paddingTop: 15,
+    padding: 5,
+    paddingTop: 20,
+  },
+  loadableColor: {
+    minWidth: screenWidth / 3,
+  },
+  loadableImage: {
+    width: screenWidth / 2.5,
   },
   image: {
     flex: 0,
@@ -61,22 +76,35 @@ const styles = StyleSheet.create({
   },
 });
 
-const Counter = ({
-  entry,
-  remove,
-  setTitle,
-  setValue,
-  setStep,
-  setColorString,
-  setImageString,
-}) => {
+const Counter = (props) => {
+  const { entry, remove } = props;
+
+
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+
+  const [title, setTitle] = useState(entry.title);
+  const [value, setValue] = useState(entry.value || 0);
+  const [step, setStep] = useState(entry.step || 0);
+  const [colorString, setColorString] = useState(entry.colorString || '');
+  const [imageString, setImageString] = useState(entry.imageString || null);
+
+  const { id } = entry;
+
+  const update = () => {
+    if (title !== entry.title) props.setTitle(id, title);
+    if (value !== entry.value) props.setValue(id, value);
+    if (step !== entry.step) props.setStep(id, step);
+    if (colorString !== entry.colorString) props.setColorString(id, colorString);
+    if (imageString !== entry.imageString) props.setImageString(id, imageString);
+  }
+
+
 
   if (!entry) {
     return null;
   }
 
-  const { id, title, value, step, colorString, imageString } = entry;
+
 
   const imagePickerHandler = () => {
     ImagePicker.openPicker({
@@ -85,44 +113,47 @@ const Counter = ({
       cropping: false,
       mediaType: 'photo',
     })
-      .then(({ path, width, height, mime }) =>
-        setImageString(id, { uri: path, width, height, mime }),
-      )
+      .then(({ path, width, height, mime }) => setImageString({ uri: path, width, height, mime }))
       .catch(e => console.log(e));
   };
 
   return (
     <View style={styles.counter}>
       <ScrollView>
-        <TextInput label="Title" value={title} onChange={v => setTitle(id, v)} />
+        <TextInput label={translate('Title')} value={title} onChange={v => setTitle(v)} />
         <TextInput
-          label="Step"
+          label={translate('Step')}
           value={String(step)}
-          onChange={v => setStep(id, Number(v))}
+          onChange={v => setStep(Number(v) || 0)}
           keyboardType="numeric"
         />
-        <TextInput
-          label="Value"
-          value={String(value)}
-          onChange={v => setValue(id, Number(v) || 0)}
-          keyboardType="numeric"
-        />
+        <View style={styles.row}>
+          <View style={styles.container}>
+            <TextInput
+              label={translate('Value')}
+              value={String(value)}
+              onChange={v => setValue(Number(v) || 0)}
+              keyboardType="numeric"
+            />
+          </View>
+        </View>
+
         <View style={styles.loadables}>
-          <LabeledView label="Color" style={styles.loadable}>
+          <LabeledView label={translate('Color')} style={[styles.loadable, styles.loadableColor]}>
             <ColorPicker
-              onColorSelected={v => setColorString(id, v)}
+              onColorSelected={v => setColorString(v)}
               style={styles.container}
               hideSliders
               defaultColor={colorString}
             />
           </LabeledView>
-          <LabeledView label="Image" style={styles.loadable}>
+          <LabeledView label={translate('Image')} style={[styles.loadable, styles.loadableImage]}>
             {imageString && <Image style={styles.image} source={imageString} />}
             {imageString ? (
               <Button
                 icon="delete"
                 style={[styles.loadableControl, styles.delete]}
-                onPress={() => setImageString(id, null)}
+                onPress={() => setImageString(null)}
                 size={styles.loadableControlText.fontSize}
                 transparent
               />
@@ -140,11 +171,17 @@ const Counter = ({
       </ScrollView>
 
       <View style={styles.actions}>
-        <Button
+      <Button
           icon="delete"
           onPress={deleteConfirmed ? () => remove(id) : () => setDeleteConfirmed(true)}
           rounded
-          style={deleteConfirmed && styles.deleteConfirmed}
+          style={[styles.action, deleteConfirmed && styles.deleteConfirmed]}
+        />
+        <Button
+          icon="content-save"
+          onPress={update}
+          rounded
+          style={styles.action}
         />
       </View>
     </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, SafeAreaView, FlatList, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { color, fontSizes, fonts } from '../../config/styles';
+import { translate } from '../../localizations';
 
 const styles = StyleSheet.create({
   item: {
@@ -24,16 +25,16 @@ const styles = StyleSheet.create({
 const Header = () => (
   <DataTable.Header>
     <DataTable.Title>
-      <Text style={styles.headerText}>Date</Text>
+      <Text style={styles.headerText}>{translate('Date')}</Text>
     </DataTable.Title>
     <DataTable.Title>
-      <Text style={styles.headerText}>Title</Text>
+      <Text style={styles.headerText}>{translate('Title')}</Text>
     </DataTable.Title>
     <DataTable.Title>
-      <Text style={styles.headerText}>Time</Text>
+      <Text style={styles.headerText}>{translate('Time')}</Text>
     </DataTable.Title>
     <DataTable.Title numeric>
-      <Text style={styles.headerText}>Value</Text>
+      <Text style={styles.headerText}>{translate('Value')}</Text>
     </DataTable.Title>
   </DataTable.Header>
 );

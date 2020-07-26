@@ -19,9 +19,11 @@ const TextInput = ({
   backgroundColor = color.COLOR_SECONDARY,
   textStyle = {},
   labelStyle = {},
+  ...rest
 }) => (
   <LabeledView label={label} backgroundColor={backgroundColor} labelStyle={labelStyle}>
     <TextInputRN
+      {...rest}
       value={value}
       onChangeText={onChange}
       onEndEditing={onEndEditing}

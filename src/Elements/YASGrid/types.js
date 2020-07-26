@@ -1,4 +1,4 @@
-import { shape, number, string, objectOf, oneOfType, arrayOf, func } from 'prop-types';
+import { shape, number, string, objectOf, arrayOf, func, object } from 'prop-types';
 
 export const SortableGridPropTypes = {
   blockTransitionDuration: number,
@@ -13,6 +13,7 @@ export const SortableGridPropTypes = {
   ),
   onDragRelease: func,
   blockHeight: number,
+  style: object,
 };
 
 export const SortableGridDefaultProps = {
@@ -21,4 +22,5 @@ export const SortableGridDefaultProps = {
   itemsPerRow: 4,
   dragActivationTreshold: 200,
   onDragRelease: () => {},
+  style: {},
 };

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SortableGrid } from '../../Elements';
 import EntryContainer from './EntryContainer';
 import { color } from '../../config/styles';
 import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../../config/metrics';
+import { translate } from '../../localizations';
 
 const styles = StyleSheet.create({
   countersCollection: {
@@ -26,56 +27,44 @@ const styles = StyleSheet.create({
   },
 });
 
-class CountersCollection extends React.Component {
-  constructor() {
-    super();
-  }
+const CountersCollection = ({ data, order, displayType, rearrange }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const filtered = Object.values(data).filter(
+    counter => counter && counter.title.toLowerCase().includes(searchQuery),
+  );
+  const sortable = searchQuery === '';
 
-  state = {
-    searchQuery: '',
-  };
-
-  render() {
-    const { data, order, displayType, rearrange } = this.props;
-    const { searchQuery } = this.state;
-
-    const filtered = Object.values(data).filter(
-      counter => counter && counter.title.toLowerCase().includes(searchQuery),
-    );
-    const sortable = searchQuery === '';
-
-    return (
-      <View style={styles.countersCollection}>
-        <Searchbar
-          placeholder="Search"
-          onChangeText={value => this.setState(() => ({ searchQuery: value.toLowerCase() }))}
-          value={searchQuery}
-          inputStyle={styles.searchInput}
-          style={styles.search}
-          iconColor={styles.search.color}
-        />
-        <SortableGrid
-          itemsPerRow={displayType.name === 'grid' ? blocksPerRow : 1}
-          blockHeight={displayType.name === 'grid' ? blockHeightGrid : blockHeightList}
-          itemOrder={order}
-          onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
-        >
-          {filtered.map(entry => {
-            const { id } = entry;
-            return (
-              <EntryContainer
-                key={id}
-                id={id}
-                entry={entry}
-                style={styles.block}
-                inactive={!sortable}
-              />
-            );
-          })}
-        </SortableGrid>
-      </View>
-    );
-  }
-}
+  return (
+    <View style={styles.countersCollection}>
+      <Searchbar
+        placeholder={translate('Search')}
+        onChangeText={value => setSearchQuery(value.toLowerCase())}
+        value={searchQuery}
+        inputStyle={styles.searchInput}
+        style={styles.search}
+        iconColor={styles.search.color}
+      />
+      <SortableGrid
+        itemsPerRow={displayType.name === 'grid' ? blocksPerRow : 1}
+        blockHeight={displayType.name === 'grid' ? blockHeightGrid : blockHeightList}
+        itemOrder={order}
+        onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
+      >
+        {filtered.map(entry => {
+          const { id } = entry;
+          return (
+            <EntryContainer
+              key={id}
+              id={id}
+              entry={entry}
+              style={styles.block}
+              inactive={!sortable}
+            />
+          );
+        })}
+      </SortableGrid>
+    </View>
+  );
+};
 
 export default CountersCollection;

@@ -18,6 +18,7 @@
     "react-native": "^0.61.5",
     "react-native-color-picker": "^0.5.2",
     "react-native-image-crop-picker": "^0.32.0",
+    "react-native-localize": "^1.4.0",
     "react-native-paper": "^3.10.1",
     "react-native-splash-screen": "^3.2.0",
     "react-native-sqlite-storage": "^5.0.0",

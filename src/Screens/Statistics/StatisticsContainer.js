@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { throttle } from 'lodash';
 import Statistics from './Statistics';
 import * as statisticsActions from '../../actions/statisticsActions';
 

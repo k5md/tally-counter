@@ -10,8 +10,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'center',
-    maxHeight: screenHeight - 4 * navBarHeight,
-    width: screenWidth - navBarHeight,
+    marginTop: navBarHeight,
+    marginBottom: 2 * navBarHeight,
+    marginHorizontal: navBarHeight,
     zIndex: 1,
   },
   header: {

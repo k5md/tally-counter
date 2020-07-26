@@ -71,11 +71,6 @@ function* onDecrement({ id, value, step, date = Date.now() }) {
   yield write(query);
 }
 
-function* onSetTitle({ id, title }) {
-  const query = `UPDATE ${TABLE_NAME} SET title = ${title} WHERE id=${id};`;
-  yield write(query);
-}
-
 function* onSetValue({ id, value, date = Date.now() }) {
   const values = [id, value, date].join(',');
   const query = `INSERT INTO ${TABLE_NAME} (id, value, date) VALUES (${values});`;
@@ -144,7 +139,6 @@ export default function* statisticsStorage() {
   yield takeEvery(actionTypes.COUNTER_CREATE, onCreate);
   yield takeEvery(actionTypes.COUNTER_DECREMENT, onDecrement);
   yield takeEvery(actionTypes.COUNTER_INCREMENT, onIncrement);
-  yield takeEvery(actionTypes.COUNTER_SET_TITLE, onSetTitle);
   yield takeEvery(actionTypes.COUNTER_SET_VALUE, onSetValue);
   yield takeEvery(actionTypes.COUNTER_REMOVE, onRemove);
   yield takeEvery(actionTypes.STATISTICS_READ, onRead);

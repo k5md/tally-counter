@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, FlatList, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { color, fontSizes } from '../../config/styles';
+import { translate } from '../../localizations';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
 const StatisticsFilters = ({ selectables, onSelect }) => (
   <View style={styles.formContent}>
     <View style={styles.header}>
-      <Text style={styles.headerText}>Select items to show:</Text>
+      <Text style={styles.headerText}>{translate('Select items to show')}</Text>
     </View>
     <FlatList
       data={selectables}

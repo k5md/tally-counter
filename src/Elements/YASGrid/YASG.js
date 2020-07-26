@@ -85,59 +85,36 @@ export class SortableGrid extends Component {
     const scrollDown = dragPosition.y > this.containerHeight - scrollThreshold && dragPosition.y + this.scrollOffset.y + scrollThreshold < this.gridHeight;
     const scrollBy = (scrollUp * -1 + scrollDown * 1) * this.props.blockHeight;
 
-    dragPosition.x = clamp(dragPosition.x, 0, this.gridWidth - this.blockWidth);
-    // dragPosition.y = clamp(dragPosition.y + this.scrollOffset.y + scrollBy, 0, this.gridHeight - this.props.blockHeight);
-    //this.moveBlock(originalPosition, dragPositionWithScrollClamped);
+    const clampX = x => clamp(x, 0, this.gridWidth - this.blockWidth);
+    const clampY = y => clamp(y, 0, this.gridHeight - this.props.blockHeight);
 
-    if ((!scrollDown && !scrollUp) && !this.keepScrolling) {
-      console.log('-scroll, -keep');
-      activeBlock.currentPosition.setValue({
-        x: dragPosition.x,
-        y: dragPosition.y + this.scrollOffset.y + scrollBy,
-      });
-      return;
-    }
-
-    if ((!scrollDown && !scrollUp) && this.keepScrolling) {
-      console.log('-scroll, +keep');
-      activeBlock.currentPosition.setValue({
-        x: dragPosition.x,
-        y: dragPosition.y + this.scrollOffset.y + scrollBy,
-      });
+    if (!scrollDown && !scrollUp) {
+      const actualDragPosition = {
+        x: clampX(dragPosition.x),
+        y: clampY(dragPosition.y + this.scrollOffset.y + scrollBy),
+      };
+      activeBlock.currentPosition.setValue(actualDragPosition);
+      this.moveBlock(originalPosition, actualDragPosition);
       this.keepScrolling = clearInterval(this.keepScrolling);
-      return;
-    }
-
-    if ((scrollDown || scrollUp) && !this.keepScrolling) {
-      console.log('+scroll, -keep');
-      activeBlock.currentPosition.setValue({
-        x: dragPosition.x,
-        y: dragPosition.y + this.scrollOffset.y,
-      });
-      this.keepScrolling = setInterval(() => {
-        this.scrollView.current.scrollTo({ y: this.scrollOffset.y + scrollBy });
-        activeBlock.currentPosition.setValue({
-          x: dragPosition.x,
-          y: dragPosition.y + this.scrollOffset.y + scrollBy,
-        });
-      }, 75);
-      return;
-    }
-    if ((scrollDown || scrollUp) && this.keepScrolling) {
-      console.log('+scroll, +keep');
-      activeBlock.currentPosition.setValue({
-        x: dragPosition.x,
-        y: dragPosition.y + this.scrollOffset.y,
-      });
+    } else {
+      const actualDragPosition = {
+        x: clampX(dragPosition.x),
+        y: clampY(dragPosition.y + this.scrollOffset.y),
+      };
+      activeBlock.currentPosition.setValue(actualDragPosition);
+      this.moveBlock(originalPosition, actualDragPosition);
       this.keepScrolling = clearInterval(this.keepScrolling);
       this.keepScrolling = setInterval(() => {
-        activeBlock.currentPosition.setValue({
-          x: dragPosition.x,
-          y: dragPosition.y + this.scrollOffset.y + scrollBy,
-        });
+        const activeBlock = this.getActiveBlock();
+        const originalPosition = activeBlock.origin;
+        const actualDragPosition = {
+          x: clampX(dragPosition.x),
+          y: clampY(dragPosition.y + this.scrollOffset.y + scrollBy),
+        }
         this.scrollView.current.scrollTo({ y: this.scrollOffset.y + scrollBy });
-      }, 75);
-      return;
+        activeBlock.currentPosition.setValue(actualDragPosition);
+        this.moveBlock(originalPosition, actualDragPosition);
+      }, 250);
     }
   };
 
@@ -214,7 +191,7 @@ export class SortableGrid extends Component {
 
   getGridStyle = () => [
     styles.sortableGrid,
-    this.blockPositionsSet() && { height: this.gridHeight },
+    this.blockPositionsSet() && { height: this.gridHeight + this.props.blockHeight },
   ];
 
   getBlockStyle = key => [
@@ -276,6 +253,7 @@ export class SortableGrid extends Component {
       onScroll={this.onScroll}
       showsVerticalScrollIndicator={false}
       canCancelContentTouches={false}
+      style={this.props.style}
     >
       <Animated.View style={this.getGridStyle()} onLayout={this.onGridLayout}>
         {this.props.children.map(this.renderEntry)}

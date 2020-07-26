@@ -1,1 +1,18 @@
-{}
+{
+  "Counters": "Counters",
+  "Statistics": "Statistics",
+  "Title": "Title",
+  "Step": "Step",
+  "Value": "Value",
+  "Color": "Color",
+  "Image": "Image",
+  "Search": "Search",
+  "Select items to show": "Select items to show:",
+  "Date": "Date",
+  "Time": "Time",
+  "1d": "1d",
+  "3d": "3d",
+  "M": "M",
+  "Y": "Y",
+  "All": "All"
+}
