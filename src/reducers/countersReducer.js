@@ -45,7 +45,7 @@ const handlers = {
 
   [types.COUNTER_REMOVE]: (state, { id }) => {
     const { [id]: omittedId, ...data } = state.data;
-    const order = state.order.filter(item => id !== item.id);
+    const order = state.order.filter(itemId => id !== itemId);
     return { ...state, data, order };
   },
 
