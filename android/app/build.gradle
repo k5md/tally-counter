@@ -153,6 +153,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('TALLYCOUNTER_RELEASE_STORE_FILE')) {
+                storeFile file(TALLYCOUNTER_RELEASE_STORE_FILE)
+                storePassword TALLYCOUNTER_RELEASE_STORE_PASSWORD
+                keyAlias TALLYCOUNTER_RELEASE_KEY_ALIAS
+                keyPassword TALLYCOUNTER_RELEASE_KEY_PASSWORD
+            }
+        }
+    }
     }
     buildTypes {
         debug {

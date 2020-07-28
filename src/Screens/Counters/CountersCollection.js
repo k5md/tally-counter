@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import { SortableGrid } from '../../Elements';
+import { SortableGrid, Banner } from '../../Elements';
 import EntryContainer from './EntryContainer';
 import { color } from '../../config/styles';
 import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../../config/metrics';
@@ -34,6 +34,10 @@ const CountersCollection = ({ data, order, displayType, rearrange }) => {
   );
   const sortable = searchQuery === '';
 
+  const displayAds =
+    (displayType.name === 'grid' && Object.values(data).length > 8) ||
+    (displayType.name === 'list' && Object.values(data).length > 4);
+
   return (
     <View style={styles.countersCollection}>
       <Searchbar
@@ -44,6 +48,7 @@ const CountersCollection = ({ data, order, displayType, rearrange }) => {
         style={styles.search}
         iconColor={styles.search.color}
       />
+      {displayAds ? <Banner /> : null}
       <SortableGrid
         itemsPerRow={displayType.name === 'grid' ? blocksPerRow : 1}
         blockHeight={displayType.name === 'grid' ? blockHeightGrid : blockHeightList}
