@@ -27,7 +27,11 @@ export const Routes = () => {
     <BottomNavigation
       navigationState={navigationState}
       onIndexChange={setIndex}
-      renderScene={nav => (routes[index].key !== nav.route.key ? null : renderScene(nav))}
+      renderScene={nav =>
+        routes[index].key !== nav.route.key && nav.route.key !== 'counters'
+          ? null
+          : renderScene(nav)
+      }
       barStyle={styles.navigationBar}
       activeColor={color.COLOR_SECONDARY}
       inactiveColor={color.COLOR_TERTIARY}

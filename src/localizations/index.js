@@ -8,6 +8,11 @@ const translations = [
     displayName: 'English',
     translation: require('./en.json'),
   },
+  {
+    languageTag: 'ru',
+    displayName: 'Russian',
+    translation: require('./ru.json'),
+  },
 ];
 
 const fallback = { languageTag: 'en', isRTL: false };

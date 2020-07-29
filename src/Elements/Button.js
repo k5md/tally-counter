@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.COLOR_PRIMARY,
+    zIndex: 9000,
   },
   rounded: {
     borderRadius: 10,

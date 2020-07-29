@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
     paddingHorizontal: fontSizes.FONT_SIZE_SMALL / 2,
+    paddingVertical: 8,
   },
 });
 

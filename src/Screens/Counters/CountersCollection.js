@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
   searchInput: {
     backgroundColor: color.COLOR_SECONDARY,
     color: color.COLOR_TERTIARY,
+    paddingVertical: 0,
   },
   search: {
     backgroundColor: color.COLOR_SECONDARY,

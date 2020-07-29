@@ -6,8 +6,10 @@ import { color, fontSizes } from '../../config/styles';
 import {
   blockHeightGrid,
   screenWidth,
+  screenHeight,
   blockWidthGrid,
   blockHeightList,
+  navBarHeight,
 } from '../../config/metrics';
 import { Button, TextInput, LabeledView } from '../../Elements';
 import { translate } from '../../localizations';
@@ -24,17 +26,20 @@ const styles = StyleSheet.create({
   counter: {
     flex: 0,
     paddingHorizontal: 5,
-    paddingTop: 50,
-    paddingBottom: 20,
+    paddingTop: 40,
+    paddingBottom: 10,
   },
   actions: {
     flex: 0,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginRight: 20,
+    justifyContent: 'space-between',
+    marginHorizontal: 10,
+    marginBottom: 0,
   },
   action: {
-    marginLeft: 40,
+    width: navBarHeight * 1.5,
+    height: navBarHeight,
+    marginHorizontal: 10,
   },
   loadables: {
     flex: 0,

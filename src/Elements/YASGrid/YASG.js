@@ -82,7 +82,10 @@ export class SortableGrid extends Component {
 
     const scrollThreshold = this.props.blockHeight / 5;
     const scrollUp = dragPosition.y < scrollThreshold && this.scrollOffset.y > 0;
-    const scrollDown = dragPosition.y > this.containerHeight - scrollThreshold && dragPosition.y + this.scrollOffset.y + scrollThreshold < this.gridHeight;
+    const scrollDown =
+      dragPosition.y > this.containerLayout.height - this.containerLayout.y - scrollThreshold &&
+      dragPosition.y + this.scrollOffset.y + scrollThreshold < this.gridHeight;
+
     const scrollBy = (scrollUp * -1 + scrollDown * 1) * this.props.blockHeight;
 
     const clampX = x => clamp(x, 0, this.gridWidth - this.blockWidth);
@@ -219,7 +222,7 @@ export class SortableGrid extends Component {
   ];
 
   onScrollLayout = ({ nativeEvent }) => {
-    this.containerHeight = nativeEvent.layout.height;
+    this.containerLayout = nativeEvent.layout;
   };
 
   onScroll = ({ nativeEvent }) => {

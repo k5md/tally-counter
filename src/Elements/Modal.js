@@ -7,12 +7,11 @@ import { screenHeight, navBarHeight, screenWidth } from '../config/metrics';
 
 const styles = StyleSheet.create({
   modalContainer: {
-    flex: 1,
+    flex: 0,
     alignSelf: 'center',
     justifyContent: 'center',
-    marginTop: navBarHeight,
-    marginBottom: 2 * navBarHeight,
-    marginHorizontal: navBarHeight,
+    height: screenHeight - 2 * navBarHeight,
+    width: screenWidth - navBarHeight,
     zIndex: 1,
   },
   header: {
@@ -33,8 +32,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    maxHeight: screenHeight - 2 * navBarHeight,
-    width: screenWidth - navBarHeight,
     backgroundColor: color.COLOR_SECONDARY,
     zIndex: 1,
     justifyContent: 'center',
