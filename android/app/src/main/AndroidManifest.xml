@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.tallycounter">
+  package="com.k5md.tallycounter">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

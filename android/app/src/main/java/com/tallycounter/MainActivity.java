@@ -1,4 +1,4 @@
-package com.tallycounter;
+package com.k5md.tallycounter;
 
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;

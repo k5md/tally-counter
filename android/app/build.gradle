@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.tallycounter"
+        applicationId "com.k5md.tallycounter"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

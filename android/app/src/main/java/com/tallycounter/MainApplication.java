@@ -1,4 +1,4 @@
-package com.tallycounter;
+package com.k5md.tallycounter;
 
 // import android.app.Application;
 import androidx.multidex.MultiDexApplication;
