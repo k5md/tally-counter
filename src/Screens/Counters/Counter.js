@@ -1,19 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
-import { ColorPicker, toHsv, fromHsv } from 'react-native-color-picker';
+import { ColorPicker } from 'react-native-color-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../../config/styles';
-import {
-  blockHeightGrid,
-  screenWidth,
-  screenHeight,
-  blockWidthGrid,
-  blockHeightList,
-  navBarHeight,
-} from '../../config/metrics';
+import { blockHeightGrid, screenWidth, blockWidthGrid, navBarHeight } from '../../config/metrics';
 import { Button, TextInput, LabeledView } from '../../Elements';
 import { translate } from '../../localizations';
-import {} from 'react-native-color-picker';
 
 const styles = StyleSheet.create({
   container: {
@@ -89,41 +81,23 @@ const styles = StyleSheet.create({
   },
 });
 
-const Counter = props => {
-  const { entry, remove } = props;
-
+const Counter = ({
+  fields: {
+    value,
+    setValue,
+    step,
+    setStep,
+    title,
+    setTitle,
+    colorString,
+    setColorString,
+    imageString,
+    setImageString,
+  },
+  remove,
+  submit,
+}) => {
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
-
-  const [title, setTitle] = useState(entry.title);
-  const [value, setValue] = useState(entry.value || 0);
-  const [step, setStep] = useState(entry.step || 0);
-  const [colorString, setColorString] = useState(toHsv(entry.colorString) || '');
-
-  const [imageString, setImageString] = useState(entry.imageString || null);
-
-  const { id } = entry;
-
-  const update = () => {
-    if (title !== entry.title) {
-      props.setTitle(id, title);
-    }
-    if (value !== entry.value) {
-      props.setValue(id, value);
-    }
-    if (step !== entry.step) {
-      props.setStep(id, step);
-    }
-    if (imageString !== entry.imageString) {
-      props.setImageString(id, imageString);
-    }
-    if (fromHsv(colorString) !== entry.colorString) {
-      props.setColorString(id, fromHsv(colorString));
-    }
-  };
-
-  if (!entry) {
-    return null;
-  }
 
   const imagePickerHandler = () => {
     ImagePicker.openPicker({
@@ -139,41 +113,29 @@ const Counter = props => {
   return (
     <View style={styles.counter}>
       <ScrollView>
-        <TextInput label={translate('Title')} value={title} onChange={v => setTitle(v)} />
-        <TextInput
-          label={translate('Step')}
-          value={String(step)}
-          onChange={v => setStep(Number(v) || 0)}
-          keyboardType="numeric"
-        />
+        <TextInput label={translate('Title')} value={title} onChange={setTitle} />
+        <TextInput label={translate('Step')} value={step} onChange={setStep} keyboardType="numeric" />
         <View style={styles.row}>
           <View style={styles.container}>
-            <TextInput
-              label={translate('Value')}
-              value={String(value)}
-              onChange={v => setValue(Number(v) || 0)}
-              keyboardType="numeric"
-            />
+            <TextInput label={translate('Value')} value={value} onChange={setValue} keyboardType="numeric" />
           </View>
         </View>
 
         <View style={styles.loadables}>
           <LabeledView label={translate('Color')} style={[styles.loadable, styles.loadableColor]}>
-            <ColorPicker
-              onColorChange={v => setColorString(v)}
-              style={styles.container}
-              defaultColor={fromHsv(colorString)}
-            />
+            <ColorPicker onColorChange={setColorString} style={styles.container} defaultColor={colorString} />
           </LabeledView>
           <LabeledView label={translate('Image')} style={[styles.loadable, styles.loadableImage]}>
-            {imageString && <Image style={styles.image} source={imageString} />}
             {imageString ? (
-              <Button
-                icon="delete"
-                style={[styles.loadableControl, styles.delete]}
-                onPress={() => setImageString(null)}
-                transparent
-              />
+              <>
+                <Image style={styles.image} source={imageString} />
+                <Button
+                  icon="delete"
+                  style={[styles.loadableControl, styles.delete]}
+                  onPress={() => setImageString(null)}
+                  transparent
+                />
+              </>
             ) : (
               <Button
                 icon="plus"
@@ -189,11 +151,11 @@ const Counter = props => {
       <View style={styles.actions}>
         <Button
           icon="delete"
-          onPress={deleteConfirmed ? () => remove(id) : () => setDeleteConfirmed(true)}
+          onPress={deleteConfirmed ? () => remove() : () => setDeleteConfirmed(true)}
           rounded
           style={[styles.action, deleteConfirmed && styles.deleteConfirmed]}
         />
-        <Button icon="content-save" onPress={update} rounded style={styles.action} />
+        <Button icon="content-save" onPress={submit} rounded style={styles.action} />
       </View>
     </View>
   );

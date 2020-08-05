@@ -29,11 +29,7 @@ const Counters = ({ nextDisplayType, setDisplayType, create }) => {
     <View style={styles.container}>
       <CountersCollectionContainer />
       <View style={styles.fabContainer}>
-        <FAB
-          style={styles.fab}
-          icon={nextDisplayType.icon}
-          onPress={() => setDisplayType(nextDisplayType)}
-        />
+        <FAB style={styles.fab} icon={nextDisplayType.icon} onPress={() => setDisplayType(nextDisplayType)} />
         <FAB style={styles.fab} icon="plus" onPress={() => create()} />
       </View>
     </View>

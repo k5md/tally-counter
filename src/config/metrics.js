@@ -15,6 +15,7 @@ export const moderateScale = (size, factor = 0.5) => size + (scale(size) - size)
 export const screenWidth = width < height ? width : height;
 export const screenHeight = width < height ? height : width;
 export const navBarHeight = 48;
+
 export const blocksPerRow = 2;
 export const blockWidthGrid = screenWidth / 2;
 export const blockWidthList = screenWidth;

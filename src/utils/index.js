@@ -12,3 +12,5 @@ export const prevYear = (date = new Date(), dt = 1) => cloneDate(date).setFullYe
 export const prevMonth = (date = new Date(), dt = 1) => cloneDate(date).setMonth(date.getMonth() - dt);
 export const prevDay = (date = new Date(), dt = 1) => cloneDate(date).setDate(date.getDate() - dt);
 export const dateRange = (start, end = Date.now()) => [start, end];
+
+export const capitalize = str => str.replace(/^\w/, c => c.toUpperCase());

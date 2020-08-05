@@ -2,7 +2,12 @@ import { put, takeEvery, call } from 'redux-saga/effects';
 import { uniqueId } from 'lodash';
 import { prevDay, prevMonth, prevYear, dateRange, randomRGB } from '../utils';
 import * as actionTypes from '../constants/actionTypes';
+
 const SQLite = require('react-native-sqlite-storage');
+SQLite.DEBUG(__DEV__);
+SQLite.enablePromise(true);
+
+let storage = null;
 
 const DB_NAME = 'tally_counter';
 const TABLE_NAME = 'statistics_counters';
@@ -11,10 +16,6 @@ const FIELDS = [
   ['value', 'INTEGER'],
   ['date', 'INTEGER'], // unix time
 ];
-
-let storage = null;
-SQLite.DEBUG(__DEV__);
-SQLite.enablePromise(true);
 
 const selectableFrames = [
   { id: '1d', window: () => dateRange(prevDay()) },
@@ -34,20 +35,15 @@ function* execute(query, successAction, failAction, storage) {
 }
 
 function* write(query) {
-  yield execute(
-    query,
-    actionTypes.STATISTICS_WRITE_SUCCESS,
-    actionTypes.STATISTICS_WRITE_FAIL,
-    storage,
-  );
+  yield execute(query, actionTypes.STATISTICS_WRITE_SUCCESS, actionTypes.STATISTICS_WRITE_FAIL, storage);
 }
 
 function* initialize() {
   try {
     storage = yield call(() => SQLite.openDatabase({ name: DB_NAME }));
-    const table = `CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(${FIELDS.map(entry =>
-      entry.join(' '),
-    ).join(',')});`;
+    const table = `CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(${FIELDS.map(entry => entry.join(' ')).join(
+      ',',
+    )});`;
     const indexId = `CREATE INDEX IF NOT EXISTS id ON ${TABLE_NAME} (id);`;
     const indexIdValueDate = `CREATE INDEX IF NOT EXISTS id_value_date ON ${TABLE_NAME} (id, value, date);`;
     yield call(() => storage.executeSql(table));

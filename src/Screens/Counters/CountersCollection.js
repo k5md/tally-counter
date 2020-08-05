@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import { SortableGrid, Banner } from '../../Elements';
+import { SortableGrid } from '../../Elements';
 import EntryContainer from './EntryContainer';
 import { color } from '../../config/styles';
 import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../../config/metrics';
@@ -53,15 +53,7 @@ const CountersCollection = ({ data, order, displayType, rearrange }) => {
       >
         {filtered.map(entry => {
           const { id } = entry;
-          return (
-            <EntryContainer
-              key={id}
-              id={id}
-              entry={entry}
-              style={styles.block}
-              inactive={!sortable}
-            />
-          );
+          return <EntryContainer key={id} id={id} entry={entry} style={styles.block} inactive={!sortable} />;
         })}
       </SortableGrid>
     </View>

@@ -2,7 +2,7 @@
  * Provides universal color configs used in the app.
  * Provides universal fonts used in the app.
  */
-import { screenHeight, moderateScale } from './metrics';
+import { moderateScale } from './metrics';
 
 const fontSizeBase = moderateScale(16);
 const fontSizeMini = fontSizeBase - 4;

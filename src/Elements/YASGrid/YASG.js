@@ -113,7 +113,7 @@ export class SortableGrid extends Component {
         const actualDragPosition = {
           x: clampX(dragPosition.x),
           y: clampY(dragPosition.y + this.scrollOffset.y + scrollBy),
-        }
+        };
         this.scrollView.current.scrollTo({ y: this.scrollOffset.y + scrollBy });
         activeBlock.currentPosition.setValue(actualDragPosition);
         this.moveBlock(originalPosition, actualDragPosition);
@@ -231,11 +231,7 @@ export class SortableGrid extends Component {
   };
 
   renderEntry = item => (
-    <Animated.View
-      key={item.key}
-      style={this.getBlockStyle(item.key)}
-      {...this.panResponder.panHandlers}
-    >
+    <Animated.View key={item.key} style={this.getBlockStyle(item.key)} {...this.panResponder.panHandlers}>
       <TouchableWithoutFeedback
         style={styles.container}
         delayLongPress={this.props.dragActivationTreshold}

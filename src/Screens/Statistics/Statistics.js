@@ -4,7 +4,6 @@ import { FAB } from 'react-native-paper';
 import StatisticsTable from './StatisticsTable';
 import StatisticsFilters from './StatisticsFilters';
 import { Modal, Button } from '../../Elements';
-
 import { color, fontSizes } from '../../config/styles';
 import { navBarHeight } from '../../config/metrics';
 import { translate } from '../../localizations';
@@ -57,15 +56,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Statistics = ({
-  read,
-  stats,
-  counters,
-  selectableIds,
-  selectableFrames,
-  selectId,
-  selectFrame,
-}) => {
+const Statistics = ({ read, stats, counters, selectableIds, selectableFrames, selectId, selectFrame }) => {
   useEffect(() => {
     const selectedIds = selectableIds.filter(({ selected }) => selected);
     const selectedFrame = selectableFrames.find(({ selected }) => selected);

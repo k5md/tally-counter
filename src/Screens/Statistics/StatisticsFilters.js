@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 5,
   },
   selectableText: {
     fontSize: fontSizes.FONT_SIZE_BASE,

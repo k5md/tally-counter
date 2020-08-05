@@ -22,7 +22,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const LabeledView = ({ label, backgroundColor = color.COLOR_SECONDARY, children, style, labelStyle = {} }) => (
+const LabeledView = ({
+  label,
+  backgroundColor = color.COLOR_SECONDARY,
+  children,
+  style,
+  labelStyle = {},
+}) => (
   <View style={[styles.container, { backgroundColor }]}>
     <View style={[styles.label, { backgroundColor }]}>
       <Text style={[styles.labelText, labelStyle]}>{label}</Text>
