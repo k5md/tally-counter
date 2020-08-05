@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   selectableText: {
-    fontSize: fontSizes.FONT_SIZE_SMALL,
+    fontSize: fontSizes.FONT_SIZE_BASE,
     color: color.COLOR_TERTIARY,
     textAlign: 'center',
   },

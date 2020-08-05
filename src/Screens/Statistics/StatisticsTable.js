@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
   tableContainer: {
     backgroundColor: color.COLOR_SECONDARY,
   },
+  tableHeader: {
+    marginTop: 20,
+  },
   cellText: {
     color: color.COLOR_TERTIARY,
   },
@@ -23,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 const Header = () => (
-  <DataTable.Header>
+  <DataTable.Header style={styles.tableHeader}>
     <DataTable.Title>
       <Text style={styles.headerText}>{translate('Date')}</Text>
     </DataTable.Title>
