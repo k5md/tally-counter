@@ -117,7 +117,7 @@ function* onRead({ ids, selectedFrame }) {
     SELECT id, value, date
     FROM ${TABLE_NAME}
     WHERE id IN (${ids.map(item => item.id).join(',')}) AND date >= ${start} AND date <= ${end}
-    ORDER BY date
+    ORDER BY date DESC
   `;
 
   try {
