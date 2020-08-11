@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, Text } from 'react-native';
 import CounterContainer from './CounterContainer';
 import { Modal, Button } from '../../Elements';
 import { color, fontSizes, fonts } from '../../config/styles';
+import { moderateScale } from '../../config/metrics';
 
 const styles = StyleSheet.create({
   header: {
@@ -27,26 +28,32 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    marginHorizontal: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  entryTitle: {
-    fontFamily: fonts.FONT_MEDIUM,
+  titleText: {
+    flex: 1,
     fontSize: fontSizes.FONT_SIZE_SMALL,
     textAlign: 'center',
+    textAlignVertical: 'center',
     color: color.COLOR_TERTIARY,
   },
-  counterControls: {
-    display: 'flex',
+  controls: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  counterControlsText: {
+  controlsText: {
+    flex: 1,
     fontSize: fontSizes.FONT_SIZE_SMALL,
     color: color.COLOR_TERTIARY,
     textAlign: 'center',
+    textAlignVertical: 'center',
+    paddingHorizontal: 10,
   },
-  counterControl: {
+  control: {
     flex: 0,
   },
   counterValue: {
@@ -80,28 +87,30 @@ const Entry = props => {
           />
         </View>
         <View style={styles.title}>
-          <Text ellipsizeMode="middle" numberOfLines={1} style={styles.entryTitle}>
+          <View style={{flex: 0.1}}/>
+          <Text ellipsizeMode="middle" numberOfLines={1} style={styles.titleText}>
             {title}
           </Text>
+          <View style={{flex: 0.1}}/>
         </View>
-        <View style={styles.counterControls}>
-          <View style={style.counterControl}>
+        <View style={styles.controls}>
+          <View style={styles.control}>
             <Button
               icon="minus"
-              iconColor={styles.counterControlsText.color}
+              iconColor={styles.controlsText.color}
               onPress={() => decrement(id, value, step)}
               transparent
             />
           </View>
           <View style={styles.counterValue}>
-            <Text ellipsizeMode="head" numberOfLines={1} style={styles.counterControlsText}>
+            <Text ellipsizeMode="head" numberOfLines={1} style={styles.controlsText}>
               {value}
             </Text>
           </View>
-          <View style={style.counterControl}>
+          <View style={styles.control}>
             <Button
               icon="plus"
-              iconColor={styles.counterControlsText.color}
+              iconColor={styles.controlsText.color}
               onPress={() => increment(id, value, step)}
               transparent
             />
