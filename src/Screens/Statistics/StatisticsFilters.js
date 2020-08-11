@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, FlatList, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import { color, fontSizes } from '../../config/styles';
+import { moderateScale } from '../../config/metrics';
 import { translate } from '../../localizations';
 
 const styles = StyleSheet.create({
@@ -16,21 +17,24 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   filter: {
-    flex: 0.5,
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    paddingVertical: moderateScale(5),
   },
   text: {
     flex: 1,
-    paddingVertical: 5,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   selectableText: {
     fontSize: fontSizes.FONT_SIZE_BASE,
     color: color.COLOR_TERTIARY,
-    textAlign: 'center',
+    marginHorizontal: 10,
   },
   header: {
-    paddingBottom: 10,
+    paddingBottom: moderateScale(10),
   },
   headerText: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
@@ -39,8 +43,10 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     flex: 1,
-    alignContent: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
   },
 });
 
@@ -69,7 +75,6 @@ const StatisticsFilters = ({ selectables, onSelect }) => (
         </View>
       )}
       keyExtractor={({ id }) => String(id)}
-      numColumns={2}
       removeClippedSubviews={false}
       overScrollMode="never"
     />

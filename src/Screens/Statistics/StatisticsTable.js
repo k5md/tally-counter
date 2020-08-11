@@ -13,9 +13,7 @@ const styles = StyleSheet.create({
   tableContainer: {
     backgroundColor: color.COLOR_SECONDARY,
   },
-  tableHeader: {
-    marginTop: 20,
-  },
+  tableHeader: {},
   cellText: {
     color: color.COLOR_TERTIARY,
   },
