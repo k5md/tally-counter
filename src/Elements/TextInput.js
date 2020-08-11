@@ -2,12 +2,13 @@ import React from 'react';
 import { StyleSheet, TextInput as TextInputRN } from 'react-native';
 import { LabeledView } from './';
 import { color, fontSizes } from '../config/styles';
+import { moderateScale } from '../config/metrics';
 
 const styles = StyleSheet.create({
   text: {
     fontSize: fontSizes.FONT_SIZE_SMALL,
     paddingHorizontal: fontSizes.FONT_SIZE_SMALL / 2,
-    paddingVertical: 8,
+    paddingVertical: moderateScale(8),
   },
 });
 
