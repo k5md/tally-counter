@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import { SortableGrid } from '../../Elements';
+import SortableGrid from 'react-native-yet-another-sortable';
 import EntryContainer from './EntryContainer';
 import { color } from '../../config/styles';
 import { navBarHeight, blocksPerRow, blockHeightGrid, blockHeightList } from '../../config/metrics';
@@ -30,10 +30,13 @@ const styles = StyleSheet.create({
 
 const CountersCollection = ({ data, order, displayType, rearrange }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const filtered = Object.values(data).filter(
-    counter => counter && counter.title.toLowerCase().includes(searchQuery),
-  );
+  const filtered = Object.values(data)
+    .filter(counter => counter && counter.title.toLowerCase().includes(searchQuery))
+    .map(counter => ({ ...counter, key: String(counter.id) }));
   const sortable = searchQuery === '';
+  const renderItem = entry => (
+    <EntryContainer id={entry.id} entry={entry} style={styles.block} inactive={!sortable} />
+  );
 
   return (
     <View style={styles.countersCollection}>
@@ -46,16 +49,13 @@ const CountersCollection = ({ data, order, displayType, rearrange }) => {
         iconColor={styles.search.color}
       />
       <SortableGrid
-        itemsPerRow={displayType.name === 'grid' ? blocksPerRow : 1}
-        blockHeight={displayType.name === 'grid' ? blockHeightGrid : blockHeightList}
-        itemOrder={order}
-        onDragRelease={({ itemOrder }) => rearrange(itemOrder)}
-      >
-        {filtered.map(entry => {
-          const { id } = entry;
-          return <EntryContainer key={id} id={id} entry={entry} style={styles.block} inactive={!sortable} />;
-        })}
-      </SortableGrid>
+        columns={displayType.name === 'grid' ? blocksPerRow : 1}
+        rowHeight={displayType.name === 'grid' ? blockHeightGrid : blockHeightList}
+        order={order}
+        data={filtered}
+        onDeactivateDrag={rearrange}
+        renderItem={renderItem}
+      />
     </View>
   );
 };
