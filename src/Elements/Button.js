@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
+import { MaterialDesignIcons as Icon } from '@react-native-vector-icons/material-design-icons';
 import { color as colors, fontSizes } from '../config/styles';
 
 const styles = StyleSheet.create({

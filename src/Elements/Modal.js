@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Modal as RNModal } from 'react-native';
-import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
+import { MaterialDesignIcons as Icon } from '@react-native-vector-icons/material-design-icons';
 import { Button } from './';
 import { color, fontSizes } from '../config/styles';
 import { screenHeight, navBarHeight, screenWidth } from '../config/metrics';

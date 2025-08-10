@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import SplashScreen from 'react-native-splash-screen';
+import BootSplash from "react-native-bootsplash";
 import configureStore from './store/configureStore';
 import { Routes } from './Routes';
 
@@ -9,7 +9,7 @@ const { persistor, store } = configureStore();
 
 const App = () => {
   useEffect(() => {
-    SplashScreen.hide();
+    BootSplash.hide({ fade: true });
   }, []);
 
   return (

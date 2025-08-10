@@ -2,8 +2,7 @@
 
 import { createStore, compose, applyMiddleware } from 'redux';
 import { persistStore, persistCombineReducers } from 'redux-persist';
-import createSagaMiddleware from 'redux-saga';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createLogger } from 'redux-logger';
 import rootReducers from '../reducers';
 import rootSaga from '../sagas';
@@ -14,6 +13,7 @@ const config = {
   debug: __DEV__,
 };
 
+const createSagaMiddleware = require('redux-saga').default;
 const sagaMiddleware = createSagaMiddleware(rootSaga);
 const middleware = [sagaMiddleware];
 

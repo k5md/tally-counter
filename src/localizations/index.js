@@ -17,7 +17,7 @@ const translations = [
 
 const fallback = { languageTag: 'en', isRTL: false };
 const { languageTag } =
-  RNLocalize.findBestAvailableLanguage(translations.map(item => item.languageTag)) || fallback;
+  RNLocalize.findBestLanguageTag(translations.map(item => item.languageTag)) || fallback;
 
 const { translation } = translations.find(item => item.languageTag === languageTag);
 

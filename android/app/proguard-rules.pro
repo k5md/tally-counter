@@ -8,11 +8,3 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
--keep class io.invertase.firebase.** { *; }
--dontwarn io.invertase.firebase.**
-
--keep class com.google.android.gms.** { *; }
--dontwarn com.google.android.gms.**
-
--keep class com.reactnative.ivpusic.imagepicker.** { *; }
--dontwarn com.reactnative.ivpusic.imagepicker.**

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
-import { ColorPicker } from 'react-native-color-picker';
+import ColorPicker from 'react-native-wheel-color-picker'
 import ImagePicker from 'react-native-image-crop-picker';
 import { color, fontSizes } from '../../config/styles';
 import { blockHeightGrid, screenWidth, blockWidthGrid, navBarHeight } from '../../config/metrics';
 import { Button, TextInput, LabeledView } from '../../Elements';
 import { translate } from '../../localizations';
+import { fromHsv } from '../../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   },
   loadableColor: {
     padding: 0,
-    minWidth: screenWidth / 3,
+    width: screenWidth / 2.5,
     height: 2 * blockHeightGrid,
   },
   loadableImage: {
@@ -122,8 +123,14 @@ const Counter = ({
         </View>
 
         <View style={styles.loadables}>
-          <LabeledView label={translate('Color')} style={[styles.loadable, styles.loadableColor]}>
-            <ColorPicker onColorChange={setColorString} style={styles.container} defaultColor={colorString} />
+          <LabeledView label={translate('Color')} style={[styles.loadable, styles.loadableColor ]}>
+            <ColorPicker
+                onColorChangeComplete={setColorString}
+                swatches={false}
+                sliderHidden={true}
+                color={colorString}
+                useNativeDriver={true}
+            />
           </LabeledView>
           <LabeledView label={translate('Image')} style={[styles.loadable, styles.loadableImage]}>
             {imageString ? (

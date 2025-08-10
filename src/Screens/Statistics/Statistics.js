@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 'auto',
+    height: 'auto',
     paddingHorizontal: 20,
     paddingVertical: 10,
   },

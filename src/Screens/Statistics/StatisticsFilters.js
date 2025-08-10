@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/dist/MaterialCommunityIcons';
+import { MaterialDesignIcons as Icon } from '@react-native-vector-icons/material-design-icons';
 import { color, fontSizes } from '../../config/styles';
 import { moderateScale } from '../../config/metrics';
 import { translate } from '../../localizations';
@@ -47,6 +47,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 10,
+    padding: 10,
+    fontSize: fontSizes.FONT_SIZE_SMALL,
   },
 });
 
@@ -66,7 +68,7 @@ const StatisticsFilters = ({ selectables, onSelect }) => (
           </View>
           <View style={styles.checkbox}>
             <Icon
-              size={styles.selectableText.fontSize}
+              size={styles.checkbox.fontSize}
               name={selected ? 'checkbox-marked' : 'checkbox-blank-outline'}
               color={color.COLOR_PRIMARY}
               onPress={() => onSelect(id, !selected)}
